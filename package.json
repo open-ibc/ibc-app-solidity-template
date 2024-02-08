@@ -1,0 +1,26 @@
+{
+  "name": "ibc-app-solidity-template",
+  "version": "1.0.0",
+  "description": "Template project to start building IBC enabled Solidity contracts, with Hardhat and Foundry support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open-ibc/ibc-app-solidity-template.git"
+  },
+  "keywords": [
+    "IBC",
+    "Solidity"
+  ],
+  "author": "Polymer Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/open-ibc/ibc-app-solidity-template/issues"
+  },
+  "homepage": "https://github.com/open-ibc/ibc-app-solidity-template#readme",
+  "devDependencies": {
+    "hardhat": "^2.19.5"
+  }
+}
