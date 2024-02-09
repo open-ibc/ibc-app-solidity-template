@@ -7,13 +7,15 @@
 const hre = require("hardhat");
 
 async function main() {
-  const args = [];
-  const myContract = await hre.ethers.deployContract('MyContract', args);
+  const artefact = process.argv[2];
+  const args = process.argv.slice(3);
+
+  const myContract = await hre.ethers.deployContract(artefact, args);
 
   await myContract.waitForDeployment();
 
   console.log(
-    `MyContract deployed to ${myContract.target}`
+    `${artefact} deployed to ${myContract.target}`
   );
 }
 

@@ -18,18 +18,18 @@ module.exports = {
     'base-sepolia': {
       url: 'https://sepolia.base.org',
       accounts: [
-        process.env.BASE_WALLET_KEY_1,
-        process.env.BASE_WALLET_KEY_2,
-        process.env.BASE_WALLET_KEY_3,
+        process.env.PRIVATE_KEY_1,
+        process.env.PRIVATE_KEY_2,
+        process.env.PRIVATE_KEY_3,
       ],
     },
     // for OP testnet
     'op-sepolia': {
       url: 'https://sepolia.optimism.io',
       accounts: [
-        process.env.OP_WALLET_KEY_1, 
-        process.env.OP_WALLET_KEY_2, 
-        process.env.OP_WALLET_KEY_3,
+        process.env.PRIVATE_KEY_1, 
+        process.env.PRIVATE_KEY_2, 
+        process.env.PRIVATE_KEY_3,
       ],
     },    
   },

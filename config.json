@@ -1,19 +1,23 @@
 {
     "createChannel": {
-        "srcAddr": "0x",
-        "dstAddr": "0x",
+        "srcContractType": "IbcApp",
+        "srcChain": "base",
+        "srcAddr": "0x123...",
+        "dstChain": "optimism",
+        "dstAddr": "0xabc...",
         "version": "1.0",
         "ordering": 1,
-        "fees": false,
-        "chains": ["optimism", "base"]
+        "fees": false
     },
     "sendPacket": {
+        "srcAddr": "0x123...",
         "srcChannelId": "channel-0",
         "timeout": 36000
     },
     "sendUniversalPacket": {
-        "srcChannelId": "channel-0",
-        "timeout": 36000,
-        "destAddr": "0x"
+        "srcAddr": "0x456...",
+        "dstAddr": "0xdef...",
+        "srcChannelId": "channel-1",
+        "timeout": 36000
     }
 }

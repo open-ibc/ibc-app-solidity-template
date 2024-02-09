@@ -1,0 +1,5 @@
+@openzeppelin/=lib/openzeppelin-contracts/
+@lazyledger/protobuf3-solidity-lib/=lib/protobuf3-solidity-lib/
+ds-test/=lib/forge-std/lib/ds-test/src/
+forge-std/=lib/forge-std/src/
+lib/forge-std:ds-test/=lib/forge-std/lib/ds-test/src/
