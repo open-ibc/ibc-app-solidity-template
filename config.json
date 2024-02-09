@@ -1,22 +1,17 @@
 {
-    "deploy": {
-        "name:": "UniversalChanIbcContract",
-        "args": []
-    },
-    "create-channel": {
+    "createChannel": {
         "srcAddr": "0x",
         "dstAddr": "0x",
         "version": "1.0",
         "ordering": 1,
         "fees": false,
-        "chains": ["optimism", "base"],
-        "counterparty": ""
+        "chains": ["optimism", "base"]
     },
-    "send-packet": {
+    "sendPacket": {
         "srcChannelId": "channel-0",
         "timeout": 36000
     },
-    "send-universal-packet": {
+    "sendUniversalPacket": {
         "srcChannelId": "channel-0",
         "timeout": 36000,
         "destAddr": "0x"

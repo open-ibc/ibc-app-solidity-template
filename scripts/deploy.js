@@ -5,16 +5,15 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const deployConfig = require('../config.json').deploy;
 
 async function main() {
-  console.log(deployConfig);
-  const myContract = await hre.ethers.deployContract(deployConfig.name, deployConfig.args);
+  const args = [];
+  const myContract = await hre.ethers.deployContract('MyContract', args);
 
   await myContract.waitForDeployment();
 
   console.log(
-    `${deployConfig.name} deployed to ${myContract.target}`
+    `MyContract deployed to ${myContract.target}`
   );
 }
 
