@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.9;
 
-import '../vibc-core/contracts/Ibc.sol';
-import '../vibc-core/contracts/IbcReceiver.sol';
-import '../vibc-core/contracts/IbcDispatcher.sol';
+import '../lib/vibc-core-smart-contracts/contracts/Ibc.sol';
+import '../lib/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
+import '../lib/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
 
 contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
     // received packet as chain B
