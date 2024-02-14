@@ -30,7 +30,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
     function updateDispatcher(IbcDispatcher _dispatcher) external onlyOwner {
         dispatcher = _dispatcher;
     }
-    
+
     /**
      * @dev Sends a packet with a greeting message over a specified channel.
      * @param message The greeting message to be sent.
@@ -160,7 +160,10 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         bool channelFound = false;
         for (uint256 i = 0; i < connectedChannels.length; i++) {
             if (connectedChannels[i].channelId == channelId) {
-                delete connectedChannels[i];
+                for (uint256 j = i; j < connectedChannels.length - 1; j++) {
+                    connectedChannels[j] = connectedChannels[j + 1];
+                }
+                connectedChannels.pop();
                 channelFound = true;
                 break;
             }
