@@ -5,17 +5,27 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const config = require("../config");
 
 async function main() {
-  const artefact = process.argv[2];
-  const args = process.argv.slice(3);
+  const networkName = hre.network.name;
 
-  const myContract = await hre.ethers.deployContract(artefact, args);
+  // The config should have a deploy object with the network name as the key and contract type as the value
+  const contractType = config["deploy"][`${networkName}`];
+
+  // TODO: update to switch statement when supporting more networks
+  const dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER : process.env.BASE_DISPATCHER;
+  
+  // Deploy the contract
+  // NOTE: when adding additional args to the constructor, add them to the array as well
+  const myContract = await hre.ethers.deployContract(contractType, [dispatcherAddr]);
 
   await myContract.waitForDeployment();
 
+  // NOTE: Do not change the output string, its output is formatted to be used in the deploy-config.js script
+  // to update the config.json file
   console.log(
-    `${artefact} deployed to ${myContract.target}`
+    `Contract ${contractType} deployed to ${myContract.target} on network ${networkName}`
   );
 }
 

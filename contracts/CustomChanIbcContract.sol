@@ -14,8 +14,13 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
     // received timeout packet as chain A
     IbcPacket[] public timeoutPackets;
     
-    // bytes array with the channel IDs of the connected channels
-    bytes32[] public connectedChannels;
+    struct ChannelMapping {
+        bytes32 channelId;
+        bytes32 cpChannelId;
+    }
+    
+    // ChannelMapping array with the channel IDs of the connected channels
+    ChannelMapping[] public connectedChannels;
 
     // add supported versions (format to be negotiated between apps)
     string[] supportedVersions = ['1.0'];
@@ -25,6 +30,17 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
     function updateDispatcher(IbcDispatcher _dispatcher) external onlyOwner {
         dispatcher = _dispatcher;
     }
+    
+    /**
+     * @dev Sends a packet with a greeting message over a specified channel.
+     * @param message The greeting message to be sent.
+     * @param channelId The ID of the channel to send the packet to.
+     * @param timeoutTimestamp The timestamp at which the packet will expire if not received.
+     */
+
+    function sendGreet(string calldata message, bytes32 channelId, uint64 timeoutTimestamp) external {
+        dispatcher.sendPacket(channelId, bytes(message), timeoutTimestamp);
+    }    
 
     function onRecvPacket(IbcPacket memory packet) external onlyIbcDispatcher returns (AckPacket memory ackPacket) {
         recvedPackets.push(packet);
@@ -41,6 +57,33 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         timeoutPackets.push(packet);
         // do logic
     }
+
+    /**
+     * 
+     * @param feeEnabled in production, you'll want to enable this to avoid spamming create channel calls (costly for relayers)
+     * @param connectionHops 2 connection hops to connect to the destination via Polymer
+     * @param counterparty the address of the destination chain contract you want to connect to
+     * @param proof not implemented for now
+     */
+    function createChannel(
+        string calldata version,
+        uint8 ordering,
+        bool feeEnabled, 
+        string[] calldata connectionHops, 
+        CounterParty calldata counterparty, 
+        Proof calldata proof
+        ) external {
+
+        dispatcher.openIbcChannel(
+            IbcChannelReceiver(address(this)),
+            version,
+            ChannelOrder(ordering),
+            feeEnabled,
+            connectionHops,
+            counterparty,
+            proof
+        );
+    } 
 
     function onOpenIbcChannel(
         string calldata version,
@@ -101,7 +144,11 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
 
         // do logic
 
-        connectedChannels.push(channelId);
+        ChannelMapping memory channelMapping = ChannelMapping({
+            channelId: channelId,
+            cpChannelId: counterpartyChannelId
+        });
+        connectedChannels.push(channelMapping);
     }
 
     function onCloseIbcChannel(
@@ -112,7 +159,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         // logic to determin if the channel should be closed
         bool channelFound = false;
         for (uint256 i = 0; i < connectedChannels.length; i++) {
-            if (connectedChannels[i] == channelId) {
+            if (connectedChannels[i].channelId == channelId) {
                 delete connectedChannels[i];
                 channelFound = true;
                 break;
@@ -129,16 +176,5 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
      */
     function triggerChannelClose(bytes32 channelId) external onlyOwner {
         dispatcher.closeIbcChannel(channelId);
-    }
-
-    /**
-     * @dev Sends a packet with a greeting message over a specified channel.
-     * @param message The greeting message to be sent.
-     * @param channelId The ID of the channel to send the packet to.
-     * @param timeoutTimestamp The timestamp at which the packet will expire if not received.
-     */
-
-    function sendGreet(string calldata message, bytes32 channelId, uint64 timeoutTimestamp) external {
-        dispatcher.sendPacket(channelId, bytes(message), timeoutTimestamp);
     }
 }

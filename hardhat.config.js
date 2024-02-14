@@ -15,7 +15,7 @@ module.exports = {
   },
   networks: {
     // for Base testnet
-    'base-sepolia': {
+    'base': {
       url: 'https://sepolia.base.org',
       accounts: [
         process.env.PRIVATE_KEY_1,
@@ -24,7 +24,7 @@ module.exports = {
       ],
     },
     // for OP testnet
-    'op-sepolia': {
+    'optimism': {
       url: 'https://sepolia.optimism.io',
       accounts: [
         process.env.PRIVATE_KEY_1, 
@@ -33,5 +33,6 @@ module.exports = {
       ],
     },    
   },
-  defaultNetwork: 'op-sepolia',
+  defaultNetwork: 'optimism',
 };
+
