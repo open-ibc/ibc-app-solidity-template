@@ -5,20 +5,26 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const config = require('../config.json').sendPacket;
+const config = require('../config.json');
+const sendConfig = config.sendPacket;
 
 async function main() {
-    const accounts = await hre.ethers.getSigners()
+    const accounts = await hre.ethers.getSigners();
+
+    const networkName = hre.network.name;
+    // Get the contract type from the config and get the contract
+    const contractType = config["deploy"][`${networkName}`];
 
     const ibcAppSrc = await hre.ethers.getContractAt(
-        `${config.srcContractType}`,
-        config.srcAddr
+        `${contractType}`,
+        sendConfig[`${networkName}`]["portAddr"]
     );
 
     // Do logic to prepare the packet
-
-    const channelIdBytes = hre.ethers.encodeBytes32String(config.srcChannelId);
-    const timeoutSeconds = config.timeout;
+    const channelId = sendConfig[`${networkName}`]["channelId"];
+    const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
+    const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
+    
     // Send the packet
     await ibcAppSrc.connect(accounts[1]).sendPacket(
         channelIdBytes,
