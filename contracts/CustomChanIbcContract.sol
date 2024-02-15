@@ -5,6 +5,7 @@ pragma solidity ^0.8.9;
 import '@open-ibc/vibc-core-smart-contracts/contracts/Ibc.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/ProofVerifier.sol';
 
 contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
     // received packet as chain B
@@ -29,6 +30,10 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
 
     function updateDispatcher(IbcDispatcher _dispatcher) external onlyOwner {
         dispatcher = _dispatcher;
+    }
+
+    function getConnectedChannels() external view returns (ChannelMapping[] memory) {
+        return connectedChannels;
     }
 
     /**
@@ -66,35 +71,33 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
      * @param proof not implemented for now
      */
     function createChannel(
-        string calldata version,
+        CounterParty calldata local,
         uint8 ordering,
         bool feeEnabled, 
         string[] calldata connectionHops, 
         CounterParty calldata counterparty, 
-        Proof calldata proof
+        Ics23Proof calldata proof
         ) external {
 
         dispatcher.openIbcChannel(
             IbcChannelReceiver(address(this)),
-            version,
+            local,
             ChannelOrder(ordering),
             feeEnabled,
             connectionHops,
             counterparty,
             proof
         );
-    } 
+    }
 
     function onOpenIbcChannel(
         string calldata version,
-        ChannelOrder ordering,
-        bool feeEnabled,
-        string[] calldata connectionHops,
-        string calldata counterpartyPortId,
-        bytes32 counterpartyChannelId,
-        string calldata counterpartyVersion
-    ) external onlyIbcDispatcher returns (string memory selectedVersion) {
-        if (bytes(counterpartyPortId).length <= 8) {
+        ChannelOrder,
+        bool,
+        string[] calldata,
+        CounterParty calldata counterparty
+    ) external view onlyIbcDispatcher returns (string memory selectedVersion) {
+        if (bytes(counterparty.portId).length <= 8) {
             revert invalidCounterPartyPortId();
         }
         /**
@@ -105,7 +108,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
          */
         bool foundVersion = false;
         selectedVersion = keccak256(abi.encodePacked(version)) == keccak256(abi.encodePacked(''))
-            ? counterpartyVersion
+            ? counterparty.version
             : version;
         for (uint256 i = 0; i < supportedVersions.length; i++) {
             if (keccak256(abi.encodePacked(selectedVersion)) == keccak256(abi.encodePacked(supportedVersions[i]))) {
@@ -115,9 +118,9 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         }
         require(foundVersion, 'Unsupported version');
         // if counterpartyVersion is not empty, then it must be the same foundVersion
-        if (keccak256(abi.encodePacked(counterpartyVersion)) != keccak256(abi.encodePacked(''))) {
+        if (keccak256(abi.encodePacked(counterparty.version)) != keccak256(abi.encodePacked(''))) {
             require(
-                keccak256(abi.encodePacked(counterpartyVersion)) == keccak256(abi.encodePacked(selectedVersion)),
+                keccak256(abi.encodePacked(counterparty.version)) == keccak256(abi.encodePacked(selectedVersion)),
                 'Version mismatch'
             );
         }
@@ -151,11 +154,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         connectedChannels.push(channelMapping);
     }
 
-    function onCloseIbcChannel(
-        bytes32 channelId,
-        string calldata counterpartyPortId,
-        bytes32 counterpartyChannelId
-    ) external onlyIbcDispatcher {
+    function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external onlyIbcDispatcher {
         // logic to determin if the channel should be closed
         bool channelFound = false;
         for (uint256 i = 0; i < connectedChannels.length; i++) {

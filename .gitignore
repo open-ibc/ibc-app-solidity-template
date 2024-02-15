@@ -12,3 +12,7 @@ node_modules
 # solidity-coverage files
 /coverage
 /coverage.json
+
+# Foundry files
+/out
+/cache_forge
