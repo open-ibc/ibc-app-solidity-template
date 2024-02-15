@@ -31,19 +31,27 @@ async function main() {
   const connHop2 = ibcConfig[chanConfig.dstChain].canonConnTo;
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
+  
+  const local = {
+    portId: srcPortId,
+    channelId: hre.ethers.encodeBytes32String(''),
+    version: '',
+  };
+
+  const cp = {
+    portId: dstPortId,
+    channelId: hre.ethers.encodeBytes32String(''),
+    version: '',
+  };
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
   const tx = await ibcAppSrc.createChannel(
-    chanConfig.version,
+    local,
     chanConfig.ordering,
     chanConfig.fees,
     [ connHop1, connHop2 ],
-    {
-        portId: dstPortId,
-        channelId: hre.ethers.encodeBytes32String(''),
-        version: '',
-    },
+    cp,
     {
         proofHeight: { revision_height: 0, revision_number: 0 },
         proof: hre.ethers.encodeBytes32String('abc')
