@@ -1,11 +1,12 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-foundry");
 
 require('dotenv').config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: '0.8.20',
+    version: '0.8.24',
     settings: {
       optimizer: {
         enabled: true,
@@ -34,5 +35,12 @@ module.exports = {
     },    
   },
   defaultNetwork: 'optimism',
+  paths: {
+    sources: './contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts',
+    libraries: './lib',
+  }
 };
 
