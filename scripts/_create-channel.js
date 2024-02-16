@@ -15,6 +15,27 @@ function addressToPortId(portPrefix, address) {
   return `${portPrefix}.${suffix}`;
 }
 
+function createDummyProof() {
+  return  {
+      proof: [
+          {
+              path: [
+                  {
+                      prefix: hre.ethers.encodeBytes32String("prefixExample1"),
+                      suffix: hre.ethers.encodeBytes32String("suffixExample1"),
+                  },
+                  // Add more OpIcs23ProofPath objects as needed
+              ],
+              key: hre.ethers.encodeBytes32String("keyExample"),
+              value: hre.ethers.encodeBytes32String("valueExample"),
+              prefix: hre.ethers.encodeBytes32String("prefixExample")
+          },
+          // Add more OpIcs23Proof objects as needed
+      ],
+      height: 123456, // example block height
+  };
+}
+
 async function main() {
   const networkName = hre.network.name;
   
@@ -35,7 +56,7 @@ async function main() {
   const local = {
     portId: srcPortId,
     channelId: hre.ethers.encodeBytes32String(''),
-    version: '',
+    version: chanConfig.version,
   };
 
   const cp = {
@@ -52,11 +73,7 @@ async function main() {
     chanConfig.fees,
     [ connHop1, connHop2 ],
     cp,
-    {
-        proofHeight: { revision_height: 0, revision_number: 0 },
-        proof: hre.ethers.encodeBytes32String('abc')
-    }
-
+    createDummyProof(),
   );
 
   // Wait for the channel handshake to complete
