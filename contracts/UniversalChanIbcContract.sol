@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.9;
 
-import '../lib/vibc-core-smart-contracts/contracts/Ibc.sol';
-import '../lib/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
-import '../lib/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
-import '../lib/vibc-core-smart-contracts/contracts/IbcMiddleware.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/Ibc.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcMiddleware.sol';
 
 contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
     struct UcPacketWithChannel {
@@ -35,7 +35,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
     function sendGreet(address destPortAddr, bytes32 channelId, bytes calldata message, uint64 timeoutTimestamp) external {
         IbcUniversalPacketSender(mw).sendUniversalPacket(
             channelId,
-            Ibc.toBytes32(destPortAddr),
+            IbcUtils.toBytes32(destPortAddr),
             message,
             timeoutTimestamp
         );
@@ -48,7 +48,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
         // do logic
         // below is an example, the actual ackpacket data should be implemented by the contract developer
-        return AckPacket(true, abi.encodePacked(address(this), Ibc.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
+        return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
     }
 
     function onUniversalAcknowledgement(
@@ -60,7 +60,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
         // check onRecvUniversalPacket for the encoded ackpacket data
         require(ack.data.length >= 20, 'ack data too short');
         address ackSender = address(bytes20(ack.data[0:20]));
-        require(Ibc.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
+        require(IbcUtils.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
         ackPackets.push(UcAckWithChannel(channelId, packet, ack));
         // do logic
     }

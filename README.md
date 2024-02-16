@@ -1,10 +1,14 @@
 # Template for IBC enabled Soldity contracts
 
-This tutorial enables to send an IBC packet from an "Xcounter" contract on either OP or Base. The packet will ensure that a counter variable on either contract remains in sync.
+This repo provides a starter project to build [IBC](https://github.com/cosmos/ibc) enabled Solidity contracts that connect rollups to one another Polymer Hub, through the [vIBC core contracts](https://github.com/open-ibc/vibc-core-smart-contracts).
+
+The repo is compatible with both Hardhat and Foundry development environments.
+
+Find more information on building with (v)IBC and Polymer in the [Polymer documentation](https://docs.polymerlabs.org).
 
 ## Install dependencies
 
-To use the quickstart tutorial, make sure that you have all dependencies installed.
+To compile your contracts and start testing, make sure that you have all dependencies installed.
 
 From the root directory run:
 ```bash
@@ -32,30 +36,33 @@ There's three types of scripts in the project:
 
 - `deploy.js` and `deploy-config.js` allow you to deploy your application contract
 - `create-channel.js` and `create-channel-config.js` creates a channel
-- `send-packet.js` sends packets over an existing channel
+- `send-packet.js` and `send-universal-packet.js` sends packets over an existing channel (custom or universal).
 
 For every script you'll find a field in the config.json!!
 
-Make sure to update the config with the intended files before running one of the scripts like so:
-```bash
-npx hardhat run scripts/send-packet.js --network optimism
-```
-
-**NOTE** Make sure to align the `--network` flag value to be compatible with your config values either on optimism or base.
-
-## Deploy
+### Deploy
 
 Run:
 ```bash
-# format node scripts/deploy-config.js [source] [destination]
-node scripts/deploy-config.js optimism base
+# format node scripts/deploy-config.js [source] [destination] [universal-channel-bool]
+node scripts/deploy-config.js optimism base true
 ```
+for an application that will use a universal channel, or:
+```bash
+# or 
+node scripts/deploy-config.js optimism base false
+```
+for an application that uses custom channels.
 
 To deploy instances of the contracts on optimism as the source and base as the destination chains. (You can also switch the order)
 
 Also this script will take the output of the deployment and update the config file with all the relevant information.
 
-Then run:
+### Create a channel
+
+In case you're using universal channels, you can skip this step and move on the sending packets.
+
+To create a custom channel, run:
 ```bash
 node scripts/create-channel-config.js
 ```
@@ -66,8 +73,17 @@ Also this script will take the output of the channel creation and update the con
 
 Check out the [channel tab in the explorer](https://explorer.prod.testnet.polymer.zone/channels) to find out if the correct channel-id's related to your contracts were updated in the config.
 
-Finally run:
+### Send packets
+Finally Run:
+```bash
+npx hardhat run scripts/send-universal-packet.js --network optimism
+```
+to send a packet over a **universal channel**. You can pick either optimism or base to send the packet from.
+
+Or run:
 ```bash
 npx hardhat run scripts/send-packet.js --network optimism
 ```
-to send a packet. You can pick either optimism or base to send the packet from.
+to send a packet over a **custom channel**. You can pick either optimism or base to send the packet from.
+
+**NOTE** Make sure to align the `--network` flag value to be compatible with your config values either on optimism or base.
