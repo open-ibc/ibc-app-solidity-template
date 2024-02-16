@@ -26,7 +26,7 @@ contract XCounter is CustomChanIbcApp {
      * @param timeoutSeconds The timeout in seconds (relative).
      */
 
-    function sendCounterUpdate( bytes32 channelId, uint64 timeoutSeconds) external {
+    function sendPacket( bytes32 channelId, uint64 timeoutSeconds) external {
         increment();
         bytes memory payload = abi.encode(msg.sender);
 

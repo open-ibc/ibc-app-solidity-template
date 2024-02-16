@@ -25,7 +25,7 @@ contract XCounterUC is UniversalChanIbcApp {
      * @param timeoutSeconds The timeout in seconds (relative).
      */
 
-    function sendCounterUpdate( bytes32 channelId, uint64 timeoutSeconds) external {
+    function sendUniversalPacket( bytes32 channelId, uint64 timeoutSeconds) external {
         increment();
         bytes memory payload = abi.encode(msg.sender);
 

@@ -29,8 +29,8 @@ async function main() {
     await ibcAppSrc.connect(accounts[1]).sendPacket(
         channelIdBytes,
         timeoutSeconds,
-        optionalArgs        // add optional args here depending on the contract
-    )
+        // Define and pass optionalArgs appropriately or remove if not needed    
+        )
     console.log("Sending packet");
 
     // Active waiting for the packet to be received and acknowledged
