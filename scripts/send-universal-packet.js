@@ -29,7 +29,7 @@ async function main() {
     await ibcAppSrc.connect(accounts[1]).sendUniversalPacket(
         channelIdBytes,
         timeoutSeconds,
-        optionalArgs        // add optional args here depending on the contract
+        // Define and pass optionalArgs appropriately or remove if not needed
     )
     console.log("Sending packet");
 
@@ -38,7 +38,7 @@ async function main() {
     let acked = false;
     let counter = 0;
     do {
-        const acked = await ibcAppSrc.findAck(sequence);
+        // Define an acked by interacting with the contract. This will depend on the contract's logic
         if (!acked) {
             console.log("ack not received. waiting...");
             await new Promise((r) => setTimeout(r, 2000));
