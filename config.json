@@ -1,7 +1,7 @@
 {
     "deploy": {
-      "optimism": "XcounterUC",
-      "base": "XcounterUC"
+      "optimism": "XCounterUC",
+      "base": "XCounterUC"
     },
     "createChannel": {
       "srcChain": "optimism",

@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 
 import './base/CustomChanIbcApp.sol';
 
-contract Xcounter is CustomChanIbcApp {
+contract XCounter is CustomChanIbcApp {
 
     uint64 public counter;
     mapping (uint64 => address) public counterMap;

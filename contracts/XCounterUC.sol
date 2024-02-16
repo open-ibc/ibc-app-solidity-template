@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.9;
 
-import './base/UniversalChanIbcContract.sol';
+import './base/UniversalChanIbcApp.sol';
 
-contract XcounterUC is UniversalChanIbcApp {
+contract XCounterUC is UniversalChanIbcApp {
     uint64 public counter;
     mapping (uint64 => address) public counterMap;
 
