@@ -7,7 +7,9 @@ import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcMiddleware.sol';
 
-contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
+// UniversalChanIbcApp is a contract that can be used as a base contract 
+// for IBC-enabled contracts that send packet over the universal channel.
+contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
     struct UcPacketWithChannel {
         bytes32 channelId;
         UniversalPacket packet;
@@ -32,7 +34,11 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
         mw = _middleware;
     }
 
-    function sendGreet(address destPortAddr, bytes32 channelId, bytes calldata message, uint64 timeoutTimestamp) external {
+    function sendPacket(
+        address destPortAddr, 
+        bytes32 channelId, bytes calldata message, 
+        uint64 timeoutTimestamp
+    ) external virtual {
         IbcUniversalPacketSender(mw).sendUniversalPacket(
             channelId,
             IbcUtils.toBytes32(destPortAddr),
@@ -44,7 +50,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
     function onRecvUniversalPacket(
         bytes32 channelId,
         UniversalPacket calldata packet
-    ) external onlyIbcMw returns (AckPacket memory ackPacket) {
+    ) external virtual onlyIbcMw returns (AckPacket memory ackPacket) {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
         // do logic
         // below is an example, the actual ackpacket data should be implemented by the contract developer
@@ -55,7 +61,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
         bytes32 channelId,
         UniversalPacket memory packet,
         AckPacket calldata ack
-    ) external onlyIbcMw {
+    ) external virtual onlyIbcMw {
         // verify packet's destPortAddr is the ack's first encoded address. assumes the packet's destPortAddr is the address of the contract that sent the packet
         // check onRecvUniversalPacket for the encoded ackpacket data
         require(ack.data.length >= 20, 'ack data too short');
@@ -65,7 +71,7 @@ contract UniversalChanIbcContract is IbcMwUser, IbcUniversalPacketReceiver {
         // do logic
     }
 
-    function onTimeoutUniversalPacket(bytes32 channelId, UniversalPacket calldata packet) external onlyIbcMw {
+    function onTimeoutUniversalPacket(bytes32 channelId, UniversalPacket calldata packet) external virtual onlyIbcMw {
         timeoutPackets.push(UcPacketWithChannel(channelId, packet));
         // do logic
     }
