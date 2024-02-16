@@ -7,7 +7,7 @@ import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/ProofVerifier.sol';
 
-contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
+contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     // received packet as chain B
     IbcPacket[] public recvedPackets;
     // received ack packet as chain A
@@ -36,6 +36,10 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         return connectedChannels;
     }
 
+    function updateSupportedVersions(string[] memory _supportedVersions) external onlyOwner {
+        supportedVersions = _supportedVersions;
+    }
+
     /**
      * @dev Sends a packet with a greeting message over a specified channel.
      * @param message The greeting message to be sent.
@@ -47,18 +51,18 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         dispatcher.sendPacket(channelId, bytes(message), timeoutTimestamp);
     }    
 
-    function onRecvPacket(IbcPacket memory packet) external onlyIbcDispatcher returns (AckPacket memory ackPacket) {
+    function onRecvPacket(IbcPacket memory packet) external virtual onlyIbcDispatcher returns (AckPacket memory ackPacket) {
         recvedPackets.push(packet);
         // do logic
         return AckPacket(true, abi.encodePacked('{ "account": "account", "reply": "got the message" }'));
     }
 
-    function onAcknowledgementPacket(IbcPacket calldata packet, AckPacket calldata ack) external onlyIbcDispatcher {
+    function onAcknowledgementPacket(IbcPacket calldata packet, AckPacket calldata ack) external virtual onlyIbcDispatcher {
         ackPackets.push(ack);
         // do logic
     }
 
-    function onTimeoutPacket(IbcPacket calldata packet) external onlyIbcDispatcher {
+    function onTimeoutPacket(IbcPacket calldata packet) external virtual onlyIbcDispatcher {
         timeoutPackets.push(packet);
         // do logic
     }
@@ -77,7 +81,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         string[] calldata connectionHops, 
         CounterParty calldata counterparty, 
         Ics23Proof calldata proof
-        ) external {
+        ) external virtual onlyOwner{
 
         dispatcher.openIbcChannel(
             IbcChannelReceiver(address(this)),
@@ -96,7 +100,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         bool,
         string[] calldata,
         CounterParty calldata counterparty
-    ) external view onlyIbcDispatcher returns (string memory selectedVersion) {
+    ) external view virtual onlyIbcDispatcher returns (string memory selectedVersion) {
         if (bytes(counterparty.portId).length <= 8) {
             revert invalidCounterPartyPortId();
         }
@@ -134,7 +138,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         bytes32 channelId,
         bytes32 counterpartyChannelId,
         string calldata counterpartyVersion
-    ) external onlyIbcDispatcher {
+    ) external virtual onlyIbcDispatcher {
         // ensure negotiated version is supported
         bool foundVersion = false;
         for (uint256 i = 0; i < supportedVersions.length; i++) {
@@ -154,7 +158,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
         connectedChannels.push(channelMapping);
     }
 
-    function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external onlyIbcDispatcher {
+    function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external virtual onlyIbcDispatcher {
         // logic to determin if the channel should be closed
         bool channelFound = false;
         for (uint256 i = 0; i < connectedChannels.length; i++) {
@@ -176,7 +180,7 @@ contract CustomChanIbcContract is IbcReceiverBase, IbcReceiver {
      * This func triggers channel closure from the dApp.
      * Func args can be arbitary, as long as dispatcher.closeIbcChannel is invoked propperly.
      */
-    function triggerChannelClose(bytes32 channelId) external onlyOwner {
+    function triggerChannelClose(bytes32 channelId) external virtual onlyOwner {
         dispatcher.closeIbcChannel(channelId);
     }
 }

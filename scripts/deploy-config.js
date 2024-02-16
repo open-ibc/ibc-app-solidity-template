@@ -8,14 +8,9 @@ const ibcConfig = require("../ibc.json");
 // $ node deploy-config.js optimism base
 const source = process.argv[2];
 const destination = process.argv[3];
-const universalChannel = process.argv[4];
+const isUniversalChannel = process.argv[4].toLowerCase();
 
-if (!source || !destination) {
-  console.error('Usage: node deploy-config.js <source_network> <destination_network> <universal_channel_bool>');
-  process.exit(1);
-}
-
-if (process.argv[4] === undefined) {
+if (!source || !destination || (isUniversalChannel !== "true" && isUniversalChannel !== "false")) {
   console.error('Usage: node deploy-config.js <source_network> <destination_network> <universal_channel_bool>');
   process.exit(1);
 }
@@ -26,7 +21,7 @@ function updateConfig(network, address, isSource) {
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
   // Update the config object
-  if (universalChannel === "false") {
+  if (isUniversalChannel === "false") {
     if (isSource) {
       config["createChannel"]["srcChain"] = network;
       config["createChannel"]["srcAddr"] = address;
@@ -36,7 +31,8 @@ function updateConfig(network, address, isSource) {
     }
 
     config["sendPacket"][`${network}`]["portAddr"] = address;    
-  } else {
+  } else if (isUniversalChannel === "true"){
+    // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
     config["sendUniversalPacket"][`${network}`]["portAddr"] = address;
     config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`]["universalChannel"];
   }

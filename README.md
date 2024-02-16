@@ -36,7 +36,7 @@ There's three types of scripts in the project:
 
 - `deploy.js` and `deploy-config.js` allow you to deploy your application contract
 - `create-channel.js` and `create-channel-config.js` creates a channel
-- `send-packet.js` and `send-universal-packet.js` sends packets over an existing channel (custom or universal).
+- `send-packet.js` sends packets over an existing custom channel, and `send-universal-packet.js` is specifically for sending packets over a universal channel
 
 For every script you'll find a field in the config.json!!
 
@@ -60,7 +60,7 @@ Also this script will take the output of the deployment and update the config fi
 
 ### Create a channel
 
-In case you're using universal channels, you can skip this step and move on the sending packets.
+If you're using universal channels, channel creation is not required. Your contract will send and receive packet data from the Universal channel handler contract which already has a universal channel to send packets over. You can directly proceed to sending (universal) packets in that case.
 
 To create a custom channel, run:
 ```bash

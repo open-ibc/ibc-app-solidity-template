@@ -38,7 +38,7 @@ async function main() {
     let acked = false;
     let counter = 0;
     do {
-        const acked = await ibcAppSrc.findAck(sequence);
+        // Define an acked by interacting with the contract. This will depend on the contract's logic
         if (!acked) {
             console.log("ack not received. waiting...");
             await new Promise((r) => setTimeout(r, 2000));
