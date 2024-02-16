@@ -1,7 +1,7 @@
 {
     "deploy": {
-      "optimism": "CustomChanIbcContract",
-      "base": "CustomChanIbcContract"
+      "optimism": "XcounterUC",
+      "base": "XcounterUC"
     },
     "createChannel": {
       "srcChain": "optimism",
