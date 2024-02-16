@@ -10,7 +10,7 @@ const source = process.argv[2];
 const destination = process.argv[3];
 const isUniversalChannel = process.argv[4].toLowerCase();
 
-if (!source || !destination || process.argv[4] === undefined) {
+if (!source || !destination || (isUniversalChannel !== "true" && isUniversalChannel !== "false")) {
   console.error('Usage: node deploy-config.js <source_network> <destination_network> <universal_channel_bool>');
   process.exit(1);
 }
