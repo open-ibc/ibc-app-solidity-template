@@ -18,7 +18,7 @@ function updateConfig(network, channel, cpNetwork, cpChannel) {
 
 // Function to run the deploy script and capture output
 function createChannelAndCapture() {
-  exec(`npx hardhat run scripts/create-channel.js --network ${config.createChannel.srcChain}`, (error, stdout, stderr) => {
+  exec(`npx hardhat run scripts/_create-channel.js --network ${config.createChannel.srcChain}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
