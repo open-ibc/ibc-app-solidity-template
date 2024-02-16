@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.9;
 
-import '@open-ibc/vibc-core-smart-contracts/Ibc.sol';
-import '@open-ibc/vibc-core-smart-contracts/IbcReceiver.sol';
-import '@open-ibc/vibc-core-smart-contracts/IbcDispatcher.sol';
-import '@open-ibc/vibc-core-smart-contracts/IbcMiddleware.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/Ibc.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/IbcMiddleware.sol';
 
 contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
     /**
