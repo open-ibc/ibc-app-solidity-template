@@ -24,7 +24,9 @@ compile COMPILER='hardhat':
     fi
 
 # Deploy the contracts in the /contracts folder using Hardhat and updating the config.json file
-# Usage: just deploy [source] [destination]
+# The source and destination arguments are REQUIRED;
+# The universal argument is optional; if not provided, it defaults to "true".
+# Usage: just deploy [source] [destination] [universal]
 deploy SOURCE DESTINATION UNIVERSAL='true':
     #!/usr/bin/env sh
     if test "{{UNIVERSAL}}" = "true"; then
@@ -46,18 +48,18 @@ create-channel:
 
 # Send a packet over the universal channel or a custom channel as defined in the config.json file
 # The source argument is REQUIRED;
-# The channel argument is optional; if not provided, it defaults to "universal".
-# Usage: just send-packet [source] [channel]
-send-packet SOURCE CHANNEL='universal':
+# The universal argument is optional; if not provided, it defaults to "true".
+# Usage: just send-packet [source] [universal]
+send-packet SOURCE UNIVERSAL='true':
     #!/usr/bin/env sh
-    if test "{{CHANNEL}}" = "universal"; then
+    if test "{{UNIVERSAL}}" = "true"; then
         echo "Sending a packet over the universal channel..."
         npx hardhat run scripts/send-universal-packet.js --network {{SOURCE}}
-    elif test "{{CHANNEL}}" = "custom"; then
+    elif test "{{UNIVERSAL}}" = "false"; then
         echo "Sending a packet over a custom channel..."
         npx hardhat run scripts/send-packet.js --network {{SOURCE}}
     else
-        echo "Unknown channel flag: {{CHANNEL}}"
+        echo "Unknown universal flag: {{UNIVERSAL}}"
         exit 1
     fi
 
