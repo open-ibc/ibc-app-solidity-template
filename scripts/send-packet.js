@@ -5,7 +5,10 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const config = require('../config.json');
+const path = require('path');
+const configRelativePath = process.env.CONFIG_PATH || 'config.json';
+const configPath = path.join(__dirname, '..' , configRelativePath);
+const config = require(configPath);
 const sendConfig = config.sendPacket;
 
 async function main() {
