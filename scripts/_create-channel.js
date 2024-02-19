@@ -5,7 +5,9 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const config = require('../config.json');
+const path = require('path');
+const configRelativePath = process.env.CONFIG_PATH || 'config.json';
+const config = path.join(__dirname, '..' , configRelativePath);
 const chanConfig = config.createChannel;
 const ibcConfig = require('../ibc.json');
 

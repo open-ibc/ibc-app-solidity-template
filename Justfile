@@ -1,11 +1,11 @@
+# Sets the default compiler to Hardhat
+COMPILER := "hardhat"
+
 # Install dependencies
 install:
     echo "Installing dependencies"
     npm install
     forge install
-
-# Sets the default compiler to Hardhat
-COMPILER := "hardhat"
 
 # Compile contracts using the specified compiler or default to Hardhat
 # The compiler argument is optional; if not provided, it defaults to "hardhat".
