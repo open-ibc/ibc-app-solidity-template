@@ -7,7 +7,8 @@
 const hre = require('hardhat');
 const path = require('path');
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const config = path.join(__dirname, '..' , configRelativePath);
+const configPath = path.join(__dirname, '..' , configRelativePath);
+const config = require(configPath);
 const chanConfig = config.createChannel;
 const ibcConfig = require('../ibc.json');
 

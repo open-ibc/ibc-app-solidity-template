@@ -7,7 +7,8 @@
 const hre = require("hardhat");
 const path = require('path');
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const config = path.join(__dirname, '..' , configRelativePath);
+const configPath = path.join(__dirname, '..' , configRelativePath);
+const config = require(configPath);
 
 async function main() {
   const networkName = hre.network.name;

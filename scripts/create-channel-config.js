@@ -2,11 +2,11 @@ const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const config = path.join(__dirname, '..' , configRelativePath);
+const configPath = path.join(__dirname, '..' , configRelativePath);
+
 
 // Function to update config.json
 function updateConfig(network, channel, cpNetwork, cpChannel) {
-  const configPath = path.join(__dirname, '..', 'config.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
   // Update the config object
