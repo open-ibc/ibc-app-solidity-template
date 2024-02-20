@@ -18,18 +18,24 @@ async function main() {
     // Get the contract type from the config and get the contract
     const contractType = config["deploy"][`${networkName}`];
 
+    const srcPortAddr = sendConfig[`${networkName}`]["portAddr"];
+
     const ibcAppSrc = await hre.ethers.getContractAt(
         `${contractType}`,
-        sendConfig[`${networkName}`]["portAddr"]
+        srcPortAddr
     );
 
     // Do logic to prepare the packet
+    const destPortAddr = config["createChannel"]["srcAddr"] === srcPortAddr 
+        ? config["createChannel"]["dstAddr"] 
+        : config["createChannel"]["srcAddr"];
     const channelId = sendConfig[`${networkName}`]["channelId"];
     const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
     
     // Send the packet
     await ibcAppSrc.connect(accounts[1]).sendUniversalPacket(
+        destPortAddr,
         channelIdBytes,
         timeoutSeconds,
         // Define and pass optionalArgs appropriately or remove if not needed
