@@ -1,4 +1,4 @@
-# ⛓️🔗⛓️ Template for IBC enabled Soldity contracts
+# ⛓️🔗⛓️ Template for IBC enabled Solidity contracts
 
 This repo provides a starter project to build [IBC](https://github.com/cosmos/ibc) enabled Solidity contracts that connect rollups to one another Polymer Hub, through the [vIBC core contracts](https://github.com/open-ibc/vibc-core-smart-contracts).
 
@@ -8,7 +8,7 @@ The repository is a _GitHub template_ repository so you can click "Use this temp
 
 ## 📚 Documentation
 
-There's some basic information here in the README but a more comprehensive documentation can be found in [the official Polymer documentation](https://https://docs.polymerlabs.org/docs/category/build-ibc-dapps-1).
+There's some basic information here in the README but a more comprehensive documentation can be found in [the official Polymer documentation](https://docs.polymerlabs.org/docs/category/build-ibc-dapps-1).
 
 ## 📋 Prerequisites
 
@@ -79,7 +79,7 @@ There's three types of default scripts in the project:
 
 For every script you'll find a field in the configuration file!!
 
-> **Note**: These are the default scripts provided. They provide the most generic interactions with the contracts to deploy, create channels and send packets. For more complicated use cases you will want to customize the scripts to your use case. 
+> **Note**: These are the default scripts provided. They provide the most generic interactions with the contracts to deploy, create channels and send packets. For more complicated use cases you will want to customize the scripts to your use case. See [advanced usage](#🦾-advanced-usage) for more info.
 
 ### Deploy
 
