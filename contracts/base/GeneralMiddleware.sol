@@ -32,7 +32,7 @@ contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
         bytes calldata appData,
         uint64 timeoutTimestamp
     ) external override {
-        _sendPacket(channelId, IbcUtils.toBytes32(msg.sender), destPortAddr, 0, appData, timeoutTimestamp);
+        _sendPacket(channelId, Ibc.toBytes32(msg.sender), destPortAddr, 0, appData, timeoutTimestamp);
     }
 
     function sendMWPacket(
@@ -74,7 +74,7 @@ contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
         if (mwIndex == mwAddrs.length - 1) {
             // last MW in the stack, deliver packet to dApp
             return
-                IbcUniversalPacketReceiver(IbcUtils.toAddress(ucPacket.destPortAddr)).onRecvUniversalPacket(
+                IbcUniversalPacketReceiver(Ibc.toAddress(ucPacket.destPortAddr)).onRecvUniversalPacket(
                     channelId,
                     ucPacket
                 );
@@ -110,7 +110,7 @@ contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
 
         if (mwIndex == mwAddrs.length - 1) {
             // last MW in the stack, deliver ack to dApp
-            IbcUniversalPacketReceiver(IbcUtils.toAddress(ucPacket.srcPortAddr)).onUniversalAcknowledgement(
+            IbcUniversalPacketReceiver(Ibc.toAddress(ucPacket.srcPortAddr)).onUniversalAcknowledgement(
                 channelId,
                 ucPacket,
                 ack
@@ -141,7 +141,7 @@ contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
 
         if (mwIndex == mwAddrs.length - 1) {
             // last MW in the stack, deliver timeout to dApp
-            IbcUniversalPacketReceiver(IbcUtils.toAddress(ucPacket.srcPortAddr)).onTimeoutUniversalPacket(
+            IbcUniversalPacketReceiver(Ibc.toAddress(ucPacket.srcPortAddr)).onTimeoutUniversalPacket(
                 channelId,
                 ucPacket
             );

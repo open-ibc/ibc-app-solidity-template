@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import '@open-ibc/vibc-core-smart-contracts/contracts/Ibc.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/ProofVerifier.sol';
+// import '@open-ibc/vibc-core-smart-contracts/contracts/ProofVerifier.sol';
 
 contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     // received packet as chain B
@@ -103,7 +103,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         bytes32 counterpartyChannelId,
         string calldata counterpartyVersion
     ) external view virtual onlyIbcDispatcher returns (string memory selectedVersion) {
-        if (bytes(counterparty.portId).length <= 8) {
+        if (bytes(counterpartyPortId).length <= 8) {
             revert invalidCounterPartyPortId();
         }
         /**

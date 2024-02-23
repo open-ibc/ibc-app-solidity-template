@@ -42,7 +42,7 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
     ) external virtual {
         IbcUniversalPacketSender(mw).sendUniversalPacket(
             channelId,
-            IbcUtils.toBytes32(destPortAddr),
+            Ibc.toBytes32(destPortAddr),
             message,
             timeoutTimestamp
         );

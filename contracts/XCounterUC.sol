@@ -38,7 +38,7 @@ contract XCounterUC is UniversalChanIbcApp {
 
         IbcUniversalPacketSender(mw).sendUniversalPacket(
             channelId,
-            IbcUtils.toBytes32(destPortAddr),
+            Ibc.toBytes32(destPortAddr),
             payload,
             timeoutTimestamp
         );
@@ -67,7 +67,7 @@ contract XCounterUC is UniversalChanIbcApp {
         // check onRecvUniversalPacket for the encoded ackpacket data
         require(ack.data.length >= 20, 'ack data too short');
         address ackSender = address(bytes20(ack.data[0:20]));
-        require(IbcUtils.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
+        require(Ibc.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
         ackPackets.push(UcAckWithChannel(channelId, packet, ack));
 
         bytes memory usefulAckData = ack.data[20:];
