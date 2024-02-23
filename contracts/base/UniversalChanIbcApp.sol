@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.9;
 
-import '@open-ibc/vibc-core-smart-contracts/contracts/Ibc.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/IbcReceiver.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/IbcDispatcher.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/IbcMiddleware.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol';
+import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol';
 
 // UniversalChanIbcApp is a contract that can be used as a base contract 
 // for IBC-enabled contracts that send packet over the universal channel.
