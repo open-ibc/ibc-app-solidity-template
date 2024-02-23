@@ -20,22 +20,8 @@ function addressToPortId(portPrefix, address) {
 
 function createDummyProof() {
   return  {
-      proof: [
-          {
-              path: [
-                  {
-                      prefix: hre.ethers.encodeBytes32String("prefixExample1"),
-                      suffix: hre.ethers.encodeBytes32String("suffixExample1"),
-                  },
-                  // Add more OpIcs23ProofPath objects as needed
-              ],
-              key: hre.ethers.encodeBytes32String("keyExample"),
-              value: hre.ethers.encodeBytes32String("valueExample"),
-              prefix: hre.ethers.encodeBytes32String("prefixExample")
-          },
-          // Add more OpIcs23Proof objects as needed
-      ],
-      height: 123456, // example block height
+      proofHeight: { revision_height: 0, revision_number: 0 },
+      proof: hre.ethers.encodeBytes32String('abc')
   };
 }
 
@@ -56,11 +42,6 @@ async function main() {
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
   
-  const local = {
-    portId: srcPortId,
-    channelId: hre.ethers.encodeBytes32String(''),
-    version: chanConfig.version,
-  };
 
   const cp = {
     portId: dstPortId,
@@ -71,7 +52,7 @@ async function main() {
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
   const tx = await ibcAppSrc.createChannel(
-    local,
+    chanConfig.version,
     chanConfig.ordering,
     chanConfig.fees,
     [ connHop1, connHop2 ],

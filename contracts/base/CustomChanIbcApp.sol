@@ -75,17 +75,17 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
      * @param proof not implemented for now
      */
     function createChannel(
-        CounterParty calldata local,
+        string calldata version,
         uint8 ordering,
         bool feeEnabled, 
         string[] calldata connectionHops, 
         CounterParty calldata counterparty, 
-        Ics23Proof calldata proof
+        Proof calldata proof
         ) external virtual onlyOwner{
 
         dispatcher.openIbcChannel(
             IbcChannelReceiver(address(this)),
-            local,
+            version,
             ChannelOrder(ordering),
             feeEnabled,
             connectionHops,
@@ -99,7 +99,9 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         ChannelOrder,
         bool,
         string[] calldata,
-        CounterParty calldata counterparty
+        string calldata counterpartyPortId,
+        bytes32 counterpartyChannelId,
+        string calldata counterpartyVersion
     ) external view virtual onlyIbcDispatcher returns (string memory selectedVersion) {
         if (bytes(counterparty.portId).length <= 8) {
             revert invalidCounterPartyPortId();
@@ -112,7 +114,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
          */
         bool foundVersion = false;
         selectedVersion = keccak256(abi.encodePacked(version)) == keccak256(abi.encodePacked(''))
-            ? counterparty.version
+            ? counterpartyVersion
             : version;
         for (uint256 i = 0; i < supportedVersions.length; i++) {
             if (keccak256(abi.encodePacked(selectedVersion)) == keccak256(abi.encodePacked(supportedVersions[i]))) {
@@ -122,9 +124,9 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         }
         require(foundVersion, 'Unsupported version');
         // if counterpartyVersion is not empty, then it must be the same foundVersion
-        if (keccak256(abi.encodePacked(counterparty.version)) != keccak256(abi.encodePacked(''))) {
+        if (keccak256(abi.encodePacked(counterpartyVersion)) != keccak256(abi.encodePacked(''))) {
             require(
-                keccak256(abi.encodePacked(counterparty.version)) == keccak256(abi.encodePacked(selectedVersion)),
+                keccak256(abi.encodePacked(counterpartyVersion)) == keccak256(abi.encodePacked(selectedVersion)),
                 'Version mismatch'
             );
         }

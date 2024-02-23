@@ -55,7 +55,7 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
         // do logic
         // below is an example, the actual ackpacket data should be implemented by the contract developer
-        return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
+        return AckPacket(true, abi.encodePacked(address(this), Ibc.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
     }
 
     function onUniversalAcknowledgement(
@@ -67,7 +67,7 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         // check onRecvUniversalPacket for the encoded ackpacket data
         require(ack.data.length >= 20, 'ack data too short');
         address ackSender = address(bytes20(ack.data[0:20]));
-        require(IbcUtils.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
+        require(Ibc.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
         ackPackets.push(UcAckWithChannel(channelId, packet, ack));
         // do logic
     }
