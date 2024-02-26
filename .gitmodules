@@ -1,6 +1,3 @@
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "lib/vibc-core-smart-contracts"]
-	path = lib/vibc-core-smart-contracts
-	url = https://github.com/open-ibc/vibc-core-smart-contracts
