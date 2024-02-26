@@ -1,5 +1,3 @@
-# Sets the default compiler to Hardhat
-COMPILER := "hardhat"
 
 # Install dependencies
 install:
