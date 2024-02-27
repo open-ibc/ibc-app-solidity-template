@@ -13,6 +13,7 @@ const sendConfig = config.sendPacket;
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
+    console.log(accounts)
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
@@ -27,12 +28,12 @@ async function main() {
     const channelId = sendConfig[`${networkName}`]["channelId"];
     const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
-    
+
     // Send the packet
-    await ibcAppSrc.connect(accounts[1]).sendPacket(
+    await ibcAppSrc.connect(accounts[0]).sendPacket(
         channelIdBytes,
         timeoutSeconds,
-        // Define and pass optionalArgs appropriately or remove if not needed    
+        // Define and pass optionalArgs appropriately or remove if not needed
         )
     console.log("Sending packet");
 
@@ -46,9 +47,9 @@ async function main() {
             console.log("ack not received. waiting...");
             await new Promise((r) => setTimeout(r, 2000));
             counter++;
-        } 
+        }
     } while (!acked && counter<100);
-    
+
     console.log("Packet lifecycle was concluded successfully: " + acked);
 }
 
