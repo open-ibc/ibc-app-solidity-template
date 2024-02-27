@@ -7,6 +7,8 @@ import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol
 import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol';
 import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/ProofVerifier.sol';
 
+// CustomChanIbcApp is a contract that can be used as a base contract
+// for IBC-enabled contracts that send packets over a custom IBC channel.
 contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     // received packet as chain B
     IbcPacket[] public recvedPackets;
@@ -40,39 +42,56 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         supportedVersions = _supportedVersions;
     }
 
-    /**
-     * @dev Sends a packet with a greeting message over a specified channel.
-     * @param message The greeting message to be sent.
-     * @param channelId The ID of the channel to send the packet to.
-     * @param timeoutTimestamp The timestamp at which the packet will expire if not received.
+    /** 
+     * @dev Implement a function to send a packet that calls the dispatcher.sendPacket function
+     *      It has the following function handle:
+     *          function sendPacket(bytes32 channelId, bytes calldata payload, uint64 timeoutTimestamp) external;
      */
 
-    function sendGreet(string calldata message, bytes32 channelId, uint64 timeoutTimestamp) external {
-        dispatcher.sendPacket(channelId, bytes(message), timeoutTimestamp);
-    }    
-
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and returns and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param packet the IBC packet encoded by the source and relayed by the relayer.
+     */
     function onRecvPacket(IbcPacket memory packet) external virtual onlyIbcDispatcher returns (AckPacket memory ackPacket) {
         recvedPackets.push(packet);
         // do logic
         return AckPacket(true, abi.encodePacked('{ "account": "account", "reply": "got the message" }'));
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet acknowledgment logic.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param packet the IBC packet encoded by the source and relayed by the relayer.
+     * @param ack the acknowledgment packet encoded by the destination and relayed by the relayer.
+     */
     function onAcknowledgementPacket(IbcPacket calldata packet, AckPacket calldata ack) external virtual onlyIbcDispatcher {
         ackPackets.push(ack);
         // do logic
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and return and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     *      NOT SUPPORTED YET
+     * 
+     * @param packet the IBC packet encoded by the counterparty and relayed by the relayer
+     */
     function onTimeoutPacket(IbcPacket calldata packet) external virtual onlyIbcDispatcher {
         timeoutPackets.push(packet);
         // do logic
     }
 
     /**
-     * 
+     * @dev Create a custom channel between two IbcReceiver contracts
+     * @param local a CounterParty struct with the local chain's portId and version (channelId can be empty)
+     * @param ordering the channel ordering (NONE, UNORDERED, ORDERED) equivalent to (0, 1, 2)
      * @param feeEnabled in production, you'll want to enable this to avoid spamming create channel calls (costly for relayers)
      * @param connectionHops 2 connection hops to connect to the destination via Polymer
      * @param counterparty the address of the destination chain contract you want to connect to
-     * @param proof not implemented for now
+     * @param proof ICS23 proof struct with dummy data (only needed on ChanOpenTry)
      */
     function createChannel(
         CounterParty calldata local,
