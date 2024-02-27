@@ -21,6 +21,12 @@ compile COMPILER='hardhat':
         exit 1
     fi
 
+# Update the config.json file with the contract type for a specified chain/rollup
+# Usage: just set-contracts [chain] [contract_type]
+set-contracts CHAIN CONTRACT_TYPE:
+    echo "Updating config.json with contract type..."
+    node scripts/set-contracts-config.js {{CHAIN}} {{CONTRACT_TYPE}}
+
 # Deploy the contracts in the /contracts folder using Hardhat and updating the config.json file
 # The source and destination arguments are REQUIRED;
 # The universal argument is optional; if not provided, it defaults to "true".

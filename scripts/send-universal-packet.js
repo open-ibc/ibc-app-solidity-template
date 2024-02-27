@@ -26,9 +26,7 @@ async function main() {
     );
 
     // Do logic to prepare the packet
-    const destPortAddr = config["createChannel"]["srcAddr"] === srcPortAddr 
-        ? config["createChannel"]["dstAddr"] 
-        : config["createChannel"]["srcAddr"];
+    const destPortAddr = networkName === "optimism" ? config["sendUniversalPacket"]["base"]["portAddr"] : config["sendUniversalPacket"]["optimism"]["portAddr"];
     const channelId = sendConfig[`${networkName}`]["channelId"];
     const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];

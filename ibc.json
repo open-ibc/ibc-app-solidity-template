@@ -2,10 +2,10 @@
     "optimism": {
         "canonConnFrom": "connection-2",
         "canonConnTo": "connection-3",
-        "universalChannel": "channel-4"
+        "universalChannel": "channel-8"
     },
     "base": {
         "canonConnFrom": "connection-0",
         "canonConnTo": "connection-1",
-        "universalChannel": "channel-5"}
+        "universalChannel": "channel-9"}
 }
