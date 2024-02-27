@@ -5,12 +5,13 @@ pragma solidity ^0.8.9;
 import './base/UniversalChanIbcApp.sol';
 
 contract XCounterUC is UniversalChanIbcApp {
+    // application specific state
     uint64 public counter;
     mapping (uint64 => address) public counterMap;
 
-
     constructor(address _middleware) UniversalChanIbcApp(_middleware) {}
 
+    // application specific logic
     function resetCounter() internal {
         counter = 0;
     }
@@ -19,13 +20,14 @@ contract XCounterUC is UniversalChanIbcApp {
         counter++;
     }
 
+    // IBC logic
+    
     /**
-     * @dev Sends a packet with a greeting message over a specified channel.
+     * @dev Sends a packet with the caller's address over the universal channel.
      * @param destPortAddr The address of the destination application.
      * @param channelId The ID of the channel to send the packet to.
      * @param timeoutSeconds The timeout in seconds (relative).
      */
-
     function sendUniversalPacket(
         address destPortAddr, 
         bytes32 channelId, 
@@ -44,12 +46,21 @@ contract XCounterUC is UniversalChanIbcApp {
         );
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and returns and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param channelId the ID of the channel (locally) the packet was received on.
+     * @param packet the Universal packet encoded by the source and relayed by the relayer.
+     */
     function onRecvUniversalPacket(
         bytes32 channelId,
         UniversalPacket calldata packet
     ) external override onlyIbcMw returns (AckPacket memory ackPacket) {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
+
         IbcPacket memory ibcPacket = abi.decode(packet.appData, (IbcPacket));
+        
         address _caller = abi.decode(ibcPacket.data, (address));
         counterMap[ibcPacket.sequence] = _caller;
 
@@ -58,6 +69,14 @@ contract XCounterUC is UniversalChanIbcApp {
         return AckPacket(true, abi.encode(counter));
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet acknowledgment logic.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param channelId the ID of the channel (locally) the ack was received on.
+     * @param packet the Universal packet encoded by the source and relayed by the relayer.
+     * @param ack the acknowledgment packet encoded by the destination and relayed by the relayer.
+     */
     function onUniversalAcknowledgement(
             bytes32 channelId,
             UniversalPacket memory packet,
@@ -79,6 +98,14 @@ contract XCounterUC is UniversalChanIbcApp {
        }
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and return and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     *      NOT SUPPORTED YET
+     * 
+     * @param channelId the ID of the channel (locally) the timeout was submitted on.
+     * @param packet the Universal packet encoded by the counterparty and relayed by the relayer
+     */
     function onTimeoutUniversalPacket(
         bytes32 channelId, 
         UniversalPacket calldata packet

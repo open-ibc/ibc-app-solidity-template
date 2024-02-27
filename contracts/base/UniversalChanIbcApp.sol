@@ -8,7 +8,7 @@ import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.s
 import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol';
 
 // UniversalChanIbcApp is a contract that can be used as a base contract 
-// for IBC-enabled contracts that send packet over the universal channel.
+// for IBC-enabled contracts that send packets over the universal channel.
 contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
     struct UcPacketWithChannel {
         bytes32 channelId;
@@ -34,20 +34,24 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         mw = _middleware;
     }
 
-    function sendUniversalPacket(
-        address destPortAddr, 
-        bytes32 channelId, 
-        bytes calldata message, 
-        uint64 timeoutTimestamp
-    ) external virtual {
-        IbcUniversalPacketSender(mw).sendUniversalPacket(
-            channelId,
-            IbcUtils.toBytes32(destPortAddr),
-            message,
-            timeoutTimestamp
-        );
-    }
+    /** 
+     * @dev Implement a function to send a packet that calls the IbcUniversalPacketSender(mw).sendUniversalPacket function
+     *      It has the following function handle:
+     *          function sendUniversalPacket(
+                    bytes32 channelId,
+                    bytes32 destPortAddr,
+                    bytes calldata appData,
+                    uint64 timeoutTimestamp
+                ) external;
+     */
 
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and returns and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param channelId the ID of the channel (locally) the packet was received on.
+     * @param packet the Universal packet encoded by the source and relayed by the relayer.
+     */
     function onRecvUniversalPacket(
         bytes32 channelId,
         UniversalPacket calldata packet
@@ -58,6 +62,14 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet acknowledgment logic.
+     *      MUST be overriden by the inheriting contract.
+     * 
+     * @param channelId the ID of the channel (locally) the ack was received on.
+     * @param packet the Universal packet encoded by the source and relayed by the relayer.
+     * @param ack the acknowledgment packet encoded by the destination and relayed by the relayer.
+     */
     function onUniversalAcknowledgement(
         bytes32 channelId,
         UniversalPacket memory packet,
@@ -72,6 +84,14 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         // do logic
     }
 
+    /**
+     * @dev Packet lifecycle callback that implements packet receipt logic and return and acknowledgement packet.
+     *      MUST be overriden by the inheriting contract.
+     *      NOT SUPPORTED YET
+     * 
+     * @param channelId the ID of the channel (locally) the timeout was submitted on.
+     * @param packet the Universal packet encoded by the counterparty and relayed by the relayer
+     */
     function onTimeoutUniversalPacket(bytes32 channelId, UniversalPacket calldata packet) external virtual onlyIbcMw {
         timeoutPackets.push(UcPacketWithChannel(channelId, packet));
         // do logic
