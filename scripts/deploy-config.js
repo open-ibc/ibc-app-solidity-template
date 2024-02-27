@@ -44,7 +44,8 @@ function updateConfig(network, address, isSource) {
 
 // Function to run the deploy script and capture output
 function deployAndCapture(network, isSource) {
-  exec(`npx hardhat run scripts/_deploy.js --network ${network}`, (error, stdout, stderr) => {
+  const deployScript = isUniversalChannel === "true" ? "_deploy-UC.js" : "_deploy.js";
+  exec(`npx hardhat run scripts/${deployScript} --network ${network}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
