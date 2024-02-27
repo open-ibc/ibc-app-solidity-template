@@ -1,7 +1,7 @@
 {
   "deploy": {
-    "optimism": "XCounter",
-    "base": "XCounter"
+    "optimism": "XCounterUC",
+    "base": "XCounterUC"
   },
   "createChannel": {
     "srcChain": "optimism",
@@ -26,13 +26,13 @@
   },
   "sendUniversalPacket": {
     "optimism": {
-      "portAddr": "0xabc",
-      "channelId": "channel-x",
+      "portAddr": "0x5286FDC4770fa59a7F3eA86cb57EF5b03c2ce776",
+      "channelId": "channel-8",
       "timeout": 36000
     },
     "base": {
-      "portAddr": "0xdef",
-      "channelId": "channel-y",
+      "portAddr": "0xE97Cd328203BF27fB2B5938bCcB84797BBfB5ABD",
+      "channelId": "channel-9",
       "timeout": 36000
     }
   }
