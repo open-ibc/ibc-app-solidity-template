@@ -83,15 +83,14 @@ For every script you'll find a field in the configuration file!!
 
 ### Deploy
 
-Before deploying, make sure to update the config.json with your contract type:
-```json
-  ...
-  "deploy": {
-    "optimism": "YourNewContract",
-    "base": "YourNewContract"
-  },
-  ...
+Before deploying, make sure to update the config.json with your contract type to deploy for each of the chain you wish to deploy to.
+
+Do this by running:
+```bash
+# Usage: just set-contracts [chain] [contract_type]
+just set-contracts optimism MyContract
 ```
+to deploy _MyContract_ artefact to the Optimism (Sepolia) chain.
 
 Then run:
 ```bash
