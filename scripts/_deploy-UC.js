@@ -16,7 +16,10 @@ async function main() {
 
   // The config should have a deploy object with the network name as the key and contract type as the value
   const contractType = config["deploy"][`${networkName}`];
-  const args = argsObject[`${contractType}`]
+  const args = argsObject[`${contractType}`];
+  if (!args) {
+    throw new Error(`No arguments found for contract type: ${contractType}`);
+   }
 
   // TODO: update to switch statement when supporting more networks
   const ucHandler = networkName === "optimism" ? process.env.OP_UC_MW : process.env.BASE_UC_MW;
