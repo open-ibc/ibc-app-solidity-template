@@ -18,12 +18,12 @@ async function main() {
   const contractType = config["deploy"][`${networkName}`];
   const args = argsObject[`${contractType}`];
   if (!args) {
-    throw new Error(`No arguments found for contract type: ${contractType}`);
-   }
+    console.warn(`No arguments found for contract type: ${contractType}`);
+ }
 
   // TODO: update to switch statement when supporting more networks
   const ucHandler = networkName === "optimism" ? process.env.OP_UC_MW : process.env.BASE_UC_MW;
-  const constructorArgs = [ucHandler, ...args];
+  const constructorArgs = [ucHandler, ...(args ?? [])];
   
   // Deploy the contract
   // NOTE: when adding additional args to the constructor, add them to the array as well
