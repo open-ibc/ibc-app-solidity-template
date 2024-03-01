@@ -66,6 +66,16 @@ send-packet SOURCE UNIVERSAL='true':
         exit 1
     fi
 
+# Run the full E2E flow by setting the contracts, deploying them, creating a channel, and sending a packet
+# Usage: just do-it
+do-it:
+    echo "Running the full E2E flow..."
+    just set-contracts optimism XCounter && just set-contracts base XCounter
+    just deploy optimism base false
+    just create-channel
+    just send-packet optimism false
+    echo "You've done it!"
+
 # Clean up the environment by removing the artifacts and cache folders and running the forge clean command
 clean:
     echo "Cleaning up environment..."
