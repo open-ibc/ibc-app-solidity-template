@@ -5,6 +5,8 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
+const { listenForIbcChannelEvents } = require('./_events.js');
+const getDispatcher = require('./_getDispatcher.js');
 
 // Function to update config.json
 function updateConfig(network, channel, cpNetwork, cpChannel) {
@@ -36,7 +38,17 @@ function createChannelAndCapture() {
       const cpChannel = match[4];
       const cpNetwork = match[5];
 
-      console.log(`Created channel: ${channel} with portID ${portId} on network ${network}, Counterparty: ${cpChannel} on network ${cpNetwork}`);
+      console.log(`
+        🎊   Created Channel   🎊
+        -----------------------------------------
+        🛣️  Channel ID: ${channel}
+        🔗 Port ID: ${portId}
+        🌍 Network: ${network}
+        -----------------------------------------
+        🛣️  Counterparty Channel ID: ${cpChannel}
+        🪐 Counterparty Network: ${cpNetwork}
+        -----------------------------------------\n`
+      );
 
       // Update the config.json file
       updateConfig(network, channel, cpNetwork, cpChannel);
@@ -47,4 +59,17 @@ function createChannelAndCapture() {
   });
 }
 
-createChannelAndCapture();
+async function main() {
+  const opDispatcher = await getDispatcher("optimism");
+  const baseDispatcher = await getDispatcher("base");
+  config["createChannel"]["srcChain"]
+  listenForIbcChannelEvents(config["createChannel"]["srcChain"], true , opDispatcher);
+  listenForIbcChannelEvents(config["createChannel"]["dstChain"], false, baseDispatcher);
+
+  createChannelAndCapture();
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
