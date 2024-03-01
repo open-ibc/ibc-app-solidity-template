@@ -25,8 +25,7 @@ async function getDispatcher (network) {
         const baseDispatcherAbi = await fetchABI(explorerUrl, process.env.BASE_DISPATCHER);
         dispatcher = new ethers.Contract(process.env.BASE_DISPATCHER, baseDispatcherAbi, providerBase);
     } else {
-        console.error(`Invalid network: ${network}`);
-        return;
+        throw new error(`Invalid network: ${network}`);
     }
 
     return dispatcher;

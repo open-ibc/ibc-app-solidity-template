@@ -7,7 +7,7 @@ async function fetchABI(explorerUrl, contractAddress) {
       const abi = response.data.abi;
       return abi;
     } else {
-      console.error('Failed to fetch ABI');
+      console.error(`Failed to fetch ABI, status code: ${response.status}`);
       return null;
     }
   } catch (error) {
