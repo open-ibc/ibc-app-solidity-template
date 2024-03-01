@@ -10,9 +10,17 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const sendConfig = config.sendPacket;
+const { listenForIbcPacketEvents } = require('./_events.js');
+const getDispatcher = require('./_getDispatcher.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
+
+    // Get the dispatchers for both source and destination to listen for IBC packet events
+    const opDispatcher = await getDispatcher("optimism");
+    const baseDispatcher = await getDispatcher("base");
+    listenForIbcPacketEvents("optimism", opDispatcher);
+    listenForIbcPacketEvents("base", baseDispatcher);
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
@@ -29,27 +37,11 @@ async function main() {
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
     
     // Send the packet
-    await ibcAppSrc.connect(accounts[1]).sendPacket(
+    await ibcAppSrc.connect(accounts[0]).sendPacket(
         channelIdBytes,
         timeoutSeconds,
         // Define and pass optionalArgs appropriately or remove if not needed    
-        )
-    console.log("Sending packet");
-
-    // Active waiting for the packet to be received and acknowledged
-    // @dev You'll need to implement this based on the contract's logic
-    let acked = false;
-    let counter = 0;
-    do {
-        // Define an acked by interacting with the contract. This will depend on the contract's logic
-        if (!acked) {
-            console.log("ack not received. waiting...");
-            await new Promise((r) => setTimeout(r, 2000));
-            counter++;
-        } 
-    } while (!acked && counter<100);
-    
-    console.log("Packet lifecycle was concluded successfully: " + acked);
+        );
 }
 
 // We recommend this pattern to be able to use async/await everywhere

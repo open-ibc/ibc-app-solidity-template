@@ -1,6 +1,3 @@
-# Sets the default compiler to Hardhat
-COMPILER := "hardhat"
-
 # Install dependencies
 install:
     echo "Installing dependencies"
@@ -49,7 +46,7 @@ deploy SOURCE DESTINATION UNIVERSAL='true':
 # Create a channel by triggering a channel handshake from the source and with parameters found in the config.json file
 # Usage: just create-channel
 create-channel:
-    echo "Creating channel..."
+    echo "Attempting to create a channel with the values from the config..."
     node scripts/create-channel-config.js
 
 # Send a packet over the universal channel or a custom channel as defined in the config.json file
@@ -59,10 +56,10 @@ create-channel:
 send-packet SOURCE UNIVERSAL='true':
     #!/usr/bin/env sh
     if test "{{UNIVERSAL}}" = "true"; then
-        echo "Sending a packet over the universal channel..."
+        echo "Attempting to send a packet over the universal channel as defined in the config..."
         npx hardhat run scripts/send-universal-packet.js --network {{SOURCE}}
     elif test "{{UNIVERSAL}}" = "false"; then
-        echo "Sending a packet over a custom channel..."
+        echo "Attempting to send a packet over a custom channel as defined in the config..."
         npx hardhat run scripts/send-packet.js --network {{SOURCE}}
     else
         echo "Unknown universal flag: {{UNIVERSAL}}"
