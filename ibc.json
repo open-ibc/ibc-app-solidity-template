@@ -1,11 +1,26 @@
 {
     "optimism": {
-        "canonConnFrom": "connection-2",
-        "canonConnTo": "connection-3",
-        "universalChannel": "channel-4"
+        "sim-client": {
+            "canonConnFrom": "connection-0",
+            "canonConnTo": "connection-1",
+            "universalChannel": "channel-"
+        },
+        "op-client": {
+            "canonConnFrom": "connection-2",
+            "canonConnTo": "connection-3",
+            "universalChannel": "channel-"
+        }
     },
     "base": {
-        "canonConnFrom": "connection-0",
-        "canonConnTo": "connection-1",
-        "universalChannel": "channel-5"}
+        "sim-client" : {
+            "canonConnFrom": "connection-4",
+            "canonConnTo": "connection-5",
+            "universalChannel": "channel-"
+        },
+        "op-client": {
+            "canonConnFrom": "connection-6",
+            "canonConnTo": "connection7-",
+            "universalChannel": "channel-"
+        }
+    }
 }
