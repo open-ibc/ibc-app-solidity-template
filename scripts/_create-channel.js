@@ -14,8 +14,9 @@ const ibcConfig = require('../ibc.json');
 
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {
+  const simAddOn = config.proofsEnabled ? '' :'-sim';
   const suffix = address.slice(2);
-  return `${portPrefix}.${suffix}`;
+  return `${portPrefix}${simAddOn}.${suffix}`;
 }
 
 function createDummyProof() {
@@ -51,8 +52,8 @@ async function main() {
   );
 
   // Prepare the arguments to create the channel
-  const connHop1 = ibcConfig[chanConfig.srcChain].canonConnFrom;
-  const connHop2 = ibcConfig[chanConfig.dstChain].canonConnTo;
+  const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
+  const connHop2 = ibcConfig[chanConfig.dstChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
   

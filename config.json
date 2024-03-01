@@ -1,4 +1,5 @@
 {
+  "proofsEnabled": false,
   "deploy": {
     "optimism": "XCounterUC",
     "base": "XCounterUC"
@@ -34,6 +35,32 @@
       "portAddr": "0xdef",
       "channelId": "channel-y",
       "timeout": 36000
+    }
+  },
+  "backup": {
+    "sendPacket": {
+      "optimism": {
+        "portAddr": "0x123",
+        "channelId": "channel-n",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "0x456",
+        "channelId": "channel-n",
+        "timeout": 36000
+      }
+    },
+    "sendUniversalPacket": {
+      "optimism": {
+        "portAddr": "0xabc",
+        "channelId": "channel-x",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "0xdef",
+        "channelId": "channel-y",
+        "timeout": 36000
+      }
     }
   }
 }

@@ -35,7 +35,7 @@ function updateConfig(network, address, isSource) {
   } else if (isUniversalChannel === "true"){
     // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
     config["sendUniversalPacket"][`${network}`]["portAddr"] = address;
-    config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`]["universalChannel"];
+    config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`]["sim-client"]["universalChannel"];
   }
 
   // Write the updated config back to the file
