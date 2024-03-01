@@ -32,6 +32,12 @@ function listenForIbcChannelEvents (network, source, dispatcher) {
         console.log(`🧾 TxHash: ${txHash}`);
         console.log(`🔍 Explorer URL: ${url}`);
         console.log(`-------------------------------------------\n`);
+        if (source) {
+            console.log(`⏱️ Waiting for channel open try...`);
+        } else {
+            console.log(`⏱️ Waiting for channel open ack...`);
+        }
+
     });
 
     dispatcher.on('ConnectIbcChannel',
@@ -54,6 +60,9 @@ function listenForIbcChannelEvents (network, source, dispatcher) {
         console.log(`🧾 TxHash: ${txHash}`);
         console.log(`🔍 Explorer URL: ${url}`);
         console.log(`-------------------------------------------\n`);
+        if (source) {
+            console.log(`⏱️ Waiting for channel open confirm...`);
+        }
 
         dispatcher.removeAllListeners();
     });
@@ -91,7 +100,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         const url = `${explorerUrl}tx/${txHash}`;
 
         console.log(`-------------------------------------------`);
-        console.log(`📦 📮   PACKET SENT !!!   📦 📮`);
+        console.log(`📦 📮   PACKET HAS BEEN SENT !!!   📦 📮`);
         console.log(`-------------------------------------------`);
         console.log(`🔔 Event name: ${event.log.fragment.name}`)
         console.log(`⛓️  Network: ${network}`)
@@ -103,6 +112,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         console.log(`🧾 TxHash: ${txHash}`);
         console.log(`🔍 Explorer URL: ${url}`);
         console.log(`-------------------------------------------\n`);
+        console.log(`⏱️ Waiting for packet receipt...`);
     });
 
     dispatcher.on('RecvPacket',
@@ -112,7 +122,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         const url = `${explorerUrl}tx/${txHash}`;
 
         console.log(`-------------------------------------------`);
-        console.log(`📦 📬   PACKET RECEIVED !!!   📦 📬`);
+        console.log(`📦 📬   PACKET IS RECEIVED !!!   📦 📬`);
         console.log(`-------------------------------------------`);
         console.log(`🔔 Event name: ${event.log.fragment.name}`)
         console.log(`⛓️  Network: ${network}`)
@@ -123,6 +133,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         console.log(`🧾 TxHash: ${txHash}`);
         console.log(`🔍 Explorer URL: ${url}`);
         console.log(`-------------------------------------------\n`);
+        console.log(`⏱️ Waiting for write acknowledgement...`);
 
     });
 
@@ -144,6 +155,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         console.log(`🧾 TxHash: ${txHash}`);
         console.log(`🔍 Explorer URL: ${url}`);
         console.log(`-------------------------------------------\n`);
+        console.log(`⏱️ Waiting for acknowledgement...`);
 
         dispatcher.removeAllListeners();
     });
@@ -155,7 +167,7 @@ function listenForIbcPacketEvents (network, dispatcher) {
         const url = `${explorerUrl}tx/${txHash}`;
 
         console.log(`-----------------------------------`);
-        console.log(`📦 🏁   PACKET ACKNOWLEDGED !!!   📦 🏁`);
+        console.log(`📦 🏁   PACKET IS ACKNOWLEDGED !!!   📦 🏁`);
         console.log(`-----------------------------------`);
         console.log(`🔔 Event name: ${event.log.fragment.name}`)
         console.log(`⛓️  Network: ${network}`)

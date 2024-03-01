@@ -39,7 +39,7 @@ function createChannelAndCapture() {
       const cpNetwork = match[5];
 
       console.log(`
-        🎊 Created Channel 🎊
+        🎊   Created Channel   🎊
         -----------------------------------------
         🛣️  Channel ID: ${channel}
         🔗 Port ID: ${portId}

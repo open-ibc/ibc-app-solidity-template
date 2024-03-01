@@ -60,7 +60,14 @@ function deployAndCapture(network, isSource) {
       const address = match[2];
       const network = match[3];
 
-      console.log(`Deployed ${contractType} to address ${address} on network ${network}`);
+      console.log(`
+        ✅   Deployment Successful   ✅
+        -------------------------------
+        📄 Contract Type: ${contractType}
+        📍 Address: ${address}
+        🌍 Network: ${network}
+        -------------------------------\n
+      `);
 
       // Update the config.json file
       updateConfig(network, address, isSource);
@@ -71,5 +78,12 @@ function deployAndCapture(network, isSource) {
   });
 }
 
-deployAndCapture(source, true);
-deployAndCapture(destination, false);
+function main() {
+  deployAndCapture(source, true);
+  deployAndCapture(destination, false);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
