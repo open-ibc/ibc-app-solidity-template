@@ -28,6 +28,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.6",
     "axios": "^1.6.7",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "hardhat-verify": "^1.0.0"
   }
 }
