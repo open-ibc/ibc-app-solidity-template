@@ -61,12 +61,12 @@ function deployAndCapture(network, isSource) {
       const network = match[3];
 
       console.log(`
-        ✅   Deployment Successful   ✅
-        -------------------------------
-        📄 Contract Type: ${contractType}
-        📍 Address: ${address}
-        🌍 Network: ${network}
-        -------------------------------\n
+          ✅   Deployment Successful   ✅
+          -------------------------------
+          📄 Contract Type: ${contractType}
+          📍 Address: ${address}
+          🌍 Network: ${network}
+          -------------------------------\n
       `);
 
       // Update the config.json file

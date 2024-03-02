@@ -39,16 +39,16 @@ function createChannelAndCapture() {
       const cpNetwork = match[5];
 
       console.log(`
-        🎊   Created Channel   🎊
-        -----------------------------------------
-        🛣️  Channel ID: ${channel}
-        🔗 Port ID: ${portId}
-        🌍 Network: ${network}
-        -----------------------------------------
-        🛣️  Counterparty Channel ID: ${cpChannel}
-        🪐 Counterparty Network: ${cpNetwork}
-        -----------------------------------------\n`
-      );
+          🎊   Created Channel   🎊
+          -----------------------------------------
+          🛣️  Channel ID: ${channel}
+          🔗 Port ID: ${portId}
+          🌍 Network: ${network}
+          -----------------------------------------
+          🛣️  Counterparty Channel ID: ${cpChannel}
+          🪐 Counterparty Network: ${cpNetwork}
+          -----------------------------------------\n`
+        );
 
       // Update the config.json file
       updateConfig(network, channel, cpNetwork, cpChannel);
