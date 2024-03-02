@@ -3,24 +3,24 @@
         "sim-client": {
             "canonConnFrom": "connection-0",
             "canonConnTo": "connection-1",
-            "universalChannel": "channel-"
+            "universalChannel": "channel-18"
         },
         "op-client": {
-            "canonConnFrom": "connection-2",
-            "canonConnTo": "connection-3",
-            "universalChannel": "channel-"
+            "canonConnFrom": "connection-8",
+            "canonConnTo": "connection-9",
+            "universalChannel": "channel-16"
         }
     },
     "base": {
         "sim-client" : {
             "canonConnFrom": "connection-4",
             "canonConnTo": "connection-5",
-            "universalChannel": "channel-"
+            "universalChannel": "channel-19"
         },
         "op-client": {
-            "canonConnFrom": "connection-6",
-            "canonConnTo": "connection7-",
-            "universalChannel": "channel-"
+            "canonConnFrom": "connection-10",
+            "canonConnTo": "connection-11",
+            "universalChannel": "channel-17"
         }
     }
 }
