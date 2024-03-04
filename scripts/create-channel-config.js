@@ -6,7 +6,7 @@ const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 const { listenForIbcChannelEvents } = require('./_events.js');
-const getDispatcher = require('./_getDispatcher.js');
+const { getDispatcher } = require('./_get-vibc-sc.js');
 
 // Function to update config.json
 function updateConfig(network, channel, cpNetwork, cpChannel) {

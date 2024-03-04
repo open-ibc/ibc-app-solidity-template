@@ -43,6 +43,12 @@ deploy SOURCE DESTINATION UNIVERSAL='true':
         exit 1
     fi
 
+# Run the sanity check script to verify that configuration (.env) files match with deployed contracts' stored values
+# Usage: just sanity-check [universal=true]
+sanity-check UNIVERSAL='true':
+    echo "Running sanity check..."
+    node scripts/sanity-check.js {{UNIVERSAL}}
+
 # Create a channel by triggering a channel handshake from the source and with parameters found in the config.json file
 # Usage: just create-channel
 create-channel:

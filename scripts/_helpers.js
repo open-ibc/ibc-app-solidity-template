@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { ethers } = require('hardhat');
 
 async function fetchABI(explorerUrl, contractAddress) {
   try {
@@ -16,4 +17,15 @@ async function fetchABI(explorerUrl, contractAddress) {
   }
 }
 
-module.exports = fetchABI;
+function areAddressesEqual(address1, address2) {
+  // Normalize addresses to checksummed format
+
+  // const checksumAddress1 = ethers.utils.getAddress(address1);
+  // const checksumAddress2 = ethers.utils.getAddress(address2);
+
+  // Compare addresses
+  const areEqual = address1 === address2;
+  return areEqual;
+}
+
+module.exports = { fetchABI, areAddressesEqual };

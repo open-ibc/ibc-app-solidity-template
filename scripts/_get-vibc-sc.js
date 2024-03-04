@@ -1,5 +1,5 @@
 const {ethers} = require("hardhat");
-const fetchABI = require("./_fetchABI.js");
+const {fetchABI} = require("./_helpers.js");
 const config = require("../config.json");
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
@@ -35,4 +35,31 @@ async function getDispatcher (network) {
     return dispatcher;
 }
 
-module.exports = getDispatcher;
+async function getUcHandler (network) {
+    const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
+    const providerBase = new ethers.JsonRpcProvider(rpcBase);
+
+    let explorerUrl;
+    let ucHandler;
+    let ucHandlerAddress;
+
+    if (network === "optimism") {
+        explorerUrl = explorerOpUrl;
+        ucHandlerAddress = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+
+        const opUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+        ucHandler = new ethers.Contract(ucHandlerAddress, opUcHandlerAbi, providerOptimism);
+    } else if (network === "base") {
+        explorerUrl = explorerBaseUrl;
+        ucHandlerAddress = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+
+        const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+        ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
+    } else {
+        throw new error(`Invalid network: ${network}`);
+    }
+
+    return ucHandler;
+}
+
+module.exports = { getDispatcher, getUcHandler };
