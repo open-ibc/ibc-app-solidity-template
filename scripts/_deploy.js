@@ -22,7 +22,7 @@ async function main() {
   }
 
   // TODO: update to switch statement when supporting more networks
-  const dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER : process.env.BASE_DISPATCHER;
+  const dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER_SIM : process.env.BASE_DISPATCHER_SIM;
   const constructorArgs = [dispatcherAddr, ...(args ?? [])];
   
   // Deploy the contract

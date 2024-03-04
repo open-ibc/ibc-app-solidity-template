@@ -10,8 +10,10 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const sendConfig = config.sendUniversalPacket;
+
+const { getIbcApp } = require('./_helpers.js');
 const { listenForIbcPacketEvents } = require('./_events.js');
-const getDispatcher = require('./_getDispatcher.js');
+const { getDispatcher } = require('./_get-vibc-sc.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
@@ -24,14 +26,7 @@ async function main() {
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
-    const contractType = config["deploy"][`${networkName}`];
-
-    const srcPortAddr = sendConfig[`${networkName}`]["portAddr"];
-
-    const ibcAppSrc = await hre.ethers.getContractAt(
-        `${contractType}`,
-        srcPortAddr
-    );
+    const ibcApp = await getIbcApp(networkName, true);
 
     // Do logic to prepare the packet
 
@@ -42,7 +37,7 @@ async function main() {
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
     
     // Send the packet
-    await ibcAppSrc.connect(accounts[0]).sendUniversalPacket(
+    await ibcApp.connect(accounts[0]).sendUniversalPacket(
         destPortAddr,
         channelIdBytes,
         timeoutSeconds,

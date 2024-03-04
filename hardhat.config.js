@@ -37,6 +37,30 @@ module.exports = {
     cache: './cache',
     artifacts: './artifacts',
     libraries: './lib',
-  }
+  },
+  etherscan: {
+    apiKey: {
+      optimism: process.env.OP_BLOCKSCOUT_API_KEY,
+      base: process.env.BASE_BLOCKSCOUT_API_KEY,
+    },
+    customChains: [
+      {
+        network: "base",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://base-sepolia.blockscout.com/api",
+          browserURL: "https://base-sepolia.blockscout.com",
+        }
+      },
+      {
+        network: "optimism",
+        chainId: 11155420,
+        urls: {
+          apiURL: "https://optimism-sepolia.blockscout.com/api",
+          browserURL: "https://optimism-sepolia.blockscout.com",
+        }
+      }
+    ]
+  },
 };
 

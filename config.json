@@ -1,4 +1,5 @@
 {
+  "proofsEnabled": false,
   "deploy": {
     "optimism": "XCounterUC",
     "base": "XCounterUC"
@@ -35,5 +36,6 @@
       "channelId": "channel-y",
       "timeout": 36000
     }
-  }
+  },
+  "backup": {}
 }
