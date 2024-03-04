@@ -7,7 +7,7 @@
 const hre = require("hardhat");
 const path = require('path');
 const { env } = require("process");
-const { areAddressesEqual } = require("./_helpers");
+const { areAddressesEqual, getIbcApp } = require("./_helpers");
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 
@@ -21,16 +21,10 @@ async function main() {
     // Get the Dispatcher from your IBC enabled contract and compare it with the stored value in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const contractType = config["deploy"][`${networkName}`];
-    const ibcAppSrcAddr = config["sendPacket"][`${networkName}`]["portAddr"];
-  
-    const ibcAppSrc = await hre.ethers.getContractAt(
-        `${contractType}`,
-        ibcAppSrcAddr
-    );
+    const ibcApp = getIbcApp(networkName, false);
 
     // 2. Query your contract for the Dispatcher address
-    const dispatcherAddr = await ibcAppSrc.dispatcher();
+    const dispatcherAddr = await ibcApp.dispatcher();
 
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;

@@ -9,7 +9,7 @@ const path = require('path');
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const { getUcHandler} = require('./_get-vibc-sc.js');
-const { areAddressesEqual } = require('./_helpers.js');
+const { areAddressesEqual, getIbcApp } = require('./_helpers.js');
 
 async function main() {
     const config = require(configPath);
@@ -21,16 +21,10 @@ async function main() {
     // Get the Universal Channel Mw from your IBC enabled contract and comare it with the values in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const contractType = config["deploy"][`${networkName}`];
-    const ibcAppSrcAddr = config["sendUniversalPacket"][`${networkName}`]["portAddr"];
-  
-    const ibcAppSrc = await hre.ethers.getContractAt(
-        `${contractType}`,
-        ibcAppSrcAddr
-    );
+    const ibcApp = getIbcApp(networkName, true);
 
     // 2. Query your app for the Universal Channel Mw address stored
-    const ucHandlerAddr = await ibcAppSrc.mw();
+    const ucHandlerAddr = await ibcApp.mw();
 
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;

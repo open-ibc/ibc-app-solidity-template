@@ -5,36 +5,19 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
+const { determineNewDispatcher, getIbcApp } = require("./_helpers");
 
 async function main() {
-    const config = require(configPath);
-    const chanConfig = config["createChannel"];
-
-    const accounts = await hre.ethers.getSigners();
+    await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
-    let newDispatcher;
-    if (networkName === "optimism") {
-        newDispatcher = config.proofsEnabled === true ? process.env.OP_DISPATCHER_SIM : process.env.OP_DISPATCHER;
-    } else if (networkName === "base") {
-        newDispatcher = config.proofsEnabled === true ? process.env.BASE_DISPATCHER_SIM : process.env.BASE_DISPATCHER;
-    } else {
-        console.error("Invalid network name");
-        process.exit(1);
-    }
+    // Determine the new dispatcher, this is dependent on whether it's part of a switch of the proofsEnabled flag
+    const newDispatcher = determineNewDispatcher(false);
 
     // Get the contract type from the config and get the contract
-    const contractType = config["deploy"][`${networkName}`];
-  
-    const ibcAppSrc = await hre.ethers.getContractAt(
-        `${contractType}`,
-        chanConfig.srcAddr
-    );
+    const ibcApp = getIbcApp(networkName, false);
 
-    await ibcAppSrc.updateDispatcher(newDispatcher);
+    await ibcApp.updateDispatcher(newDispatcher);
     console.log(`Dispatcher updated to ${newDispatcher}`);
 }
 

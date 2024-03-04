@@ -10,8 +10,10 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const sendConfig = config.sendPacket;
+
 const { listenForIbcPacketEvents } = require('./_events.js');
 const { getDispatcher } = require('./_get-vibc-sc.js');
+const { get } = require('http');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
@@ -24,12 +26,7 @@ async function main() {
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
-    const contractType = config["deploy"][`${networkName}`];
-
-    const ibcAppSrc = await hre.ethers.getContractAt(
-        `${contractType}`,
-        sendConfig[`${networkName}`]["portAddr"]
-    );
+    const ibcApp = getIbcApp(networkName, false);
 
     // Do logic to prepare the packet
     const channelId = sendConfig[`${networkName}`]["channelId"];
@@ -37,7 +34,7 @@ async function main() {
     const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
     
     // Send the packet
-    await ibcAppSrc.connect(accounts[0]).sendPacket(
+    await ibcApp.connect(accounts[0]).sendPacket(
         channelIdBytes,
         timeoutSeconds,
         // Define and pass optionalArgs appropriately or remove if not needed    
