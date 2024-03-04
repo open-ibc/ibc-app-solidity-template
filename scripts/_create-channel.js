@@ -12,7 +12,6 @@ const config = require(configPath);
 const chanConfig = config.createChannel;
 const ibcConfig = require('../ibc.json');
 const { getIbcApp } = require('./_helpers.js');
-const { connect } = require('http2');
 
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {
@@ -81,7 +80,9 @@ async function main() {
   await new Promise((r) => setTimeout(r, 60000));
 
   // Get the connected channels and print the new channel along with its counterparty
-  const connectedChannels = await ibcApp.getConnectedChannels();
+  if (tx) {
+    const connectedChannels = await ibcApp.getConnectedChannels();
+  }
 
   if (connectedChannels!== undefined && connectedChannels.length !== 0) {
 
