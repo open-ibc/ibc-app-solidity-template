@@ -49,6 +49,18 @@ sanity-check UNIVERSAL='true':
     echo "Running sanity check..."
     node scripts/sanity-check.js {{UNIVERSAL}}
 
+# Update the universal channel handler address in the on the IBC contract with that from the .env file
+# Usage: just update-uc-handler [chain]
+update-uc-handler CHAIN:
+  echo "Updating the universal channel handler address..."
+  npx hardhat run scripts/_updateUcHandler.js --network {{CHAIN}}
+
+# Update the dispatcher address in the on the IBC contract with that from the .env file
+# Usage: just dispatcher [chain]
+update-dispatcher CHAIN:
+  echo "Updating the universal channel handler address..."
+  npx hardhat run scripts/_updateDispatcher.js --network {{CHAIN}}
+
 # Create a channel by triggering a channel handshake from the source and with parameters found in the config.json file
 # Usage: just create-channel
 create-channel:

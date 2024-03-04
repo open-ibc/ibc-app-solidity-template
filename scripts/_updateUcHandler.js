@@ -11,16 +11,15 @@ const configPath = path.join(__dirname, '..' , configRelativePath);
 
 async function main() {
     const config = require(configPath);
-    const chanConfig = config["createChannel"];
 
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
     let newUcHandler;
     if (networkName === "optimism") {
-        newUcHandler = config.proofsEnabled === true ? process.env.OP_UC_MW_SIM : process.env.OP_UC_MW;
+        newUcHandler = config.proofsEnabled === true ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
     } else if (networkName === "base") {
-        newUcHandler = config.proofsEnabled === true ? process.env.BASE_UC_MW_SIM : process.env.BASE_UC_MW;
+        newUcHandler = config.proofsEnabled === true ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
     } else {
         console.error("Invalid network name");
         process.exit(1);
@@ -28,10 +27,11 @@ async function main() {
 
     // Get the contract type from the config and get the contract
     const contractType = config["deploy"][`${networkName}`];
-  
+
+    const ibcAppSrcAddr = config["sendUniversalPacket"][`${networkName}`]["portAddr"];
     const ibcAppSrc = await hre.ethers.getContractAt(
         `${contractType}`,
-        chanConfig.srcAddr
+        ibcAppSrcAddr,
     );
 
     await ibcAppSrc.updateMiddleware(newUcHandler);
