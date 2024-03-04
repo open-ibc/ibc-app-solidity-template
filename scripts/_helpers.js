@@ -44,18 +44,16 @@ function areAddressesEqual(address1, address2) {
   return areEqual;
 }
 
-function determineNewDispatcher (network, beforeFlip) {
+function determineNewDispatcher (network) {
   const proofsEnabled = config.proofsEnabled === true;
-  const xOR = (proofsEnabled || beforeFlip) && !(proofsEnabled && beforeFlip);
 
   let newDispatcher;
   if (network === "optimism") {
-      newDispatcher = xOR ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
+      newDispatcher = proofsEnabled ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
   } else if (network === "base") {
-      newDispatcher = xOR ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
+      newDispatcher = proofsEnabled ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
   } else {
-      console.error("Invalid network name");
-      process.exit(1);
+    throw new Error("Invalid network name");
   }
 
   return newDispatcher;
@@ -71,8 +69,7 @@ function determineNewUcHandler (network) {
   } else if (network === "base") {
       newUcHandler = proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
   } else {
-      console.error("Invalid network name");
-      process.exit(1);
+    throw new Error("Invalid network name");
   }
 
   return newUcHandler;
