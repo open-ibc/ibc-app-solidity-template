@@ -1,4 +1,5 @@
 const axios = require('axios');
+const hre = require('hardhat');
 const path = require('path');
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
@@ -35,11 +36,11 @@ async function fetchABI(explorerUrl, contractAddress) {
 function areAddressesEqual(address1, address2) {
   // Normalize addresses to checksummed format
 
-  // const checksumAddress1 = ethers.utils.getAddress(address1);
-  // const checksumAddress2 = ethers.utils.getAddress(address2);
+  const checksumAddress1 = hre.ethers.getAddress(address1);
+  const checksumAddress2 = hre.ethers.getAddress(address2);
 
   // Compare addresses
-  const areEqual = address1 === address2;
+  const areEqual = checksumAddress1 === checksumAddress2;
   return areEqual;
 }
 
