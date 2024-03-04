@@ -26,10 +26,12 @@ Some basic knowledge of all of these tools is also required, although the detail
 To compile your contracts and start testing, make sure that you have all dependencies installed.
 
 From the root directory run:
+
 ```bash
 just install
 ```
-to install the [vIBC core smart contracts](https://github.com/open-ibc/vibc-core-smart-contracts) as a dependency. 
+
+to install the [vIBC core smart contracts](https://github.com/open-ibc/vibc-core-smart-contracts) as a dependency.
 
 Additionally Hardhat will be installed as a dev dependency with some useful plugins. Check `package.json` for an exhaustive list.
 
@@ -37,11 +39,18 @@ Additionally Hardhat will be installed as a dev dependency with some useful plug
 
 Convert the `.env.example` file into an `.env` file. This will ignore the file for future git commits as well as expose the environment variables. Add your private keys and update the other values if you want to customize (advanced usage feature).
 
-```
-Update:     .env.example -------> .env
+```bash
+cp .env.example .env
 ```
 
 This will enable you to sign transactions with your private key(s). If not added, the scripts from the justfile will fail.
+
+### Obtaining testnet ETH
+
+The account associated with your private key must have both Base Sepolia and Optimism Sepolia ETH. To obtain the testnet ETH visit:
+
+- [Optimism Sepolia Faucet](https://www.alchemy.com/faucets/optimism-sepolia)
+- [Base Sepolia Faucet](https://www.alchemy.com/faucets/base-sepolia)
 
 ## 🏃🏽🏃🏻‍♀️ Quickstart
 
@@ -50,11 +59,13 @@ The project comes with a built-in dummy application called x-counter. You can fi
 The default setup (`.env`, `config.json`) are preconfigured to try to send packets over the universal channel.
 
 Run the following as a sanity check:
+
 ```bash
 # Usage: just send-packet [source] [universal]
 # Source can be either 'optimism' or 'base', universal is set to true
 just send-packet optimism true
 ```
+
 <!-- TODO: add how to check for the packet on explorer or set up an event listener -->
 
 Check if the packet got through on the [Polymer IBC explorer](https://explorer.prod.testnet.polymer.zone/packets).
@@ -86,22 +97,28 @@ For every script you'll find a field in the configuration file!!
 Before deploying, make sure to update the config.json with your contract type to deploy for each of the chain you wish to deploy to.
 
 Do this by running:
+
 ```bash
 # Usage: just set-contracts [chain] [contract_type]
-just set-contracts optimism MyContract
+just set-contracts optimism XCounter
 ```
+
 to deploy _MyContract_ artefact to the Optimism (Sepolia) chain.
 
 Then run:
+
 ```bash
 # Usage: just deploy [source] [destination] [universal]
 just deploy optimism base true
 ```
+
 for an application that will use a universal channel, or:
+
 ```bash
-# or 
+# or
 just deploy optimism base false
 ```
+
 for an application that uses custom channels.
 
 The script will take the output of the deployment and update the config file with all the relevant information.
@@ -111,6 +128,7 @@ The script will take the output of the deployment and update the config file wit
 If you're **using universal channels, channel creation is not required**. Your contract will send and receive packet data from the Universal channel handler contract which already has a universal channel to send packets over. You can directly proceed to sending (universal) packets in that case.
 
 To create a custom channel, run:
+
 ```bash
 just create-channel
 ```
@@ -122,17 +140,22 @@ The script will take the output of the channel creation and update the config fi
 Check out the [channel tab in the explorer](https://explorer.prod.testnet.polymer.zone/channels) to find out if the correct channel-id's related to your contracts were updated in the config.
 
 ### Send packets
+
 Finally Run:
+
 ```bash
 # Usage: just send-packet [source] [universal]
 just send-packet optimism true
 ```
+
 to send a packet over a **universal channel**. You can pick either optimism or base to send the packet from.
 
 Or run:
+
 ```bash
 just send-packet optimism false
 ```
+
 to send a packet over a **custom channel**. You can pick either optimism or base to send the packet from.
 
 ## 🦾 Advanced usage
@@ -140,6 +163,7 @@ to send a packet over a **custom channel**. You can pick either optimism or base
 For advanced users, there's multiple custimizations to follow. These includes configuring the config.json manually and/or running the scripts without using just.
 
 For example, the last action to send a packet on a universal channel could be executed with this command:
+
 ```bash
 npx hardhat run scripts/send-universal-packet.js --network base
 ```
