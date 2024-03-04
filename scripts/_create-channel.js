@@ -85,10 +85,10 @@ async function main() {
 
   if (connectedChannelsAfter!== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
 
-    const newChannelBytes = connectedChannels[connectedChannels.length - 1].channelId;
+    const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
     const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
 
-    const cpChannelBytes = connectedChannels[connectedChannels.length - 1].cpChannelId;
+    const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
     const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
   
     console.log(`Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
