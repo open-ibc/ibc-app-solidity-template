@@ -26,7 +26,7 @@ async function main() {
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
-    const ibcApp = getIbcApp(networkName, true);
+    const ibcApp = await getIbcApp(networkName, true);
 
     // Do logic to prepare the packet
 

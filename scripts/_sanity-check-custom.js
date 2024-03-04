@@ -21,7 +21,7 @@ async function main() {
     // Get the Dispatcher from your IBC enabled contract and compare it with the stored value in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const ibcApp = getIbcApp(networkName, false);
+    const ibcApp = await getIbcApp(networkName, false);
 
     // 2. Query your contract for the Dispatcher address
     const dispatcherAddr = await ibcApp.dispatcher();

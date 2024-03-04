@@ -11,11 +11,11 @@ async function main() {
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
-    // Determine the new universal channel handler, this is dependent on whether it's part of a switch of the proofsEnabled flag
-    const newUcHandler = determineNewUcHandler(false);
+    // Determine the new universal channel handler, based on the network.
+    const newUcHandler = determineNewUcHandler(networkName);
 
     // Get the contract type from the config and get the contract
-    const ibcApp = getIbcApp(networkName, true);
+    const ibcApp = await getIbcApp(networkName, true);
 
     await ibcApp.updateMiddleware(newUcHandler);
     console.log(`Universal channel handler updated to ${newUcHandler}`);

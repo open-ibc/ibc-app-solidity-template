@@ -21,7 +21,7 @@ async function main() {
     // Get the Universal Channel Mw from your IBC enabled contract and comare it with the values in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const ibcApp = getIbcApp(networkName, true);
+    const ibcApp = await getIbcApp(networkName, true);
 
     // 2. Query your app for the Universal Channel Mw address stored
     const ucHandlerAddr = await ibcApp.mw();

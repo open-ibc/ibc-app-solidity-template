@@ -6,6 +6,7 @@ const config = require(configPath);
 
 async function getIbcApp (network, isUniversal) {
   const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
+  console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
   const contractType = config["deploy"][`${network}`];
 
   const ibcApp = await hre.ethers.getContractAt(
@@ -42,13 +43,14 @@ function areAddressesEqual(address1, address2) {
   return areEqual;
 }
 
-function determineNewDispatcher (beforeFlip) {
+function determineNewDispatcher (network, beforeFlip) {
   const proofsEnabled = config.proofsEnabled === true;
   const xOR = (proofsEnabled || beforeFlip) && !(proofsEnabled && beforeFlip);
+
   let newDispatcher;
-  if (networkName === "optimism") {
+  if (network === "optimism") {
       newDispatcher = xOR ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-  } else if (networkName === "base") {
+  } else if (network === "base") {
       newDispatcher = xOR ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
   } else {
       console.error("Invalid network name");
@@ -59,14 +61,14 @@ function determineNewDispatcher (beforeFlip) {
 
 }
 
-function determineNewUcHandler (beforeFlip) {
+function determineNewUcHandler (network) {
   const proofsEnabled = config.proofsEnabled === true;
-  const xOR = (proofsEnabled || beforeFlip) && !(proofsEnabled && bef);
+
   let newUcHandler;
-  if (networkName === "optimism") {
-      newUcHandler = xOR ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
-  } else if (networkName === "base") {
-      newUcHandler = xOR ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+  if (network === "optimism") {
+      newUcHandler = proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+  } else if (network === "base") {
+      newUcHandler = proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
   } else {
       console.error("Invalid network name");
       process.exit(1);

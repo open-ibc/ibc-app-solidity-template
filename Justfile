@@ -87,6 +87,7 @@ send-packet SOURCE UNIVERSAL='true':
 switch-client UNIVERSAL='true':
     #!/usr/bin/env sh
     echo "Switching between sim client and client with proofs..."
+    node scripts/switch-clients.js
     if test "{{UNIVERSAL}}" = "true"; then
         npx hardhat run scripts/_updateUcHandler.js --network optimism
         npx hardhat run scripts/_updateUcHandler.js --network base
@@ -97,7 +98,7 @@ switch-client UNIVERSAL='true':
         echo "Unknown universal flag: {{UNIVERSAL}}"
         exit 1
     fi
-    node scripts/switch-clients.js
+
 
 # Run the full E2E flow by setting the contracts, deploying them, creating a channel, and sending a packet
 # Usage: just do-it

@@ -11,11 +11,11 @@ async function main() {
     await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
-    // Determine the new dispatcher, this is dependent on whether it's part of a switch of the proofsEnabled flag
-    const newDispatcher = determineNewDispatcher(false);
+    // Determine the new dispatcher, based on the network.
+    const newDispatcher = determineNewDispatcher(networkName);
 
     // Get the contract type from the config and get the contract
-    const ibcApp = getIbcApp(networkName, false);
+    const ibcApp = await getIbcApp(networkName, false);
 
     await ibcApp.updateDispatcher(newDispatcher);
     console.log(`Dispatcher updated to ${newDispatcher}`);
