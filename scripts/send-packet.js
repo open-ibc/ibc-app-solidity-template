@@ -13,7 +13,7 @@ const sendConfig = config.sendPacket;
 
 const { listenForIbcPacketEvents } = require('./_events.js');
 const { getDispatcher } = require('./_get-vibc-sc.js');
-const { get } = require('http');
+const { getIbcApp } = require('./_helpers.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();

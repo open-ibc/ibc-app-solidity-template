@@ -46,7 +46,7 @@ async function main() {
   const networkName = hre.network.name;
   
   // Get the contract type from the config and get the contract
-  const ibcApp = getIbcApp(networkName, false);
+  const ibcApp = await getIbcApp(networkName, false);
 
   // Prepare the arguments to create the channel
   const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
