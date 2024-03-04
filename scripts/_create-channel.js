@@ -26,14 +26,14 @@ function createDummyProof() {
           {
               path: [
                   {
-                      prefix: hre.ethers.encodeBytes32String("prefixExample1"),
-                      suffix: hre.ethers.encodeBytes32String("suffixExample1"),
+                      prefix: hre.ethers.toUtf8Bytes("prefixExample1"),
+                      suffix: hre.ethers.toUtf8Bytes("suffixExample1"),
                   },
                   // Add more OpIcs23ProofPath objects as needed
               ],
-              key: hre.ethers.encodeBytes32String("keyExample"),
-              value: hre.ethers.encodeBytes32String("valueExample"),
-              prefix: hre.ethers.encodeBytes32String("prefixExample")
+              key: hre.ethers.toUtf8Bytes("keyExample"),
+              value: hre.ethers.toUtf8Bytes("valueExample"),
+              prefix: hre.ethers.toUtf8Bytes("prefixExample")
           },
           // Add more OpIcs23Proof objects as needed
       ],
@@ -46,13 +46,14 @@ async function main() {
   
   // Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName, false);
+  const connectedChannelsBefore = await ibcApp.getConnectedChannels();
 
   // Prepare the arguments to create the channel
   const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
   const connHop2 = ibcConfig[chanConfig.dstChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
-  
+
   const local = {
     portId: srcPortId,
     channelId: hre.ethers.encodeBytes32String(''),
@@ -73,18 +74,16 @@ async function main() {
     chanConfig.fees,
     [ connHop1, connHop2 ],
     cp,
-    createDummyProof(),
+    createDummyProof()
   );
 
   // Wait for the channel handshake to complete
   await new Promise((r) => setTimeout(r, 60000));
 
   // Get the connected channels and print the new channel along with its counterparty
-  if (tx) {
-    const connectedChannels = await ibcApp.getConnectedChannels();
-  }
+  const connectedChannelsAfter = await ibcApp.getConnectedChannels();
 
-  if (connectedChannels!== undefined && connectedChannels.length !== 0) {
+  if (connectedChannelsAfter!== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
 
     const newChannelBytes = connectedChannels[connectedChannels.length - 1].channelId;
     const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
