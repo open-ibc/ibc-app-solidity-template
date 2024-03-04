@@ -3,7 +3,7 @@
         "sim-client": {
             "canonConnFrom": "connection-0",
             "canonConnTo": "connection-1",
-            "universalChannel": "channel-18"
+            "universalChannel": "channel-10"
         },
         "op-client": {
             "canonConnFrom": "connection-8",
@@ -15,7 +15,7 @@
         "sim-client" : {
             "canonConnFrom": "connection-4",
             "canonConnTo": "connection-5",
-            "universalChannel": "channel-19"
+            "universalChannel": "channel-11"
         },
         "op-client": {
             "canonConnFrom": "connection-10",
