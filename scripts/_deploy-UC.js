@@ -22,7 +22,14 @@ async function main() {
  }
 
   // TODO: update to switch statement when supporting more networks
-  const ucHandler = networkName === "optimism" ? process.env.OP_UC_MW_SIM : process.env.BASE_UC_MW_SIM;
+  let ucHandler;
+  if (config.proofsEnabled === true) {
+    ucHandler = networkName === "optimism" ? process.env.OP_UC_MW : process.env.BASE_UC_MW;
+  } else if (config.proofsEnabled === false) {
+    ucHandler = networkName === "optimism" ? process.env.OP_UC_MW_SIM : process.env.BASE_UC_MW_SIM;
+  } else {
+    throw new Error("Invalid value for proofsEnabled in config.json");
+  }
   const constructorArgs = [ucHandler, ...(args ?? [])];
   
   // Deploy the contract
