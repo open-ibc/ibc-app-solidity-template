@@ -84,6 +84,7 @@ send-packet SOURCE UNIVERSAL='true':
         exit 1
     fi
 
+# Usage: just switch-client [universal=true]
 switch-client UNIVERSAL='true':
     #!/usr/bin/env sh
     echo "Switching between sim client and client with proofs..."
