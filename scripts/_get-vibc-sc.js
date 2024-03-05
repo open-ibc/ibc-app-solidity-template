@@ -1,6 +1,6 @@
 const {ethers} = require("hardhat");
 const {fetchABI} = require("./_helpers.js");
-const config = require("../config.json");
+const { getConfigPath } = require('./_helpers');
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
 const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
@@ -9,6 +9,8 @@ const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHE
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
 async function getDispatcher (network) {
+    const configPath = getConfigPath();
+    const config = require(configPath);
     const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
     const providerBase = new ethers.JsonRpcProvider(rpcBase);
 
@@ -36,6 +38,8 @@ async function getDispatcher (network) {
 }
 
 async function getUcHandler (network) {
+    const configPath = getConfigPath();
+    const config = require(configPath);
     const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
     const providerBase = new ethers.JsonRpcProvider(rpcBase);
 

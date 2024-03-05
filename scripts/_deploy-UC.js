@@ -5,13 +5,12 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
-const config = require(configPath);
-const argsObject = require('../arguments.js');
+const {getConfigPath} = require('./_helpers');
 
 async function main() {
+  const configPath = getConfigPath();
+  const config = require(configPath);
+  const argsObject = require('../arguments.js');
   const networkName = hre.network.name;
 
   // The config should have a deploy object with the network name as the key and contract type as the value

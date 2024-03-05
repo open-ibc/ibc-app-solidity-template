@@ -1,12 +1,18 @@
 const axios = require('axios');
 const hre = require('hardhat');
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
+const configPath = getConfigPath();
 const config = require(configPath);
 
-async function getIbcApp (network, isUniversal) {
-  const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
+function getConfigPath() {
+  const path = require('path');
+  const configRelativePath = process.env.CONFIG_PATH ? process.env.CONFIG_PATH : 'config.json';
+  console.log(`Using config file at ${configRelativePath}`);
+  const configPath = path.join(__dirname, '..' , configRelativePath);
+  return configPath;
+}
+
+async function getIbcApp (network) {
+  const ibcAppAddr = config.isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
   console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
   const contractType = config["deploy"][`${network}`];
 
@@ -75,4 +81,4 @@ function determineNewUcHandler (network) {
   return newUcHandler;
 }
 
-module.exports = { fetchABI, getIbcApp, areAddressesEqual, determineNewDispatcher, determineNewUcHandler };
+module.exports = { getConfigPath, fetchABI, getIbcApp, areAddressesEqual, determineNewDispatcher, determineNewUcHandler };

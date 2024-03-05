@@ -5,23 +5,20 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const { env } = require("process");
+const { getConfigPath } = require('./_helpers');
+
 const { areAddressesEqual, getIbcApp } = require("./_helpers");
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
 
 async function main() {
+    const configPath = getConfigPath();
     const config = require(configPath);
-
-
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
     // Get the Dispatcher from your IBC enabled contract and compare it with the stored value in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const ibcApp = await getIbcApp(networkName, false);
+    const ibcApp = await getIbcApp(networkName);
 
     // 2. Query your contract for the Dispatcher address
     const dispatcherAddr = await ibcApp.dispatcher();

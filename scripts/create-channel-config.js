@@ -1,22 +1,22 @@
 const { exec } = require("child_process");
 const fs = require("fs");
-const path = require("path");
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+const { getConfigPath } = require('./_helpers');
+
 
 const { listenForIbcChannelEvents } = require('./_events.js');
 const { getDispatcher } = require('./_get-vibc-sc.js');
 
 // Function to update config.json
 function updateConfig(network, channel, cpNetwork, cpChannel) {
+  const configPath = getConfigPath();
+  const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
   // Update the config object
-  config["sendPacket"][`${network}`]["channelId"] = channel;
-  config["sendPacket"][`${cpNetwork}`]["channelId"] = cpChannel;
+  upConfig["sendPacket"][`${network}`]["channelId"] = channel;
+  upConfig["sendPacket"][`${cpNetwork}`]["channelId"] = cpChannel;
 
   // Write the updated config back to the file
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
 }
 
 // Function to run the deploy script and capture output
@@ -60,9 +60,11 @@ function createChannelAndCapture() {
 }
 
 async function main() {
+  const configPath = getConfigPath();
+  const config = require(configPath);
   const opDispatcher = await getDispatcher("optimism");
   const baseDispatcher = await getDispatcher("base");
-  config["createChannel"]["srcChain"]
+
   listenForIbcChannelEvents(config["createChannel"]["srcChain"], true , opDispatcher);
   listenForIbcChannelEvents(config["createChannel"]["dstChain"], false, baseDispatcher);
 

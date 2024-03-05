@@ -21,7 +21,7 @@ compile COMPILER='hardhat':
     fi
 
 # Update the config.json file with the contract type for a specified chain/rollup
-# Usage: just set-contracts [chain] [contract_type]
+# Usage: just set-contracts [chain] [contract-type]
 set-contracts CHAIN CONTRACT_TYPE:
     echo "Updating config.json with contract type..."
     node scripts/set-contracts-config.js {{CHAIN}} {{CONTRACT_TYPE}}
@@ -29,25 +29,16 @@ set-contracts CHAIN CONTRACT_TYPE:
 # Deploy the contracts in the /contracts folder using Hardhat and updating the config.json file
 # The source and destination arguments are REQUIRED;
 # The universal argument is optional; if not provided, it defaults to "true".
-# Usage: just deploy [source] [destination] [universal]
-deploy SOURCE DESTINATION UNIVERSAL='true':
-    #!/usr/bin/env sh
-    if test "{{UNIVERSAL}}" = "true"; then
+# Usage: just deploy [source] [destination] [config-file]
+deploy SOURCE DESTINATION:
         echo "Deploying contracts with Hardhat..."
-        node scripts/deploy-config.js {{SOURCE}} {{DESTINATION}} true
-    elif test "{{UNIVERSAL}}" = "false"; then
-        echo "Deploying contracts with Hardhat..."
-        node scripts/deploy-config.js {{SOURCE}} {{DESTINATION}} false
-    else
-        echo "Unknown universal flag: {{UNIVERSAL}}"
-        exit 1
-    fi
+        node scripts/deploy-config.js {{SOURCE}} {{DESTINATION}}
 
 # Run the sanity check script to verify that configuration (.env) files match with deployed contracts' stored values
-# Usage: just sanity-check [universal=true]
-sanity-check UNIVERSAL='true':
+# Usage: just sanity-check
+sanity-check:
     echo "Running sanity check..."
-    node scripts/sanity-check.js {{UNIVERSAL}}
+    node scripts/sanity-check.js
 
 # Update the universal channel handler address in the on the IBC contract with that from the .env file
 # Usage: just update-uc-handler [chain]
@@ -71,18 +62,9 @@ create-channel:
 # The source argument is REQUIRED;
 # The universal argument is optional; if not provided, it defaults to "true".
 # Usage: just send-packet [source] [universal]
-send-packet SOURCE UNIVERSAL='true':
-    #!/usr/bin/env sh
-    if test "{{UNIVERSAL}}" = "true"; then
-        echo "Attempting to send a packet over the universal channel as defined in the config..."
-        npx hardhat run scripts/send-universal-packet.js --network {{SOURCE}}
-    elif test "{{UNIVERSAL}}" = "false"; then
-        echo "Attempting to send a packet over a custom channel as defined in the config..."
-        npx hardhat run scripts/send-packet.js --network {{SOURCE}}
-    else
-        echo "Unknown universal flag: {{UNIVERSAL}}"
-        exit 1
-    fi
+send-packet SOURCE:
+    echo "Sending a packet with the values from the config..."
+    node scripts/send-packet-config.js {{SOURCE}}
 
 switch-client UNIVERSAL='true':
     #!/usr/bin/env sh

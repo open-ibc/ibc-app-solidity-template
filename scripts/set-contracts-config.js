@@ -1,7 +1,5 @@
 const fs = require('fs');
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
+const { getConfigPath } = require('./_helpers.js');
 
 if(process.argv.length < 4) {
   console.error('Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType>');
@@ -12,6 +10,7 @@ if(process.argv.length < 4) {
 // $ node set-contracts-config.js optimism XCounterUC
 const chain = process.argv[2];
 const contractType = process.argv[3];
+const configPath = getConfigPath();
 
 // Function to update config.json
 function updateConfig(network, contractType) {
