@@ -7,11 +7,13 @@ const configRelativePath = process.env.CONFIG_PATH || "config.json";
 const configPath = path.join(__dirname, "..", configRelativePath);
 const config = require(configPath);
 
+function filterChannelEvents(portAddress) {
+    return (portAddress === config.createChannel["srcAddr"]) || (portAddress === config.createChannel["dstAddr"]);
+}
+
 function listenForIbcChannelEvents(network, source, dispatcher) {
     const explorerUrl = network === "optimism" ? explorerOpUrl : explorerBaseUrl;
-    const currentNetworkPortAddr = config.sendPacket[network].portAddr;
     console.log(`👂 Listening for IBC channel events on ${network}...`);
-
     dispatcher.on(
         "OpenIbcChannel",
         (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, counterpartyChannelId, event) => {
@@ -19,7 +21,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
             const counterpartyChannelIdString = hre.ethers.decodeBytes32String(counterpartyChannelId);
             const url = `${explorerUrl}tx/${txHash}`;
 
-            if (portAddress === currentNetworkPortAddr) {
+            if (filterChannelEvents(portAddress)) {
                 console.log(`
           -------------------------------------------`);
                 if (source) {
@@ -40,7 +42,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
           🦘 Connection Hops: ${connectionHops}
           🔀 Ordering: ${ordering}
           💰 Fee Enabled: ${feeEnabled}
-          #️⃣ Version: ${version}
+          #️⃣  Version: ${version}
           -------------------------------------------
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
@@ -59,7 +61,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
         const txHash = event.log.transactionHash;
         const channelIdString = hre.ethers.decodeBytes32String(channelId);
         const url = `${explorerUrl}tx/${txHash}`;
-        if (portAddress === currentNetworkPortAddr) {
+        if (filterChannelEvents(portAddress)) {
             console.log(`
           -------------------------------------------`);
             if (source) {
@@ -92,7 +94,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
         const txHash = event.log.transactionHash;
         const channelIdString = hre.ethers.decodeBytes32String(channelId);
         const url = `${explorerUrl}tx/${txHash}`;
-        if (portAddress === currentNetworkPortAddr) {
+        if (filterChannelEvents(portAddress)) {
             console.log(`
           -------------------------------------------
           🔗 🔒   IBC CHANNEL CLOSED !!!   🔗 🔒
@@ -110,10 +112,18 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
     });
 }
 
+function filterPacketEvents(portAddress, network) {
+    const sendPacketConfig = config.sendPacket;
+    const sendUniversalPacketConfig = config.sendUniversalPacket;
+
+    const filterCondition = 
+        portAddress === sendPacketConfig[network].portAddr ||
+        portAddress === sendUniversalPacketConfig[network].portAddr;
+    return filterCondition;
+}
+
 function listenForIbcPacketEvents(network, dispatcher) {
     const explorerUrl = network === "optimism" ? explorerOpUrl : explorerBaseUrl;
-    const srcNetworkPortAddr = config.sendPacket[network].portAddr;
-    const destNetworkPortAddr = config.sendPacket[network].destPortAddr;
     console.log(`👂 Listening for IBC packet events on ${network}...`);
 
     dispatcher.on("SendPacket", (sourcePortAddress, sourceChannelId, packet, sequence, timeoutTimestamp, event) => {
@@ -121,7 +131,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
         const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
         const url = `${explorerUrl}tx/${txHash}`;
 
-        if (sourcePortAddress === srcNetworkPortAddr) {
+        if (filterPacketEvents(sourcePortAddress, network)) {
             console.log(` 
           -------------------------------------------
           📦 📮   PACKET HAS BEEN SENT !!!   📦 📮
@@ -145,7 +155,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
         const destChannelIdString = hre.ethers.decodeBytes32String(destChannelId);
         const url = `${explorerUrl}tx/${txHash}`;
 
-        if (destPortAddress === destNetworkPortAddr) {
+        if (filterPacketEvents(destPortAddress,network)) {
             console.log(`
           -------------------------------------------
           📦 📬   PACKET IS RECEIVED !!!   📦 📬
@@ -167,7 +177,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
         const txHash = event.log.transactionHash;
         const writerChannelIdString = hre.ethers.decodeBytes32String(writerChannelId);
         const url = `${explorerUrl}tx/${txHash}`;
-        if (writerPortAddress === destNetworkPortAddr) {
+        if (filterPacketEvents(writerPortAddress, network)) {
             console.log(` 
           -------------------------------------------
           📦 📝   ACKNOWLEDGEMENT WRITTEN !!!   📦 📝
@@ -190,7 +200,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
         const txHash = event.log.transactionHash;
         const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
         const url = `${explorerUrl}tx/${txHash}`;
-        if (sourcePortAddress === srcNetworkPortAddr) {
+        if (filterPacketEvents(sourcePortAddress, network)) {
             console.log(`   
           -------------------------------------------
           📦 🏁   PACKET IS ACKNOWLEDGED !!!   📦 🏁
