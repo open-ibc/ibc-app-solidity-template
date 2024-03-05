@@ -30,10 +30,6 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
 
     constructor(address _middleware) IbcMwUser(_middleware) {}
 
-    function updateMiddleware(address _middleware) external onlyOwner {
-        mw = _middleware;
-    }
-
     /** 
      * @dev Implement a function to send a packet that calls the IbcUniversalPacketSender(mw).sendUniversalPacket function
      *      It has the following function handle:

@@ -17,7 +17,7 @@ async function main() {
     // Get the contract type from the config and get the contract
     const ibcApp = await getIbcApp(networkName, true);
 
-    await ibcApp.updateMiddleware(newUcHandler);
+    await ibcApp.setDefaultMw(newUcHandler);
     console.log(`Universal channel handler updated to ${newUcHandler}`);
 }
 

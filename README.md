@@ -100,7 +100,7 @@ Do this by running:
 
 ```bash
 # Usage: just set-contracts [chain] [contract_type]
-just set-contracts optimism XCounter
+just set-contracts optimism MyContract
 ```
 
 to deploy _MyContract_ artefact to the Optimism (Sepolia) chain.

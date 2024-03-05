@@ -15,7 +15,7 @@ const { getIbcApp } = require('./_helpers.js');
 
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {
-  const simAddOn = config.proofsEnabled ? '-proofs' :'-sim';
+  const simAddOn = config.proofsEnabled ? '-proofs-1' :'-sim';
   const suffix = address.slice(2);
   return `${portPrefix}${simAddOn}.${suffix}`;
 }
