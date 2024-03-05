@@ -101,8 +101,6 @@ Soon...
 
 <!-- TODO: add how to check for the packet on explorer or set up an event listener -->
 
-Check if the packet got through on the [Polymer IBC explorer](https://explorer.prod.testnet.polymer.zone/packets).
-
 ## 💻 Develop your custom application
 
 The main work for you as a developer is to develop the contracts that make up your cross-chain logic.
