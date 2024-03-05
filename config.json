@@ -1,8 +1,8 @@
 {
   "proofsEnabled": false,
   "deploy": {
-    "optimism": "XCounterUC",
-    "base": "XCounterUC"
+    "optimism": "XCounter",
+    "base": "XCounter"
   },
   "createChannel": {
     "srcChain": "optimism",
@@ -10,7 +10,7 @@
     "dstChain": "base",
     "dstAddr": "0x456",
     "version": "1.0",
-    "ordering": 1,
+    "ordering": 0,
     "fees": false
   },
   "sendPacket": {

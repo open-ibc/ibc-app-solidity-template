@@ -22,7 +22,14 @@ async function main() {
   }
 
   // TODO: update to switch statement when supporting more networks
-  const dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER_SIM : process.env.BASE_DISPATCHER_SIM;
+  let dispatcherAddr;
+  if (config.proofsEnabled === "true") {
+    dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER : process.env.BASE_DISPATCHER;
+  } else if (config.proofsEnabled === "false") {
+    dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER_SIM : process.env.BASE_DISPATCHER_SIM;
+  } else { 
+    throw new Error("Invalid value for proofsEnabled in config.json");
+  }
   const constructorArgs = [dispatcherAddr, ...(args ?? [])];
   
   // Deploy the contract
