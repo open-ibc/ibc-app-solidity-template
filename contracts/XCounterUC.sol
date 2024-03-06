@@ -75,13 +75,9 @@ contract XCounterUC is UniversalChanIbcApp {
         override
         onlyIbcMw
     {
-        // verify packet's destPortAddr is the ack's first encoded address. assumes the packet's destPortAddr is the address of the contract that sent the packet
-        // check onRecvUniversalPacket for the encoded ackpacket data
-        // require(ack.data.length >= 20, "ack data too short");
-        // address ackSender = address(bytes20(ack.data[0:20]));
-        // require(IbcUtils.toAddress(packet.destPortAddr) == ackSender, "ack address mismatch");
         ackPackets.push(UcAckWithChannel(channelId, packet, ack));
 
+        // decode the counter from the ack packet
         (uint64 _counter) = abi.decode(ack.data, (uint64));
 
         if (_counter != counter) {

@@ -53,7 +53,9 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         UniversalPacket calldata packet
     ) external virtual onlyIbcMw returns (AckPacket memory ackPacket) {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
-        // do logic
+        // 1. decode the packet.data
+        // 2. do logic
+        // 3. encode the ack packet (encoding format should be agreed between the two applications)
         // below is an example, the actual ackpacket data should be implemented by the contract developer
         return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
     }
@@ -71,13 +73,9 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         UniversalPacket memory packet,
         AckPacket calldata ack
     ) external virtual onlyIbcMw {
-        // verify packet's destPortAddr is the ack's first encoded address. assumes the packet's destPortAddr is the address of the contract that sent the packet
-        // check onRecvUniversalPacket for the encoded ackpacket data
-        require(ack.data.length >= 20, 'ack data too short');
-        address ackSender = address(bytes20(ack.data[0:20]));
-        require(IbcUtils.toAddress(packet.destPortAddr) == ackSender, 'ack address mismatch');
         ackPackets.push(UcAckWithChannel(channelId, packet, ack));
-        // do logic
+        // 1. decode the ack.data
+        // 2. do logic
     }
 
     /**
