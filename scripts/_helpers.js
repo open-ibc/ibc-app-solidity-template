@@ -22,6 +22,10 @@ async function fetchABI(explorerUrl, contractAddress) {
 }
 
 function areAddressesEqual(address1, address2) {
+  // Validate input addresses
+  if (!hre.ethers.utils.isAddress(address1) || !hre.ethers.utils.isAddress(address2)) {
+    throw new Error('One or both addresses are not valid Ethereum addresses');
+  }
   // Normalize addresses to checksummed format
 
   const checksumAddress1 = hre.ethers.getAddress(address1);
