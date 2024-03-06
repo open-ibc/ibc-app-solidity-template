@@ -7,7 +7,8 @@
 const hre = require("hardhat");
 const path = require('path');
 const { env } = require("process");
-const { areAddressesEqual, getIbcApp } = require("./_helpers");
+const { areAddressesEqual } = require("./_helpers");
+const { getIbcApp } = require("./_vibc-helpers");
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 

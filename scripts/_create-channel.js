@@ -11,7 +11,7 @@ const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const chanConfig = config.createChannel;
 const ibcConfig = require('../ibc.json');
-const { getIbcApp } = require('./_helpers.js');
+const { getIbcApp } = require('./_vibc-helpers.js');
 
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {

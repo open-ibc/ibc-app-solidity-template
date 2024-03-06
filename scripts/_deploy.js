@@ -10,6 +10,7 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const argsObject = require('../arguments.js');
+const { getDispatcherAddress } = require('./_vibc-helpers.js');
 
 async function main() {
   const networkName = hre.network.name;
@@ -22,14 +23,7 @@ async function main() {
   }
 
   // TODO: update to switch statement when supporting more networks
-  let dispatcherAddr;
-  if (config.proofsEnabled === true) {
-    dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER : process.env.BASE_DISPATCHER;
-  } else if (config.proofsEnabled === false) {
-    dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER_SIM : process.env.BASE_DISPATCHER_SIM;
-  } else { 
-    throw new Error("Invalid value for proofsEnabled in config.json");
-  }
+const dispatcherAddr = getDispatcherAddress(networkName);
   const constructorArgs = [dispatcherAddr, ...(args ?? [])];
   
   // Deploy the contract
