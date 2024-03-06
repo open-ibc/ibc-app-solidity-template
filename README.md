@@ -68,7 +68,7 @@ Run the following command to go through a full E2E sweep of the project:
 
 ```bash
 # Usage: just do-it
-just do it
+just do-it
 ```
 
 It does the following under the hood:
