@@ -5,14 +5,14 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const { determineNewDispatcher, getIbcApp } = require("./_helpers");
+const { getDispatcherAddr, getIbcApp } = require("./_vibc-helpers");
 
 async function main() {
     await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
     // Determine the new dispatcher, based on the network.
-    const newDispatcher = determineNewDispatcher(networkName);
+    const newDispatcher = getDispatcherAddr(networkName);
 
     // Get the contract type from the config and get the contract
     const ibcApp = await getIbcApp(networkName, false);

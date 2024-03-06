@@ -10,6 +10,7 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const argsObject = require('../arguments.js');
+const { getUcHandlerAddress } = require('./_vibc-helpers.js');
 
 async function main() {
   const networkName = hre.network.name;
@@ -22,15 +23,8 @@ async function main() {
  }
 
   // TODO: update to switch statement when supporting more networks
-  let ucHandler;
-  if (config.proofsEnabled === true) {
-    ucHandler = networkName === "optimism" ? process.env.OP_UC_MW : process.env.BASE_UC_MW;
-  } else if (config.proofsEnabled === false) {
-    ucHandler = networkName === "optimism" ? process.env.OP_UC_MW_SIM : process.env.BASE_UC_MW_SIM;
-  } else {
-    throw new Error("Invalid value for proofsEnabled in config.json");
-  }
-  const constructorArgs = [ucHandler, ...(args ?? [])];
+  const ucHandlerAddr = getUcHandlerAddress(networkName);
+  const constructorArgs = [ucHandlerAddr, ...(args ?? [])];
   
   // Deploy the contract
   // NOTE: when adding additional args to the constructor, add them to the array as well

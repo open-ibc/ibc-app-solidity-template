@@ -5,18 +5,6 @@ const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 
-async function getIbcApp (network, isUniversal) {
-  const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
-  console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
-  const contractType = config["deploy"][`${network}`];
-
-  const ibcApp = await hre.ethers.getContractAt(
-      `${contractType}`,
-      ibcAppAddr
-  );
-  return ibcApp;
-}
-
 async function fetchABI(explorerUrl, contractAddress) {
   try {
     const response = await axios.get(`${explorerUrl}api/v2/smart-contracts/${contractAddress}`);
@@ -44,35 +32,5 @@ function areAddressesEqual(address1, address2) {
   return areEqual;
 }
 
-function determineNewDispatcher (network) {
-  const proofsEnabled = config.proofsEnabled === true;
 
-  let newDispatcher;
-  if (network === "optimism") {
-      newDispatcher = proofsEnabled ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-  } else if (network === "base") {
-      newDispatcher = proofsEnabled ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-  } else {
-    throw new Error("Invalid network name");
-  }
-
-  return newDispatcher;
-
-}
-
-function determineNewUcHandler (network) {
-  const proofsEnabled = config.proofsEnabled === true;
-
-  let newUcHandler;
-  if (network === "optimism") {
-      newUcHandler = proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
-  } else if (network === "base") {
-      newUcHandler = proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
-  } else {
-    throw new Error("Invalid network name");
-  }
-
-  return newUcHandler;
-}
-
-module.exports = { fetchABI, getIbcApp, areAddressesEqual, determineNewDispatcher, determineNewUcHandler };
+module.exports = { fetchABI, areAddressesEqual };

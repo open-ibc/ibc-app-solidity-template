@@ -9,7 +9,8 @@ const path = require('path');
 const configRelativePath = process.env.CONFIG_PATH || 'config.json';
 const configPath = path.join(__dirname, '..' , configRelativePath);
 const { getUcHandler} = require('./_get-vibc-sc.js');
-const { areAddressesEqual, getIbcApp } = require('./_helpers.js');
+const { areAddressesEqual } = require('./_helpers.js');
+const { getIbcApp } = require("./_vibc-helpers.js");
 
 async function main() {
     const config = require(configPath);

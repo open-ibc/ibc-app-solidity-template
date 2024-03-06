@@ -8,6 +8,18 @@ const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
 const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
+async function getIbcApp (network, isUniversal) {
+    const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
+    console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
+    const contractType = config["deploy"][`${network}`];
+  
+    const ibcApp = await hre.ethers.getContractAt(
+        `${contractType}`,
+        ibcAppAddr
+    );
+    return ibcApp;
+  }
+
 function getDispatcherAddress(network) {
     let dispatcherAddr;
     if (network === "optimism") {
@@ -86,4 +98,4 @@ async function getUcHandler (network) {
     return ucHandler;
 }
 
-module.exports = { getDispatcherAddress, getDispatcher, getUcHandlerAddress, getUcHandler };
+module.exports = { getIbcApp, getDispatcherAddress, getDispatcher, getUcHandlerAddress, getUcHandler };
