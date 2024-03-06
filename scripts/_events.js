@@ -1,6 +1,7 @@
 const hre = require("hardhat");
 const path = require("path");
 const { areAddressesEqual } = require("./_helpers.js");
+const { getUcHandlerAddress } = require("./_get-vibc-sc.js");
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
 const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
@@ -115,14 +116,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
 
 function filterPacketEvents(portAddress, network) {
     const sendPacketConfig = config.sendPacket;
-    let ucHandlerAddr;
-    if (network === "optimism") {
-        ucHandlerAddr = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
-    } else if (network === "base") {
-        ucHandlerAddr = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
-    } else {
-        throw new Error("Invalid network");
-    }
+    const ucHandlerAddr = getUcHandlerAddress(network);
     return areAddressesEqual(portAddress, sendPacketConfig[`${network}`].portAddr) || areAddressesEqual(portAddress, ucHandlerAddr);
 }
 

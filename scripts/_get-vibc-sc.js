@@ -8,6 +8,18 @@ const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
 const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
+function getDispatcherAddress(network) {
+    let dispatcherAddr;
+    if (network === "optimism") {
+        dispatcherAddr = config.proofsEnabled ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
+    } else if (network === "base") {
+        dispatcherAddr = config.proofsEnabled ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
+    } else {
+        throw new Error("Invalid network");
+    }
+    return dispatcherAddr;
+}
+
 async function getDispatcher (network) {
     const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
     const providerBase = new ethers.JsonRpcProvider(rpcBase);
@@ -33,6 +45,18 @@ async function getDispatcher (network) {
     }
 
     return dispatcher;
+}
+
+function getUcHandlerAddress(network) {
+    let ucHandlerAddr;
+    if (network === "optimism") {
+        ucHandlerAddr = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+    } else if (network === "base") {
+        ucHandlerAddr = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+    } else {
+        throw new Error("Invalid network");
+    }
+    return ucHandlerAddr;
 }
 
 async function getUcHandler (network) {
@@ -62,4 +86,4 @@ async function getUcHandler (network) {
     return ucHandler;
 }
 
-module.exports = { getDispatcher, getUcHandler };
+module.exports = { getDispatcherAddress, getDispatcher, getUcHandlerAddress, getUcHandler };
