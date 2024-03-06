@@ -1,5 +1,6 @@
 const hre = require("hardhat");
 const path = require("path");
+const { areAddressesEqual } = require("./_helpers.js");
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
 const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
@@ -8,7 +9,7 @@ const configPath = path.join(__dirname, "..", configRelativePath);
 const config = require(configPath);
 
 function filterChannelEvents(portAddress) {
-    return (portAddress === config.createChannel["srcAddr"]) || (portAddress === config.createChannel["dstAddr"]);
+    return areAddressesEqual(portAddress, config.createChannel["srcAddr"]) || areAddressesEqual(portAddress, config.createChannel["dstAddr"]);
 }
 
 function listenForIbcChannelEvents(network, source, dispatcher) {
@@ -114,12 +115,15 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
 
 function filterPacketEvents(portAddress, network) {
     const sendPacketConfig = config.sendPacket;
-    const sendUniversalPacketConfig = config.sendUniversalPacket;
-
-    const filterCondition = 
-        portAddress === sendPacketConfig[network].portAddr ||
-        portAddress === sendUniversalPacketConfig[network].portAddr;
-    return filterCondition;
+    let ucHandlerAddr;
+    if (network === "optimism") {
+        ucHandlerAddr = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+    } else if (network === "base") {
+        ucHandlerAddr = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+    } else {
+        throw new Error("Invalid network");
+    }
+    return areAddressesEqual(portAddress, sendPacketConfig[`${network}`].portAddr) || areAddressesEqual(portAddress, ucHandlerAddr);
 }
 
 function listenForIbcPacketEvents(network, dispatcher) {
