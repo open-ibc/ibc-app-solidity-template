@@ -6,8 +6,10 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 const { getConfigPath } = require('./_helpers');
+const { areAddressesEqual } = require("./_helpers");
+const { getIbcApp } = require("./_vibc-helpers");
 
-const { areAddressesEqual, getIbcApp } = require("./_helpers");
+
 
 async function main() {
     const configPath = getConfigPath();

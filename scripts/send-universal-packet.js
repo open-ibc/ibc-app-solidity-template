@@ -11,9 +11,8 @@ const configPath = path.join(__dirname, '..' , configRelativePath);
 const config = require(configPath);
 const sendConfig = config.sendUniversalPacket;
 
-const { getIbcApp } = require('./_helpers.js');
+const { getIbcApp, getDispatcher } = require('./_vibc-helpers.js');
 const { listenForIbcPacketEvents } = require('./_events.js');
-const { getDispatcher } = require('./_get-vibc-sc.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();

@@ -6,6 +6,7 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 const {getConfigPath} = require('./_helpers');
+const { getUcHandlerAddress } = require('./_vibc-helpers.js');
 
 async function main() {
   const configPath = getConfigPath();
@@ -21,8 +22,8 @@ async function main() {
  }
 
   // TODO: update to switch statement when supporting more networks
-  const ucHandler = networkName === "optimism" ? process.env.OP_UC_MW_SIM : process.env.BASE_UC_MW_SIM;
-  const constructorArgs = [ucHandler, ...(args ?? [])];
+  const ucHandlerAddr = getUcHandlerAddress(networkName);
+  const constructorArgs = [ucHandlerAddr, ...(args ?? [])];
   
   // Deploy the contract
   // NOTE: when adding additional args to the constructor, add them to the array as well

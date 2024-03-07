@@ -5,14 +5,14 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const { determineNewUcHandler, getIbcApp } = require("./_helpers");
+const { getUcHandlerAddress, getIbcApp } = require("./_vibc-helpers");
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
     // Determine the new universal channel handler, based on the network.
-    const newUcHandler = determineNewUcHandler(networkName);
+    const newUcHandler = getUcHandlerAddress(networkName);
 
     // Get the contract type from the config and get the contract
     const ibcApp = await getIbcApp(networkName, true);

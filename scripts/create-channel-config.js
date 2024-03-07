@@ -4,7 +4,7 @@ const { getConfigPath } = require('./_helpers');
 
 
 const { listenForIbcChannelEvents } = require('./_events.js');
-const { getDispatcher } = require('./_get-vibc-sc.js');
+const { getDispatcher } = require('./_vibc-helpers.js');
 
 // Function to update config.json
 function updateConfig(network, channel, cpNetwork, cpChannel) {

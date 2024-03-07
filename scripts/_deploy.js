@@ -5,8 +5,8 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
 const {getConfigPath} = require('./_helpers');
+const { getDispatcherAddress } = require('./_vibc-helpers.js');
 
 async function main() {
   const configPath = getConfigPath();
@@ -23,7 +23,7 @@ async function main() {
   }
 
   // TODO: update to switch statement when supporting more networks
-  const dispatcherAddr = networkName === "optimism" ? process.env.OP_DISPATCHER_SIM : process.env.BASE_DISPATCHER_SIM;
+const dispatcherAddr = getDispatcherAddress(networkName);
   const constructorArgs = [dispatcherAddr, ...(args ?? [])];
   
   // Deploy the contract

@@ -66,6 +66,7 @@ send-packet SOURCE:
     echo "Sending a packet with the values from the config..."
     node scripts/send-packet-config.js {{SOURCE}}
 
+# Usage: just switch-client [universal=true]
 switch-client UNIVERSAL='true':
     #!/usr/bin/env sh
     echo "Switching between sim client and client with proofs..."

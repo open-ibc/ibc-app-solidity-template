@@ -1,7 +1,5 @@
 const axios = require('axios');
 const hre = require('hardhat');
-const configPath = getConfigPath();
-const config = require(configPath);
 
 function getConfigPath() {
   const path = require('path');
@@ -9,18 +7,6 @@ function getConfigPath() {
   console.log(`Using config file at ${configRelativePath}`);
   const configPath = path.join(__dirname, '..' , configRelativePath);
   return configPath;
-}
-
-async function getIbcApp (network) {
-  const ibcAppAddr = config.isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
-  console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
-  const contractType = config["deploy"][`${network}`];
-
-  const ibcApp = await hre.ethers.getContractAt(
-      `${contractType}`,
-      ibcAppAddr
-  );
-  return ibcApp;
 }
 
 async function fetchABI(explorerUrl, contractAddress) {
@@ -40,6 +26,10 @@ async function fetchABI(explorerUrl, contractAddress) {
 }
 
 function areAddressesEqual(address1, address2) {
+  // Validate input addresses
+  if (!hre.ethers.isAddress(address1) || !hre.ethers.isAddress(address2)) {
+    throw new Error('One or both addresses are not valid Ethereum addresses');
+  }
   // Normalize addresses to checksummed format
 
   const checksumAddress1 = hre.ethers.getAddress(address1);
@@ -50,35 +40,5 @@ function areAddressesEqual(address1, address2) {
   return areEqual;
 }
 
-function determineNewDispatcher (network) {
-  const proofsEnabled = config.proofsEnabled === true;
 
-  let newDispatcher;
-  if (network === "optimism") {
-      newDispatcher = proofsEnabled ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-  } else if (network === "base") {
-      newDispatcher = proofsEnabled ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-  } else {
-    throw new Error("Invalid network name");
-  }
-
-  return newDispatcher;
-
-}
-
-function determineNewUcHandler (network) {
-  const proofsEnabled = config.proofsEnabled === true;
-
-  let newUcHandler;
-  if (network === "optimism") {
-      newUcHandler = proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
-  } else if (network === "base") {
-      newUcHandler = proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
-  } else {
-    throw new Error("Invalid network name");
-  }
-
-  return newUcHandler;
-}
-
-module.exports = { getConfigPath, fetchABI, getIbcApp, areAddressesEqual, determineNewDispatcher, determineNewUcHandler };
+module.exports = { getConfigPath, fetchABI, areAddressesEqual };

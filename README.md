@@ -19,6 +19,10 @@ The repo is **compatible with both Hardhat and Foundry** development environment
 - Have [Foundry](https://book.getfoundry.sh/getting-started/installation) installed (Hardhat will be installed when running `npm install`)
 - Have [just](https://just.systems/man/en/chapter_1.html) installed (recommended but not strictly necessary)
 
+You'll need some API keys from third party's:
+- [Optimism Sepolia](https://optimism-sepolia.blockscout.com/account/api-key) and [Base Sepolia](https://base-sepolia.blockscout.com/account/api-key) Blockscout Explorer API keys
+- Have an [Alchemy API key](https://docs.alchemy.com/docs/alchemy-quickstart-guide) for OP and Base Sepolia
+
 Some basic knowledge of all of these tools is also required, although the details are abstracted away for basic usage.
 
 ## 🧰 Install dependencies
@@ -56,19 +60,46 @@ The account associated with your private key must have both Base Sepolia and Opt
 
 The project comes with a built-in dummy application called x-counter. You can find the contracts in the `/contracts` directory as XCounterUC.sol and XCounter.sol (the former when using the universal channel, the latter when creating a custom IBC channel).
 
-The default setup (`.env`, `config.json`) are preconfigured to try to send packets over the universal channel.
+### Custom IBC channel
 
-Run the following as a sanity check:
+The default setup (`.env`, `config.json`) are preconfigured to try to send packets over a custom channel.
+
+Run the following command to go through a full E2E sweep of the project:
 
 ```bash
-# Usage: just send-packet [source] [universal]
-# Source can be either 'optimism' or 'base', universal is set to true
-just send-packet optimism true
+# Usage: just do-it
+just do-it
 ```
 
-<!-- TODO: add how to check for the packet on explorer or set up an event listener -->
+It does the following under the hood:
+```bash
+# Run the full E2E flow by setting the contracts, deploying them, creating a channel, and sending a packet
+# Usage: just do-it
+do-it:
+    echo "Running the full E2E flow..."
+    just set-contracts optimism XCounter && just set-contracts base XCounter
+    just deploy optimism base false
+    just create-channel
+    just send-packet optimism false
+    echo "You've done it!"
+```
 
-Check if the packet got through on the [Polymer IBC explorer](https://explorer.prod.testnet.polymer.zone/packets).
+It makes sure you've got the correct contracts set, deploys new instances, creates a channel and sends a packet over the channel once created.
+
+> Note: by default the sim-client is used to improve latency. This is useful for iterative development and testing BUT also insecure as it involves no proofs. Make sure to move to the client **with proofs** by running another just command...
+
+```bash
+# Usage: just switch-client [universal=true]
+just switch-client false
+```
+
+Check if the packet got through on the [Polymer IBC explorer](https://sepolia.polymer.zone/packets).
+
+### Universal channels
+
+Soon...
+
+<!-- TODO: add how to check for the packet on explorer or set up an event listener -->
 
 ## 💻 Develop your custom application
 
@@ -123,6 +154,15 @@ for an application that uses custom channels.
 
 The script will take the output of the deployment and update the config file with all the relevant information.
 
+Before moving on, you'll want to check if the variables in your .env and config files line up with what is stored in the actual deployed contracts... especially when you're actively playing around with different configuration files and contracts.
+
+To do a sanity check, run:
+```bash
+# Usage: just sanity-check [universal=true]
+just sanity-check false
+```
+Pick false for custom channels and true (or leave empty) for universal channels.
+
 ### Create a channel
 
 If you're **using universal channels, channel creation is not required**. Your contract will send and receive packet data from the Universal channel handler contract which already has a universal channel to send packets over. You can directly proceed to sending (universal) packets in that case.
@@ -157,6 +197,17 @@ just send-packet optimism false
 ```
 
 to send a packet over a **custom channel**. You can pick either optimism or base to send the packet from.
+
+## Verify, don't trust
+
+> Note: by default the sim-client is used to improve latency. This is useful for iterative development and testing BUT also insecure as it involves no proofs. Make sure to move to the client **with proofs** by running another just command...
+
+```bash
+# Usage: just switch-client [universal=true]
+just switch-client false
+```
+
+This will use the op-stack client with proofs, making sure that the relayer is proving what is being submitted every step along the way, ensuring there's no trust assumption on the relayer.
 
 ## 🦾 Advanced usage
 
