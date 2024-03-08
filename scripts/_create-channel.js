@@ -70,7 +70,7 @@ async function main() {
   );
 
   // Wait for the channel handshake to complete
-  await new Promise((r) => setTimeout(r, 60000));
+  await new Promise((r) => setTimeout(r, 90000));
 
   // Get the connected channels and print the new channel along with its counterparty
   const connectedChannelsAfter = await ibcApp.getConnectedChannels();

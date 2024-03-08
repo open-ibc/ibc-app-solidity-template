@@ -73,7 +73,7 @@ switch-client:
 # Usage: just do-it
 do-it:
     echo "Running the full E2E flow..."
-    just set-contracts optimism XCounter && just set-contracts base XCounter
+    just set-contracts optimism XCounter false && just set-contracts base XCounter false
     just deploy optimism base
     just sanity-check
     just create-channel

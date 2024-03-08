@@ -82,8 +82,7 @@ function areAddressesEqual(address1, address2) {
 
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {
-  const configPath = getConfigPath();
-  const config = require(configPath);
+  const config = require(getConfigPath());
   const simAddOn = config.proofsEnabled ? '-proofs-1' :'-sim';
   const suffix = address.slice(2);
   return `${portPrefix}${simAddOn}.${suffix}`;

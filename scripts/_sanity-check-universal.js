@@ -9,8 +9,7 @@ const { getConfigPath, areAddressesEqual } = require('./_helpers.js');
 const { getIbcApp, getUcHandler } = require("./_vibc-helpers.js");
 
 async function main() {
-    const configPath = getConfigPath();
-    const config = require(configPath);
+    const config = require(getConfigPath());
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 

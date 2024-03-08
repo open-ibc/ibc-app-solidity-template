@@ -23,6 +23,7 @@ async function getIbcApp (network, isUniversal) {
   }
 
 function getDispatcherAddress(network) {
+    const config = require(getConfigPath());
     let dispatcherAddr;
     if (network === "optimism") {
         dispatcherAddr = config.proofsEnabled ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
@@ -35,8 +36,7 @@ function getDispatcherAddress(network) {
 }
 
 async function getDispatcher (network) {
-    const configPath = getConfigPath();
-    const config = require(configPath);
+    const config = require(getConfigPath());
     const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
     const providerBase = new ethers.JsonRpcProvider(rpcBase);
 
@@ -77,8 +77,7 @@ function getUcHandlerAddress(network) {
 }
 
 async function getUcHandler (network) {
-    const configPath = getConfigPath();
-    const config = require(configPath);
+    const config = require(getConfigPath());
     const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
     const providerBase = new ethers.JsonRpcProvider(rpcBase);
 
