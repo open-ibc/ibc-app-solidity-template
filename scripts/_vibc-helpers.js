@@ -8,10 +8,10 @@ const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
 const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
-async function getIbcApp (network, isUniversal) {
+async function getIbcApp (network) {
     const config = require(getConfigPath());
     
-    const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
+    const ibcAppAddr = config.isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
     console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
     const contractType = config["deploy"][`${network}`];
   

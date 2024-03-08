@@ -37,7 +37,7 @@ async function main() {
   const networkName = hre.network.name;
   
   // Get the contract type from the config and get the contract
-  const ibcApp = await getIbcApp(networkName, false);
+  const ibcApp = await getIbcApp(networkName);
   const connectedChannelsBefore = await ibcApp.getConnectedChannels();
 
   // Prepare the arguments to create the channel

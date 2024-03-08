@@ -18,7 +18,7 @@ async function main() {
         const newDispatcher = getDispatcherAddress(networkName);
 
         // Get the contract type from the config and get the contract
-        const ibcApp = await getIbcApp(networkName, false);
+        const ibcApp = await getIbcApp(networkName);
         await ibcApp.updateDispatcher(newDispatcher);
         console.log(`Dispatcher updated to ${newDispatcher}`);
     } else if (config.isUniversal) {
