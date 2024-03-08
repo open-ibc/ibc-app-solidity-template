@@ -1,14 +1,21 @@
 const { exec } = require("child_process");
-const {getConfigPath} = require('./_helpers.js');
+const {getConfigPath, getWhitelistedNetworks} = require('./_helpers.js');
 const { setupIbcPacketEventListener } = require('./_events.js');
 
 const source = process.argv[2];
-if (!(source === "optimism" || source === "base")) {
-  console.error("Please provide a valid source chain");
+if (!source) {
+  console.error('Usage: node send-packet-config.js <source_network>');
   process.exit(1);
 }
 
 function runSendPacket(config) {
+  const allowedNetworks = getWhitelistedNetworks();
+  if (!allowedNetworks.includes(source)) {
+    console.error("Please provide a valid source chain");
+    process.exit(1);
+  }
+
+  // Run the send-packet or send-universal-packet script based on the config
   if (config.isUniversal) {
     exec(`npx hardhat run scripts/send-universal-packet.js --network ${source}`, (error, stdout, stderr) => {
         if (error) {

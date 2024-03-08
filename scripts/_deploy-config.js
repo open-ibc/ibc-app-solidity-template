@@ -1,5 +1,5 @@
 const { exec } = require("child_process");
-const { updateConfigDeploy } = require('./_helpers');
+const { updateConfigDeploy, getWhitelistedNetworks } = require('./_helpers');
 
 // Run script with source and destination networks as arguments
 // Example: 
@@ -14,6 +14,11 @@ if (!source || !destination) {
 
 // Function to run the deploy script and capture output
 function deployAndCapture(network, isSource) {
+  const allowedNetworks = getWhitelistedNetworks();
+  if (!allowedNetworks.includes(network)) {
+    console.error('Invalid network. Please provide a valid network as an argument.');
+    return;
+  }
   exec(`npx hardhat run scripts/deploy.js --network ${network}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);

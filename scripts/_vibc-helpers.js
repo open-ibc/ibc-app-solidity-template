@@ -9,17 +9,20 @@ const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHE
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
 async function getIbcApp (network) {
-    const config = require(getConfigPath());
-    
-    const ibcAppAddr = config.isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
-    console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
-    const contractType = config["deploy"][`${network}`];
-  
-    const ibcApp = await hre.ethers.getContractAt(
-        `${contractType}`,
-        ibcAppAddr
-    );
-    return ibcApp;
+    try {
+        const config = require(getConfigPath());
+        const ibcAppAddr = config.isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
+        console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
+        const contractType = config["deploy"][`${network}`];
+        const ibcApp = await ethers.getContractAt(
+            `${contractType}`,
+            ibcAppAddr
+        );
+        return ibcApp;
+    } catch (error) {
+        console.log(`Error getting IBC app: ${error}`);
+        return;
+    }
   }
 
 function getDispatcherAddress(network) {
@@ -43,24 +46,28 @@ async function getDispatcher (network) {
     let explorerUrl;
     let dispatcher;
     let dispatcherAddress;
+    try {
+        if (network === "optimism") {
+            explorerUrl = explorerOpUrl;
+            dispatcherAddress = config.proofsEnabled ? dispatcherAddress = process.env.OP_DISPATCHER : dispatcherAddress = process.env.OP_DISPATCHER_SIM;
 
-    if (network === "optimism") {
-        explorerUrl = explorerOpUrl;
-        dispatcherAddress = config.proofsEnabled ? dispatcherAddress = process.env.OP_DISPATCHER : dispatcherAddress = process.env.OP_DISPATCHER_SIM;
+            const opDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
+            dispatcher = new ethers.Contract(dispatcherAddress, opDispatcherAbi, providerOptimism);
+        } else if (network === "base") {
+            explorerUrl = explorerBaseUrl;
+            dispatcherAddress = config.proofsEnabled ? dispatcherAddress = process.env.BASE_DISPATCHER : dispatcherAddress = process.env.BASE_DISPATCHER_SIM;
 
-        const opDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
-        dispatcher = new ethers.Contract(dispatcherAddress, opDispatcherAbi, providerOptimism);
-    } else if (network === "base") {
-        explorerUrl = explorerBaseUrl;
-        dispatcherAddress = config.proofsEnabled ? dispatcherAddress = process.env.BASE_DISPATCHER : dispatcherAddress = process.env.BASE_DISPATCHER_SIM;
-
-        const baseDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
-        dispatcher = new ethers.Contract(dispatcherAddress, baseDispatcherAbi, providerBase);
-    } else {
-        throw new error(`Invalid network: ${network}`);
+            const baseDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
+            dispatcher = new ethers.Contract(dispatcherAddress, baseDispatcherAbi, providerBase);
+        } else {
+            throw new error(`Invalid network: ${network}`);
+        }
+        return dispatcher;
     }
-
-    return dispatcher;
+    catch (error) {
+        console.log(`Error getting dispatcher: ${error}`);
+        return;
+    }
 }
 
 function getUcHandlerAddress(network) {
@@ -85,23 +92,28 @@ async function getUcHandler (network) {
     let ucHandler;
     let ucHandlerAddress;
 
-    if (network === "optimism") {
-        explorerUrl = explorerOpUrl;
-        ucHandlerAddress = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+    try {
+        if (network === "optimism") {
+            explorerUrl = explorerOpUrl;
+            ucHandlerAddress = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
 
-        const opUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
-        ucHandler = new ethers.Contract(ucHandlerAddress, opUcHandlerAbi, providerOptimism);
-    } else if (network === "base") {
-        explorerUrl = explorerBaseUrl;
-        ucHandlerAddress = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+            const opUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+            ucHandler = new ethers.Contract(ucHandlerAddress, opUcHandlerAbi, providerOptimism);
+        } else if (network === "base") {
+            explorerUrl = explorerBaseUrl;
+            ucHandlerAddress = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
 
-        const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
-        ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
-    } else {
-        throw new error(`Invalid network: ${network}`);
+            const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+            ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
+        } else {
+            throw new error(`Invalid network: ${network}`);
+        }
+
+        return ucHandler;
+    } catch (error) {
+        console.log(`Error getting ucHandler: ${error}`);
+        return;
     }
-
-    return ucHandler;
 }
 
 module.exports = { getIbcApp, getDispatcherAddress, getDispatcher, getUcHandlerAddress, getUcHandler };

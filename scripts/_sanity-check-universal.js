@@ -19,17 +19,28 @@ async function main() {
     const ibcApp = await getIbcApp(networkName);
 
     // 2. Query your app for the Universal Channel Mw address stored
-    const ucHandlerAddr = await ibcApp.mw();
+    let ucHandlerAddr;
+    try {
+        ucHandlerAddr = await ibcApp.mw();
+    } catch (error) {
+        console.log(`Error getting Universal Channel Mw address from IBC app: ${error}`);
+        return;
+    }
 
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;
     let envUcHandlerAddr;
-    if (networkName === "optimism") {
-        envUcHandlerAddr = config.proofsEnabled === true ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
-        sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
-    } else if (networkName === "base") {
-        envUcHandlerAddr = config.proofsEnabled === true ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
-        sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
+    try {
+        if (networkName === "optimism") {
+            envUcHandlerAddr = config.proofsEnabled === true ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
+            sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
+        } else if (networkName === "base") {
+            envUcHandlerAddr = config.proofsEnabled === true ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
+            sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
+        }
+    } catch (error) {
+        console.log(`Error comparing Universal Channel Mw addresses in .env file and IBC app: ${error}`);
+        return;
     }
 
     // 4. If true, we continue to check the dispatcher stored in the Universal Channel Mw
@@ -37,16 +48,21 @@ async function main() {
     let dispatcherAddr;
     
     if (sanityCheck) {
-        const ucHandler = await getUcHandler(networkName);
-        dispatcherAddr = await ucHandler.dispatcher();
-        if (networkName === "optimism") {
-            envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-        } else if (networkName === "base") {
-            envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-        } else {
-            sanityCheck = false;
+        try {
+            const ucHandler = await getUcHandler(networkName);
+            dispatcherAddr = await ucHandler.dispatcher();
+            if (networkName === "optimism") {
+                envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
+                sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+            } else if (networkName === "base") {
+                envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
+                sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+            } else {
+                sanityCheck = false;
+            }
+        } catch (error) {
+            console.log(`Error getting dispatcher address from Universal Channel Mw or from config: ${error}`);
+            return;
         }
     } else {
         console.log(`

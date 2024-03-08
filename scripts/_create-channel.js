@@ -31,8 +31,7 @@ function createDummyProof() {
 }
 
 async function main() {
-  const configPath = getConfigPath();
-  const config = require(configPath);
+  const config = require(getConfigPath());
   const chanConfig = config.createChannel;
   const networkName = hre.network.name;
   
@@ -60,7 +59,7 @@ async function main() {
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  const tx = await ibcApp.createChannel(
+  await ibcApp.createChannel(
     local,
     chanConfig.ordering,
     chanConfig.fees,
@@ -69,21 +68,23 @@ async function main() {
     createDummyProof()
   );
 
-  // Wait for the channel handshake to complete
-  await new Promise((r) => setTimeout(r, 90000));
+  if (!config.proofsEnabled) {
+    // Wait for the channel handshake to complete
+    await new Promise((r) => setTimeout(r, 90000));
 
-  // Get the connected channels and print the new channel along with its counterparty
-  const connectedChannelsAfter = await ibcApp.getConnectedChannels();
+    // Get the connected channels and print the new channel along with its counterparty
+    const connectedChannelsAfter = await ibcApp.getConnectedChannels();
 
-  if (connectedChannelsAfter!== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
+    if (connectedChannelsAfter!== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
 
-    const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
-    const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
+      const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
+      const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
 
-    const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
-    const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
-  
-    console.log(`Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
+      const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
+      const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
+    
+      console.log(`Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
+    }
   }
 }
 

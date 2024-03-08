@@ -21,7 +21,7 @@ compile COMPILER='hardhat':
     fi
 
 # Update the config.json file with the contract type for a specified chain/rollup
-# Usage: just set-contracts [chain] [contract-type]
+# Usage: just set-contracts [chain] [contract-type] [universal]
 set-contracts CHAIN CONTRACT_TYPE UNIVERSAL='true':
     echo "Updating config.json with contract type..."
     node scripts/_set-contracts-config.js {{CHAIN}} {{CONTRACT_TYPE}} {{UNIVERSAL}}
@@ -39,7 +39,6 @@ deploy SOURCE DESTINATION:
 sanity-check:
     echo "Running sanity check..."
     node scripts/_sanity-check.js
-# TODO: add a check to see if isUniversal flag is correct
 
 # Update the dispatcher or universal channel handler address on the IBC application, with that from the .env file
 # Usage: just update-vibc [chain]

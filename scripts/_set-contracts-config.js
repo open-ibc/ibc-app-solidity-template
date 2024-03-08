@@ -1,16 +1,16 @@
+// Run script to set the contract in the config.json file along with the isUniversal flag
+// Example: 
+// $ node set-contracts-config.js optimism XCounterUC true
 const fs = require('fs');
 const { getConfigPath } = require('./_helpers.js');
 
 if(process.argv.length < 5) {
-  console.error('Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType>');
+  console.error('Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
   process.exit(1);
 }
-// Run script with source and destination networks as arguments
-// Example: 
-// $ node set-contracts-config.js optimism XCounterUC true
 const chain = process.argv[2];
 const contractType = process.argv[3];
-const universalBoolean = process.argv[4].toLowerCase();
+const universalBoolean = process.argv[4].trim().toLowerCase()
 
 if (chain !== "optimism" && chain !== "base") {
   console.error('Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');

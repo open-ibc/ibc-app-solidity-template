@@ -1,11 +1,15 @@
 const { exec } = require("child_process");
-const { getConfigPath, updateConfigCreateChannel } = require('./_helpers.js');
-//const { getDispatcher } = require('./_vibc-helpers.js');
+const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks } = require('./_helpers.js');
 const { setupIbcChannelEventListener } = require('./_events.js');
 
 // Function to run the deploy script and capture output
 function createChannelAndCapture() {
   const config = require(getConfigPath());
+  const allowedNetworks = getWhitelistedNetworks();
+  if (!allowedNetworks.includes(network)) {
+    console.error('Invalid network name');
+    return;
+  }
   exec(`npx hardhat run scripts/_create-channel.js --network ${config.createChannel.srcChain}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
