@@ -9,6 +9,8 @@ const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHE
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
 async function getIbcApp (network, isUniversal) {
+    const config = require(getConfigPath());
+    
     const ibcAppAddr = isUniversal ? config["sendUniversalPacket"][`${network}`]["portAddr"] : config["sendPacket"][`${network}`]["portAddr"];
     console.log(`Fetching IBC app on ${network} at address: ${ibcAppAddr}`)
     const contractType = config["deploy"][`${network}`];
@@ -62,6 +64,7 @@ async function getDispatcher (network) {
 }
 
 function getUcHandlerAddress(network) {
+    const config = require(getConfigPath());
     let ucHandlerAddr;
     if (network === "optimism") {
         ucHandlerAddr = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;

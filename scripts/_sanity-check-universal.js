@@ -5,8 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const { getConfigPath } = require('./_helpers');
-const { areAddressesEqual } = require('./_helpers.js');
+const { getConfigPath, areAddressesEqual } = require('./_helpers.js');
 const { getIbcApp, getUcHandler } = require("./_vibc-helpers.js");
 
 async function main() {
@@ -26,7 +25,6 @@ async function main() {
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;
     let envUcHandlerAddr;
-
     if (networkName === "optimism") {
         envUcHandlerAddr = config.proofsEnabled === true ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
         sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);

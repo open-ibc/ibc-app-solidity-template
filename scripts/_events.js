@@ -1,15 +1,12 @@
 const hre = require("hardhat");
-const path = require("path");
-const { areAddressesEqual } = require("./_helpers.js");
-const { getUcHandlerAddress } = require("./_vibc-helpers.js");
+const { areAddressesEqual, getConfigPath } = require("./_helpers.js");
+const { getDispatcher, getUcHandlerAddress } = require("./_vibc-helpers.js");
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
 const explorerBaseUrl = "https://base-sepolia.blockscout.com/";
-const configRelativePath = process.env.CONFIG_PATH || "config.json";
-const configPath = path.join(__dirname, "..", configRelativePath);
-const config = require(configPath);
 
 function filterChannelEvents(portAddress) {
+    const config = require(getConfigPath());
     return areAddressesEqual(portAddress, config.createChannel["srcAddr"]) || areAddressesEqual(portAddress, config.createChannel["dstAddr"]);
 }
 
@@ -115,8 +112,10 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
 }
 
 function filterPacketEvents(portAddress, network) {
+    const config = require(getConfigPath());
     const sendPacketConfig = config.sendPacket;
     const ucHandlerAddr = getUcHandlerAddress(network);
+
     return areAddressesEqual(portAddress, sendPacketConfig[`${network}`].portAddr) || areAddressesEqual(portAddress, ucHandlerAddr);
 }
 
@@ -217,4 +216,26 @@ function listenForIbcPacketEvents(network, dispatcher) {
     });
 }
 
-module.exports = { listenForIbcChannelEvents, listenForIbcPacketEvents };
+async function setupIbcPacketEventListener() {
+    console.log("🔊 Setting up IBC packet event listener...")
+    // Get the dispatchers for both source and destination to listen for IBC packet events
+    const opDispatcher = await getDispatcher("optimism");
+    const baseDispatcher = await getDispatcher("base");
+    listenForIbcPacketEvents("optimism", opDispatcher);
+    listenForIbcPacketEvents("base", baseDispatcher);
+}
+
+async function setupIbcChannelEventListener() {
+    console.log("🔊 Setting up IBC channel event listener...")
+    const config = require(getConfigPath());
+    const opIsSource = config.createChannel.srcChain === "optimism";
+    const baseIsSource = config.createChannel.srcChain === "base";
+
+    // Get the dispatchers for both source and destination to listen for IBC packet events
+    const opDispatcher = await getDispatcher("optimism");
+    const baseDispatcher = await getDispatcher("base");
+    listenForIbcChannelEvents("optimism", opIsSource , opDispatcher);
+    listenForIbcChannelEvents("base", baseIsSource, baseDispatcher);
+}
+
+module.exports = { listenForIbcChannelEvents, listenForIbcPacketEvents, setupIbcPacketEventListener, setupIbcChannelEventListener };

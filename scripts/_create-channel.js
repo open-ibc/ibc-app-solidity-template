@@ -5,18 +5,9 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath } = require('./_helpers');
-const ibcConfig = require('../ibc.json');
+const { getConfigPath, addressToPortId } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers.js');
-
-// Helper function to convert an address to a port ID
-function addressToPortId(portPrefix, address) {
-  const configPath = getConfigPath();
-  const config = require(configPath);
-  const simAddOn = config.proofsEnabled ? '-proofs-1' :'-sim';
-  const suffix = address.slice(2);
-  return `${portPrefix}${simAddOn}.${suffix}`;
-}
+const ibcConfig = require('../ibc.json');
 
 function createDummyProof() {
   return  {

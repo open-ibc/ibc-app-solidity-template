@@ -1,26 +1,11 @@
 const { exec } = require("child_process");
-const fs = require("fs");
-const { getConfigPath } = require('./_helpers');
-
-
-const { listenForIbcChannelEvents } = require('./_events.js');
-const { getDispatcher } = require('./_vibc-helpers.js');
-
-// Function to update config.json
-function updateConfig(network, channel, cpNetwork, cpChannel) {
-  const configPath = getConfigPath();
-  const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-
-  // Update the config object
-  upConfig["sendPacket"][`${network}`]["channelId"] = channel;
-  upConfig["sendPacket"][`${cpNetwork}`]["channelId"] = cpChannel;
-
-  // Write the updated config back to the file
-  fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
-}
+const { getConfigPath, updateConfigCreateChannel } = require('./_helpers.js');
+//const { getDispatcher } = require('./_vibc-helpers.js');
+const { setupIbcChannelEventListener } = require('./_events.js');
 
 // Function to run the deploy script and capture output
 function createChannelAndCapture() {
+  const config = require(getConfigPath());
   exec(`npx hardhat run scripts/_create-channel.js --network ${config.createChannel.srcChain}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
@@ -51,7 +36,7 @@ function createChannelAndCapture() {
         );
 
       // Update the config.json file
-      updateConfig(network, channel, cpNetwork, cpChannel);
+      updateConfigCreateChannel(network, channel, cpNetwork, cpChannel);
       console.log(`Updated config.json with ${channel} on network ${network} and ${cpChannel} on network ${cpNetwork}`);
     } else {
       console.error("Could not find required parameters in output");
@@ -60,14 +45,7 @@ function createChannelAndCapture() {
 }
 
 async function main() {
-  const configPath = getConfigPath();
-  const config = require(configPath);
-  const opDispatcher = await getDispatcher("optimism");
-  const baseDispatcher = await getDispatcher("base");
-
-  listenForIbcChannelEvents(config["createChannel"]["srcChain"], true , opDispatcher);
-  listenForIbcChannelEvents(config["createChannel"]["dstChain"], false, baseDispatcher);
-
+  await setupIbcChannelEventListener();
   createChannelAndCapture();
 }
 

@@ -5,13 +5,11 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const {getConfigPath} = require('./_helpers');
-const { getDispatcherAddress } = require('./_vibc-helpers.js');
+const {getConfigPath} = require('./_helpers.js');
+const { getDispatcherAddress, getUcHandlerAddress } = require('./_vibc-helpers.js');
 
 async function main() {
-  const configPath = getConfigPath();
-  const config = require(configPath);
-
+  const config = require(getConfigPath());
   const argsObject = require('../arguments.js');
   const networkName = hre.network.name;
 
@@ -23,8 +21,14 @@ async function main() {
   }
 
   // TODO: update to switch statement when supporting more networks
-const dispatcherAddr = getDispatcherAddress(networkName);
-  const constructorArgs = [dispatcherAddr, ...(args ?? [])];
+  let constructorArgs;
+  if (config.isUniversal) {
+    const ucHandlerAddr = getUcHandlerAddress(networkName);
+    constructorArgs = [ucHandlerAddr, ...(args ?? [])];
+  } else if (!config.isUniversal) {
+    const dispatcherAddr = getDispatcherAddress(networkName);
+    constructorArgs = [dispatcherAddr, ...(args ?? [])];
+  }
   
   // Deploy the contract
   // NOTE: when adding additional args to the constructor, add them to the array as well

@@ -9,8 +9,6 @@ const { getConfigPath } = require('./_helpers');
 const { areAddressesEqual } = require("./_helpers");
 const { getIbcApp } = require("./_vibc-helpers");
 
-
-
 async function main() {
     const configPath = getConfigPath();
     const config = require(configPath);

@@ -1,12 +1,13 @@
 const fs = require('fs');
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
+const { getConfigPath } = require('./_helpers.js');
 
 // Function to update config.json
 function flipConfig() {
     try {
+        const configPath = getConfigPath();
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        // Create a temporary copy of the config object to store a backup of the current values
+        // The backup is used when switching back to between clients
         const tempConfig = {...config};
     
         // Below, we'll update the config object
