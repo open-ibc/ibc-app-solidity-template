@@ -22,6 +22,7 @@ The repo is **compatible with both Hardhat and Foundry** development environment
 You'll need some API keys from third party's:
 - [Optimism Sepolia](https://optimism-sepolia.blockscout.com/account/api-key) and [Base Sepolia](https://base-sepolia.blockscout.com/account/api-key) Blockscout Explorer API keys
 - Have an [Alchemy API key](https://docs.alchemy.com/docs/alchemy-quickstart-guide) for OP and Base Sepolia
+- Have an [Tenderly API](https://docs.tenderly.co/reference/api) for OP and Base Sepolia
 
 Some basic knowledge of all of these tools is also required, although the details are abstracted away for basic usage.
 
