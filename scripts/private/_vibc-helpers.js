@@ -59,7 +59,7 @@ async function getDispatcher (network) {
             const baseDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
             dispatcher = new ethers.Contract(dispatcherAddress, baseDispatcherAbi, providerBase);
         } else {
-            throw new error(`❌ Invalid network: ${network}`);
+            throw new Error(`❌ Invalid network: ${network}`);
         }
         return dispatcher;
     }
@@ -105,7 +105,7 @@ async function getUcHandler (network) {
             const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
             ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
         } else {
-            throw new error(`❌ Invalid network: ${network}`);
+            throw new Error(`❌ Invalid network: ${network}`);
         }
 
         return ucHandler;
