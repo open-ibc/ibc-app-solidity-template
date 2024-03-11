@@ -129,7 +129,7 @@ It makes sure you've got the correct contracts set, deploys new instances, creat
 
 ```bash
 # Usage: just switch-client
-just switch-client false
+just switch-client
 ```
 
 Check if the packet got through on the [Polymer IBC explorer](https://sepolia.polymer.zone/packets).
