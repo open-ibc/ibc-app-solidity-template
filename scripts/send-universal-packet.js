@@ -10,8 +10,7 @@ const { getIbcApp } = require('./private/_vibc-helpers.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
-    const configPath = getConfigPath();
-    const config = require(configPath);
+    const config = require(getConfigPath());
     const sendConfig = config.sendUniversalPacket;
 
     const networkName = hre.network.name;

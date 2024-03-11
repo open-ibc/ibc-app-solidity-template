@@ -83,7 +83,7 @@ async function main() {
       const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
       const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
     
-      console.log(`Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
+      console.log(`✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
     }
   }
 }

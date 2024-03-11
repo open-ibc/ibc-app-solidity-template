@@ -37,7 +37,7 @@ function updateConfigDeploy(network, address, isSource) {
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   } catch (error) {
-    console.error('Error updating config:', error);
+    console.error('❌ Error updating config:', error);
   }
 }
 
@@ -54,7 +54,7 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
   } catch (error) {
-    console.error('Error updating config:', error);
+    console.error('❌ Error updating config:', error);
   }
 }
 
@@ -65,11 +65,11 @@ async function fetchABI(explorerUrl, contractAddress) {
       const abi = response.data.abi;
       return abi;
     } else {
-      console.error(`Failed to fetch ABI, status code: ${response.status}`);
+      console.error(`❌ Failed to fetch ABI, status code: ${response.status}`);
       return null;
     }
   } catch (error) {
-    console.error('Error fetching ABI:', error);
+    console.error('❌ Error fetching ABI:', error);
     return null;
   }
 }
@@ -77,7 +77,7 @@ async function fetchABI(explorerUrl, contractAddress) {
 function areAddressesEqual(address1, address2) {
   // Validate input addresses
   if (!hre.ethers.isAddress(address1) || !hre.ethers.isAddress(address2)) {
-    throw new Error('One or both addresses are not valid Ethereum addresses');
+    throw new Error('❌ One or both addresses are not valid Ethereum addresses');
   }
   // Normalize addresses to checksummed format
 

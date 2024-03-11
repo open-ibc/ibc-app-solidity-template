@@ -6,9 +6,11 @@ const { setupIbcChannelEventListener } = require('./_events.js');
 function createChannelAndCapture() {
   const config = require(getConfigPath());
   const srcChain = config.createChannel.srcChain;
+  
+  // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
   if (!allowedNetworks.includes(srcChain)) {
-    console.error('Invalid network name');
+    console.error('❌ Invalid network name');
     return;
   }
   exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout, stderr) => {
@@ -42,9 +44,9 @@ function createChannelAndCapture() {
 
       // Update the config.json file
       updateConfigCreateChannel(network, channel, cpNetwork, cpChannel);
-      console.log(`Updated config.json with ${channel} on network ${network} and ${cpChannel} on network ${cpNetwork}`);
+      console.log(`🆗 Updated config.json with ${channel} on network ${network} and ${cpChannel} on network ${cpNetwork}`);
     } else {
-      console.error("Could not find required parameters in output");
+      console.error("❌ Could not find required parameters in output");
     }
   });
 }

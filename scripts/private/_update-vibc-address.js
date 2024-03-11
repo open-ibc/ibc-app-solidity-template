@@ -19,18 +19,28 @@ async function main() {
 
         // Get the contract type from the config and get the contract
         const ibcApp = await getIbcApp(networkName);
-        await ibcApp.updateDispatcher(newDispatcher);
-        console.log(`Dispatcher updated to ${newDispatcher}`);
+        try {
+            await ibcApp.updateDispatcher(newDispatcher);
+        } catch (error) { 
+            console.error(`❌ Error getting dispatcher address from IBC app. Check if the configuration file has the correct isUniversal flag set...`);
+            return;
+        }
+        console.log(`✅ Dispatcher updated to ${newDispatcher}`);
     } else if (config.isUniversal) {
         // Determine the new universal channel handler, based on the network.
         const newUcHandler = getUcHandlerAddress(networkName);
 
         // Get the contract type from the config and get the contract
         const ibcApp = await getIbcApp(networkName, true);
-        await ibcApp.setDefaultMw(newUcHandler);
-        console.log(`Universal channel handler updated to ${newUcHandler}`);
+        try {
+            await ibcApp.setDefaultMw(newUcHandler);
+        } catch (error) {
+            console.log(`❌ Error updating Universal Channel Mw address from IBC app. Check if the configuration file has the correct isUniversal flag set...`);
+            return;
+        }
+        console.log(`✅ Universal channel handler updated to ${newUcHandler}`);
     }else {
-        console.log('Check the config file for isUniversal value. It should be a boolean.');
+        console.error('❌ Check the config file for isUniversal value. It should be a boolean.');
     };
 }
 

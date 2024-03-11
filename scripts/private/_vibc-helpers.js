@@ -19,7 +19,7 @@ async function getIbcApp (network) {
         );
         return ibcApp;
     } catch (error) {
-        console.log(`Error getting IBC app: ${error}`);
+        console.log(`❌ Error getting IBC app: ${error}`);
         return;
     }
   }
@@ -32,7 +32,7 @@ function getDispatcherAddress(network) {
     } else if (network === "base") {
         dispatcherAddr = config.proofsEnabled ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
     } else {
-        throw new Error("Invalid network");
+        throw new Error("❌ Invalid network");
     }
     return dispatcherAddr;
 }
@@ -59,12 +59,12 @@ async function getDispatcher (network) {
             const baseDispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
             dispatcher = new ethers.Contract(dispatcherAddress, baseDispatcherAbi, providerBase);
         } else {
-            throw new error(`Invalid network: ${network}`);
+            throw new error(`❌ Invalid network: ${network}`);
         }
         return dispatcher;
     }
     catch (error) {
-        console.log(`Error getting dispatcher: ${error}`);
+        console.log(`❌ Error getting dispatcher: ${error}`);
         return;
     }
 }
@@ -77,7 +77,7 @@ function getUcHandlerAddress(network) {
     } else if (network === "base") {
         ucHandlerAddr = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
     } else {
-        throw new Error("Invalid network");
+        throw new Error("❌ Invalid network");
     }
     return ucHandlerAddr;
 }
@@ -105,12 +105,12 @@ async function getUcHandler (network) {
             const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
             ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
         } else {
-            throw new error(`Invalid network: ${network}`);
+            throw new error(`❌ Invalid network: ${network}`);
         }
 
         return ucHandler;
     } catch (error) {
-        console.log(`Error getting ucHandler: ${error}`);
+        console.log(`❌ Error getting ucHandler: ${error}`);
         return;
     }
 }

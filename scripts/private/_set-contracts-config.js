@@ -5,7 +5,7 @@ const fs = require('fs');
 const { getConfigPath } = require('./_helpers.js');
 
 if(process.argv.length < 5) {
-  console.error('Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
+  console.error('❌ Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
   process.exit(1);
 }
 const chain = process.argv[2];
@@ -13,7 +13,7 @@ const contractType = process.argv[3];
 const universalBoolean = process.argv[4].trim().toLowerCase()
 
 if (chain !== "optimism" && chain !== "base") {
-  console.error('Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
+  console.error('❌ Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
   process.exit(1);
 }
 
@@ -23,7 +23,7 @@ if (universalBoolean === "true") {
 } else if (universalBoolean === "false") {
   isUniversal = false;
 } else {
-  console.error('Incorrect boolean value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
+  console.error('❌ Incorrect boolean value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
   process.exit(1);
 }
 
@@ -40,8 +40,9 @@ function updateConfig(network, contractType) {
     
       // Write the updated config back to the file
       fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+      console.log(`🆗 Updated config with ${contractType} for ${network}. Set isUniversal to ${isUniversal}.`);
     } catch (error) {
-      console.error(`Failed to update config: ${error.message}`);
+      console.error(`❌ Failed to update config: ${error.message}`);
       process.exit(1);
     }
   }

@@ -47,9 +47,9 @@ function deployAndCapture(network, isSource) {
 
       // Update the config.json file
       updateConfigDeploy(network, address, isSource);
-      console.log(`Updated ${process.env.CONFIG_PATH || 'config.json'} with address ${address} on network ${network}`);
+      console.log(`🆗 Updated ${process.env.CONFIG_PATH || 'config.json'} with address ${address} on network ${network}`);
     } else {
-      console.error("Could not find contract address and network in output");
+      console.error("❌ Could not find contract address and network in output");
     }
   });
 }

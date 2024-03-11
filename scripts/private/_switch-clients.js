@@ -37,9 +37,9 @@ function flipConfig() {
 
         // Write the updated config back to the file
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
-        console.log('Config updated');
+        console.log('🆗 Config updated');
     } catch (error) {
-        console.error(`Failed to update config: ${error.message}`);
+        console.error(`❌ Failed to update config: ${error.message}`);
         process.exit(1);
     }
 }

@@ -21,6 +21,9 @@ compile COMPILER='hardhat':
     fi
 
 # Update the config.json file with the contract type for a specified chain/rollup
+# The chain and contract-type arguments are REQUIRED;
+# The universal argument is optional; if not provided, it defaults to "true".
+# It indicates whether the contracts to deploy are using custom or universal IBC channels to send packets.
 # Usage: just set-contracts [chain] [contract-type] [universal]
 set-contracts CHAIN CONTRACT_TYPE UNIVERSAL='true':
     echo "Updating config.json with contract type..."
@@ -28,7 +31,6 @@ set-contracts CHAIN CONTRACT_TYPE UNIVERSAL='true':
 
 # Deploy the contracts in the /contracts folder using Hardhat and updating the config.json file
 # The source and destination arguments are REQUIRED;
-# The universal argument is optional; if not provided, it defaults to "true".
 # Usage: just deploy [source] [destination]
 deploy SOURCE DESTINATION:
         echo "Deploying contracts with Hardhat..."
@@ -41,6 +43,7 @@ sanity-check:
     node scripts/private/_sanity-check.js
 
 # Update the dispatcher or universal channel handler address on the IBC application, with that from the .env file
+# The chain argument is REQUIRED;
 # Usage: just update-vibc [chain]
 update-vibc CHAIN:
   echo "Updating the dispatcher or universal channel handler address..."
@@ -54,8 +57,7 @@ create-channel:
 
 # Send a packet over the universal channel or a custom channel as defined in the config.json file
 # The source argument is REQUIRED;
-# The universal argument is optional; if not provided, it defaults to "true".
-# Usage: just send-packet [source] [universal]
+# Usage: just send-packet [source]
 send-packet SOURCE:
     echo "Sending a packet with the values from the config..."
     node scripts/private/_send-packet-config.js {{SOURCE}}

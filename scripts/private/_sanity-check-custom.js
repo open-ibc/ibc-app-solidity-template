@@ -21,17 +21,28 @@ async function main() {
     const ibcApp = await getIbcApp(networkName);
 
     // 2. Query your contract for the Dispatcher address
-    const dispatcherAddr = await ibcApp.dispatcher();
+    let dispatcherAddr
+    try {
+        dispatcherAddr = await ibcApp.dispatcher();
+    } catch (error) { 
+        console.log(`❌ Error getting dispatcher address from IBC app. Check if the configuration file has the correct isUniversal flag set...`);
+        return;
+    }
 
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;
     let envDispatcherAddr;
-    if (networkName === "optimism") {
-        envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-        sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-    } else if (networkName === "base") {
-        envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-        sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+    try {
+        if (networkName === "optimism") {
+            envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
+            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+        } else if (networkName === "base") {
+            envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
+            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+        }
+    } catch (error) {
+        console.log(`❌ Error comparing dispatcher addresses in .env file and IBC app: ${error}`);
+        return;
     }
 
     // 4. Print the result of the sanity check 

@@ -23,7 +23,7 @@ async function main() {
     try {
         ucHandlerAddr = await ibcApp.mw();
     } catch (error) {
-        console.log(`Error getting Universal Channel Mw address from IBC app: ${error}`);
+        console.log(`❌ Error getting Universal Channel Mw address from IBC app. Check if the configuration file has the correct isUniversal flag set...`);
         return;
     }
 
@@ -39,7 +39,7 @@ async function main() {
             sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
         }
     } catch (error) {
-        console.log(`Error comparing Universal Channel Mw addresses in .env file and IBC app: ${error}`);
+        console.log(`❌ Error comparing Universal Channel Mw addresses in .env file and IBC app: ${error}`);
         return;
     }
 
@@ -61,7 +61,7 @@ async function main() {
                 sanityCheck = false;
             }
         } catch (error) {
-            console.log(`Error getting dispatcher address from Universal Channel Mw or from config: ${error}`);
+            console.log(`❌ Error getting dispatcher address from Universal Channel Mw or from config: ${error}`);
             return;
         }
     } else {

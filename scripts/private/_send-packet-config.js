@@ -9,9 +9,10 @@ if (!source) {
 }
 
 function runSendPacket(config) {
+  // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
   if (!allowedNetworks.includes(source)) {
-    console.error("Please provide a valid source chain");
+    console.error("❌ Please provide a valid source chain");
     process.exit(1);
   }
 
