@@ -2,7 +2,7 @@
 install:
     echo "Installing dependencies"
     npm install
-    forge install
+    forge install --shallow
 
 # Compile contracts using the specified compiler or default to Hardhat
 # The compiler argument is optional; if not provided, it defaults to "hardhat".
