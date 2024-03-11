@@ -11,7 +11,7 @@ function createChannelAndCapture() {
     console.error('Invalid network name');
     return;
   }
-  exec(`npx hardhat run scripts/_create-channel.js --network ${srcChain}`, (error, stdout, stderr) => {
+  exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;

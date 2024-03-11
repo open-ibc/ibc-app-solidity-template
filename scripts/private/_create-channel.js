@@ -7,7 +7,7 @@
 const hre = require('hardhat');
 const { getConfigPath, addressToPortId } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers.js');
-const ibcConfig = require('../ibc.json');
+const ibcConfig = require('../../ibc.json');
 
 function createDummyProof() {
   return  {

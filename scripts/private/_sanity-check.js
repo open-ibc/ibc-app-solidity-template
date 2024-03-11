@@ -7,7 +7,7 @@ function runSanityCheck(network) {
     const config = require(getConfigPath());
     const scriptSuffix = config.isUniversal ? 'universal' : 'custom';
     
-    exec(`npx hardhat run scripts/_sanity-check-${scriptSuffix}.js --network ${network}`, (error, stdout, stderr) => {
+    exec(`npx hardhat run scripts/private/_sanity-check-${scriptSuffix}.js --network ${network}`, (error, stdout, stderr) => {
         if (error) {
         console.error(`exec error: ${error}`);
         return;

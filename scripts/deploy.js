@@ -5,8 +5,8 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const {getConfigPath} = require('./_helpers.js');
-const { getDispatcherAddress, getUcHandlerAddress } = require('./_vibc-helpers.js');
+const {getConfigPath} = require('./private/_helpers.js');
+const { getDispatcherAddress, getUcHandlerAddress } = require('./private/_vibc-helpers.js');
 
 async function main() {
   const config = require(getConfigPath());

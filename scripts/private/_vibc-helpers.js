@@ -1,6 +1,5 @@
 const {ethers} = require("hardhat");
-const {fetchABI} = require("./_helpers.js");
-const { getConfigPath } = require('./_helpers');
+const { getConfigPath, fetchABI} = require("./_helpers.js");
 
 const explorerOpUrl = "https://optimism-sepolia.blockscout.com/";
 const explorerBaseUrl = "https://base-sepolia.blockscout.com/";

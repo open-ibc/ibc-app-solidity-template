@@ -1,7 +1,7 @@
 const fs = require('fs');
 const axios = require('axios');
 const hre = require('hardhat');
-const ibcConfig = require("../ibc.json");
+const ibcConfig = require("../../ibc.json");
 
 // Function to get the path to the configuration file
 function getConfigPath() {

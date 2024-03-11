@@ -5,8 +5,8 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath } = require('./_helpers');
-const { getIbcApp } = require('./_vibc-helpers.js');
+const { getConfigPath } = require('./private/_helpers');
+const { getIbcApp } = require('./private/_vibc-helpers.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
