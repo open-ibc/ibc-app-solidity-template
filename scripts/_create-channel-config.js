@@ -5,12 +5,13 @@ const { setupIbcChannelEventListener } = require('./_events.js');
 // Function to run the deploy script and capture output
 function createChannelAndCapture() {
   const config = require(getConfigPath());
+  const srcChain = config.createChannel.srcChain;
   const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(network)) {
+  if (!allowedNetworks.includes(srcChain)) {
     console.error('Invalid network name');
     return;
   }
-  exec(`npx hardhat run scripts/_create-channel.js --network ${config.createChannel.srcChain}`, (error, stdout, stderr) => {
+  exec(`npx hardhat run scripts/_create-channel.js --network ${srcChain}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
