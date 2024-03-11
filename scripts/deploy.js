@@ -10,7 +10,7 @@ const { getDispatcherAddress, getUcHandlerAddress } = require('./private/_vibc-h
 
 async function main() {
   const config = require(getConfigPath());
-  const argsObject = require('../arguments.js');
+  const argsObject = require('../contracts/arguments.js');
   const networkName = hre.network.name;
 
   // The config should have a deploy object with the network name as the key and contract type as the value
