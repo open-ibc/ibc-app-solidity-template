@@ -46,10 +46,11 @@ async function main() {
     // 4. If true, we continue to check the dispatcher stored in the Universal Channel Mw
     let envDispatcherAddr;
     let dispatcherAddr;
+    let ucHandler;
     
     if (sanityCheck) {
         try {
-            const ucHandler = await getUcHandler(networkName);
+            ucHandler = await getUcHandler(networkName);
             dispatcherAddr = await ucHandler.dispatcher();
             if (networkName === "optimism") {
                 envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
@@ -70,10 +71,29 @@ async function main() {
 check if the values provided in the .env file for the Universal Channel Mw and the dispatcher are correct.
 --------------------------------------------------
 🔮 Expected Universal Channel Handler (in IBC contract): ${ucHandlerAddr}...
-🗃️ Found Universal Channel Handler (in .env file): ${envUcHandlerAddr}...
+🗃️  Found Universal Channel Handler (in .env file): ${envUcHandlerAddr}...
 --------------------------------------------------
         `);
         return;
+    }
+
+    if (sanityCheck) {
+        const channelBytes = await ucHandler.connectedChannels(0);
+        const channelId = hre.ethers.decodeBytes32String(channelBytes);
+        const envChannelId = config["sendUniversalPacket"][networkName]["channelId"];
+
+        if (channelId !== envChannelId) {
+            sanityCheck = false;
+            console.log(`
+⛔ Sanity check failed for network ${networkName}, 
+check if the channel id value for the Universal channel in the config is correct.
+--------------------------------------------------
+🔮 Expected Channel ID (in Universal Channel Handler contract): ${channelId}...
+🗃️  Found Dispatcher (in .env file): ${envChannelId}...
+--------------------------------------------------
+`);
+            return;
+        }
     }
 
     // 5. Print the result of the sanity check
@@ -86,7 +106,7 @@ check if the values provided in the .env file for the Universal Channel Mw and t
 check if the values provided in the .env file for the Universal Channel Mw and the dispatcher are correct.
 --------------------------------------------------
 🔮 Expected Dispatcher (in Universal Channel Handler contract): ${dispatcherAddr}...
-🗃️ Found Dispatcher (in .env file): ${envDispatcherAddr}...
+🗃️  Found Dispatcher (in .env file): ${envDispatcherAddr}...
 --------------------------------------------------
 `);
     }

@@ -7,8 +7,8 @@ const ibcConfig = require("../../ibc.json");
 function getConfigPath() {
   const path = require('path');
   const configRelativePath = process.env.CONFIG_PATH ? process.env.CONFIG_PATH : 'config.json';
-  // console.log(`Using config file at ${configRelativePath}`);
-  const configPath = path.join(__dirname, '..' , configRelativePath);
+  // console.log(`📔 Using config file at ${configRelativePath}`);
+  const configPath = path.join(__dirname, '../..' , configRelativePath);
   return configPath;
 }
 
@@ -30,8 +30,9 @@ function updateConfigDeploy(network, address, isSource) {
       config["sendPacket"][`${network}`]["portAddr"] = address;    
     } else if (config.isUniversal){
       // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
+      const client = config.proofsEnabled ? 'op-client' : 'sim-client';
       config["sendUniversalPacket"][`${network}`]["portAddr"] = address;
-      config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`]["sim-client"]["universalChannel"];
+      config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`][`${client}`]["universalChannel"];
     }
   
     // Write the updated config back to the file
