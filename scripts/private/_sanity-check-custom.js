@@ -5,37 +5,44 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const path = require('path');
-const { env } = require("process");
+const { getConfigPath } = require('./_helpers');
 const { areAddressesEqual } = require("./_helpers");
 const { getIbcApp } = require("./_vibc-helpers");
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
 
 async function main() {
+    const configPath = getConfigPath();
     const config = require(configPath);
-
-
     const accounts = await hre.ethers.getSigners();
     const networkName = hre.network.name;
 
     // Get the Dispatcher from your IBC enabled contract and compare it with the stored value in the .env file
 
     // 1. Get the contract type from the config and get the contract
-    const ibcApp = await getIbcApp(networkName, false);
+    const ibcApp = await getIbcApp(networkName);
 
     // 2. Query your contract for the Dispatcher address
-    const dispatcherAddr = await ibcApp.dispatcher();
+    let dispatcherAddr
+    try {
+        dispatcherAddr = await ibcApp.dispatcher();
+    } catch (error) { 
+        console.log(`❌ Error getting dispatcher address from IBC app. Check if the configuration file has the correct isUniversal flag set...`);
+        return;
+    }
 
     // 3. Compare with the value expected in the .env config file
     let sanityCheck = false;
     let envDispatcherAddr;
-    if (networkName === "optimism") {
-        envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-        sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-    } else if (networkName === "base") {
-        envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-        sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+    try {
+        if (networkName === "optimism") {
+            envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
+            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+        } else if (networkName === "base") {
+            envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
+            sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
+        }
+    } catch (error) {
+        console.log(`❌ Error comparing dispatcher addresses in .env file and IBC app: ${error}`);
+        return;
     }
 
     // 4. Print the result of the sanity check 

@@ -5,27 +5,17 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const path = require('path');
-const configRelativePath = process.env.CONFIG_PATH || 'config.json';
-const configPath = path.join(__dirname, '..' , configRelativePath);
-const config = require(configPath);
-const sendConfig = config.sendPacket;
-
-const { listenForIbcPacketEvents } = require('./_events.js');
-const { getDispatcher, getIbcApp } = require('./_vibc-helpers.js');
+const { getConfigPath } = require('./private/_helpers');
+const { getIbcApp } = require('./private/_vibc-helpers.js');
 
 async function main() {
     const accounts = await hre.ethers.getSigners();
-
-    // Get the dispatchers for both source and destination to listen for IBC packet events
-    const opDispatcher = await getDispatcher("optimism");
-    const baseDispatcher = await getDispatcher("base");
-    listenForIbcPacketEvents("optimism", opDispatcher);
-    listenForIbcPacketEvents("base", baseDispatcher);
+    const config = require(getConfigPath());
+    const sendConfig = config.sendPacket;
 
     const networkName = hre.network.name;
     // Get the contract type from the config and get the contract
-    const ibcApp = await getIbcApp(networkName, false);
+    const ibcApp = await getIbcApp(networkName);
 
     // Do logic to prepare the packet
     const channelId = sendConfig[`${networkName}`]["channelId"];
