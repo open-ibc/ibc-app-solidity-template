@@ -22,10 +22,10 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         bytes32 cpChannelId;
     }
     
-    // ChannelMapping array with the channel IDs of the connected channels
+    // ChannelMapping array with the channel IDs of the connected channels.
     ChannelMapping[] public connectedChannels;
 
-    // add supported versions (format to be negotiated between apps)
+    // add supported versions (format to be negotiated between apps).
     string[] supportedVersions = ['1.0'];
 
     constructor(IbcDispatcher _dispatcher) IbcReceiverBase(_dispatcher) {}
