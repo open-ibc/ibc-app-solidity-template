@@ -1,8 +1,8 @@
 {
   "proofsEnabled": false,
   "deploy": {
-    "optimism": "XCounterUC",
-    "base": "XCounterUC"
+    "optimism": "XGif",
+    "base": "XGif"
   },
   "isUniversal": true,
   "createChannel": {
