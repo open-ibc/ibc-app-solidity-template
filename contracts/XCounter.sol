@@ -9,6 +9,7 @@ contract XCounter is CustomChanIbcApp {
     uint64 public counter;
     mapping (uint64 => address) public counterMap;
 
+    uint64 public immutable CONST_TIME = 1e9;
 
     constructor(IbcDispatcher _dispatcher) CustomChanIbcApp(_dispatcher) {}
 
@@ -37,7 +38,7 @@ contract XCounter is CustomChanIbcApp {
         bytes memory payload = abi.encode(msg.sender);
 
         // setting the timeout timestamp at 10h from now
-        uint64 timeoutTimestamp = uint64((block.timestamp + timeoutSeconds) * 1000000000);
+        uint64 timeoutTimestamp = uint64((block.timestamp + timeoutSeconds) * CONST_TIME);
 
         // calling the Dispatcher to send the packet
         dispatcher.sendPacket(channelId, payload, timeoutTimestamp);
