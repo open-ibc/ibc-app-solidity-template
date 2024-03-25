@@ -123,6 +123,22 @@ do-it:
     echo "You've done it!"
 ```
 
+Customize this command for ease of implementation for quick setup in your Justfile
+
+# Nano Justfile & Paste this...
+---------------------------------------------------------------------------------------------------------------------------------------
+# Command to streamline the process of switching clients, setting contracts, deploying, performing a sanity check, and sending a packet
+# Usage: just quick-setup
+quick-setup:
+    echo "Starting quick setup..."
+    just switch-client
+    just set-contracts optimism XCounterUC true && just set-contracts base XCounterUC true
+    just deploy optimism base
+    just sanity-check
+    just send-packet optimism
+    echo "Quick setup complete!"
+---------------------------------------------------------------------------------------------------------------------------------------
+
 It makes sure you've got the correct contracts set, deploys new instances, creates a channel and sends a packet over the channel once created.
 
 > Note: by default the sim-client is used to improve latency. This is useful for iterative development and testing BUT also insecure as it involves no proofs. Make sure to move to the client **with proofs** by running another just command...
