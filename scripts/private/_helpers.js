@@ -1,14 +1,14 @@
 const fs = require('fs');
 const axios = require('axios');
 const hre = require('hardhat');
-const ibcConfig = require("../../ibc.json");
+const ibcConfig = require('../../ibc.json');
 
 // Function to get the path to the configuration file
 function getConfigPath() {
   const path = require('path');
   const configRelativePath = process.env.CONFIG_PATH ? process.env.CONFIG_PATH : 'config.json';
   // console.log(`📔 Using config file at ${configRelativePath}`);
-  const configPath = path.join(__dirname, '../..' , configRelativePath);
+  const configPath = path.join(__dirname, '../..', configRelativePath);
   return configPath;
 }
 
@@ -20,21 +20,21 @@ function updateConfigDeploy(network, address, isSource) {
     // Update the config object
     if (!config.isUniversal) {
       if (isSource) {
-        config["createChannel"]["srcChain"] = network;
-        config["createChannel"]["srcAddr"] = address;
+        config['createChannel']['srcChain'] = network;
+        config['createChannel']['srcAddr'] = address;
       } else {
-        config["createChannel"]["dstChain"] = network;
-        config["createChannel"]["dstAddr"] = address;
+        config['createChannel']['dstChain'] = network;
+        config['createChannel']['dstAddr'] = address;
       }
-  
-      config["sendPacket"][`${network}`]["portAddr"] = address;    
-    } else if (config.isUniversal){
+
+      config['sendPacket'][`${network}`]['portAddr'] = address;
+    } else if (config.isUniversal) {
       // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
       const client = config.proofsEnabled ? 'op-client' : 'sim-client';
-      config["sendUniversalPacket"][`${network}`]["portAddr"] = address;
-      config["sendUniversalPacket"][`${network}`]["channelId"] = ibcConfig[`${network}`][`${client}`]["universalChannel"];
+      config['sendUniversalPacket'][`${network}`]['portAddr'] = address;
+      config['sendUniversalPacket'][`${network}`]['channelId'] = ibcConfig[`${network}`][`${client}`]['universalChannel'];
     }
-  
+
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   } catch (error) {
@@ -47,11 +47,11 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
   try {
     const configPath = getConfigPath();
     const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  
+
     // Update the config object
-    upConfig["sendPacket"][`${network}`]["channelId"] = channel;
-    upConfig["sendPacket"][`${cpNetwork}`]["channelId"] = cpChannel;
-  
+    upConfig['sendPacket'][`${network}`]['channelId'] = channel;
+    upConfig['sendPacket'][`${cpNetwork}`]['channelId'] = cpChannel;
+
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
   } catch (error) {
@@ -93,7 +93,7 @@ function areAddressesEqual(address1, address2) {
 // Helper function to convert an address to a port ID
 function addressToPortId(portPrefix, address) {
   const config = require(getConfigPath());
-  const simAddOn = config.proofsEnabled ? '-proofs-1' :'-sim';
+  const simAddOn = config.proofsEnabled ? '-proofs-1' : '-sim';
   const suffix = address.slice(2);
   return `${portPrefix}${simAddOn}.${suffix}`;
 }
@@ -102,12 +102,12 @@ function getWhitelistedNetworks() {
   return Object.keys(ibcConfig);
 }
 
-module.exports = { 
+module.exports = {
   getConfigPath,
   updateConfigDeploy,
   updateConfigCreateChannel,
   fetchABI,
   areAddressesEqual,
   addressToPortId,
-  getWhitelistedNetworks
+  getWhitelistedNetworks,
 };

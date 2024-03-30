@@ -10,23 +10,23 @@ const { getIbcApp } = require('./_vibc-helpers.js');
 const ibcConfig = require('../../ibc.json');
 
 function createDummyProof() {
-  return  {
-      proof: [
+  return {
+    proof: [
+      {
+        path: [
           {
-              path: [
-                  {
-                      prefix: hre.ethers.toUtf8Bytes("prefixExample1"),
-                      suffix: hre.ethers.toUtf8Bytes("suffixExample1"),
-                  },
-                  // Add more OpIcs23ProofPath objects as needed
-              ],
-              key: hre.ethers.toUtf8Bytes("keyExample"),
-              value: hre.ethers.toUtf8Bytes("valueExample"),
-              prefix: hre.ethers.toUtf8Bytes("prefixExample")
+            prefix: hre.ethers.toUtf8Bytes('prefixExample1'),
+            suffix: hre.ethers.toUtf8Bytes('suffixExample1'),
           },
-          // Add more OpIcs23Proof objects as needed
-      ],
-      height: 123456, // example block height
+          // Add more OpIcs23ProofPath objects as needed
+        ],
+        key: hre.ethers.toUtf8Bytes('keyExample'),
+        value: hre.ethers.toUtf8Bytes('valueExample'),
+        prefix: hre.ethers.toUtf8Bytes('prefixExample'),
+      },
+      // Add more OpIcs23Proof objects as needed
+    ],
+    height: 123456, // example block height
   };
 }
 
@@ -34,7 +34,7 @@ async function main() {
   const config = require(getConfigPath());
   const chanConfig = config.createChannel;
   const networkName = hre.network.name;
-  
+
   // Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName);
   const connectedChannelsBefore = await ibcApp.getConnectedChannels();
@@ -59,14 +59,7 @@ async function main() {
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  await ibcApp.createChannel(
-    local,
-    chanConfig.ordering,
-    chanConfig.fees,
-    [ connHop1, connHop2 ],
-    cp,
-    createDummyProof()
-  );
+  await ibcApp.createChannel(local, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], cp, createDummyProof());
 
   if (!config.proofsEnabled) {
     // Wait for the channel handshake to complete
@@ -75,15 +68,16 @@ async function main() {
     // Get the connected channels and print the new channel along with its counterparty
     const connectedChannelsAfter = await ibcApp.getConnectedChannels();
 
-    if (connectedChannelsAfter!== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
-
+    if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
       const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
       const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
 
       const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
       const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
-    
-      console.log(`✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`);
+
+      console.log(
+        `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
+      );
     }
   }
 }

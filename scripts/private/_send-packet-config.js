@@ -1,5 +1,5 @@
-const { exec } = require("child_process");
-const {getConfigPath, getWhitelistedNetworks} = require('./_helpers.js');
+const { exec } = require('child_process');
+const { getConfigPath, getWhitelistedNetworks } = require('./_helpers.js');
 const { setupIbcPacketEventListener } = require('./_events.js');
 
 const source = process.argv[2];
@@ -10,7 +10,7 @@ if (!source) {
 
 function runSendPacketCommand(command) {
   return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
+    exec(command, (error, stdout) => {
       if (error) {
         console.error(`exec error: ${error}`);
         reject(error);
@@ -26,7 +26,7 @@ async function runSendPacket(config) {
   // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
   if (!allowedNetworks.includes(source)) {
-    console.error("❌ Please provide a valid source chain");
+    console.error('❌ Please provide a valid source chain');
     process.exit(1);
   }
 
@@ -37,7 +37,7 @@ async function runSendPacket(config) {
     await setupIbcPacketEventListener();
     await runSendPacketCommand(command);
   } catch (error) {
-    console.error("❌ Error sending packet: ", error);
+    console.error('❌ Error sending packet: ', error);
     process.exit(1);
   }
 }

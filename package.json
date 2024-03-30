@@ -4,7 +4,9 @@
   "description": "Template project to start building IBC enabled Solidity contracts, with Hardhat and Foundry support",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "eslint . --ext .js,.ts --fix"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,11 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.1",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
-    "hardhat": "^2.19.5"
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "hardhat": "^2.19.5",
+    "prettier": "^3.2.5"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.6",
