@@ -1,8 +1,8 @@
-const { exec } = require("child_process");
+const { exec } = require('child_process');
 const { updateConfigDeploy, getWhitelistedNetworks } = require('./_helpers');
 
 // Run script with source and destination networks as arguments
-// Example: 
+// Example:
 // $ node deploy-config.js optimism base
 const source = process.argv[2];
 const destination = process.argv[3];
@@ -19,7 +19,7 @@ function deployAndCapture(network, isSource) {
     console.error('Invalid network. Please provide a valid network as an argument.');
     return;
   }
-  exec(`npx hardhat run scripts/deploy.js --network ${network}`, (error, stdout, stderr) => {
+  exec(`npx hardhat run scripts/deploy.js --network ${network}`, (error, stdout) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -49,7 +49,7 @@ function deployAndCapture(network, isSource) {
       updateConfigDeploy(network, address, isSource);
       console.log(`🆗 Updated ${process.env.CONFIG_PATH || 'config.json'} with address ${address} on network ${network}`);
     } else {
-      console.error("❌ Could not find contract address and network in output");
+      console.error('❌ Could not find contract address and network in output');
     }
   });
 }

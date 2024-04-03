@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+const { exec } = require('child_process');
 const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks } = require('./_helpers.js');
 const { setupIbcChannelEventListener } = require('./_events.js');
 
@@ -6,14 +6,14 @@ const { setupIbcChannelEventListener } = require('./_events.js');
 function createChannelAndCapture() {
   const config = require(getConfigPath());
   const srcChain = config.createChannel.srcChain;
-  
+
   // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
   if (!allowedNetworks.includes(srcChain)) {
     console.error('❌ Invalid network name');
     return;
   }
-  exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout, stderr) => {
+  exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -39,14 +39,13 @@ function createChannelAndCapture() {
           -----------------------------------------
           🛣️  Counterparty Channel ID: ${cpChannel}
           🪐 Counterparty Network: ${cpNetwork}
-          -----------------------------------------\n`
-        );
+          -----------------------------------------\n`);
 
       // Update the config.json file
       updateConfigCreateChannel(network, channel, cpNetwork, cpChannel);
       console.log(`🆗 Updated config.json with ${channel} on network ${network} and ${cpChannel} on network ${cpNetwork}`);
     } else {
-      console.error("❌ Could not find required parameters in output");
+      console.error('❌ Could not find required parameters in output');
     }
   });
 }

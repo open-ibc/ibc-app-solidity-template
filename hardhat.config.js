@@ -1,5 +1,5 @@
-require("@nomicfoundation/hardhat-toolbox");
-require("@nomicfoundation/hardhat-foundry");
+require('@nomicfoundation/hardhat-toolbox');
+require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
@@ -10,25 +10,21 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200 // Optimize for a typical number of runs
-      }
-    }    
+        runs: 200, // Optimize for a typical number of runs
+      },
+    },
   },
   networks: {
     // for Base testnet
-    'base': {
+    base: {
       url: 'https://sepolia.base.org',
-      accounts: [
-        process.env.PRIVATE_KEY_1
-      ],
+      accounts: [process.env.PRIVATE_KEY_1],
     },
     // for OP testnet
-    'optimism': {
+    optimism: {
       url: 'https://sepolia.optimism.io',
-      accounts: [
-        process.env.PRIVATE_KEY_1
-      ],
-    },    
+      accounts: [process.env.PRIVATE_KEY_1],
+    },
   },
   defaultNetwork: 'optimism',
   paths: {
@@ -45,22 +41,21 @@ module.exports = {
     },
     customChains: [
       {
-        network: "base",
+        network: 'base',
         chainId: 84532,
         urls: {
-          apiURL: "https://base-sepolia.blockscout.com/api",
-          browserURL: "https://base-sepolia.blockscout.com",
-        }
+          apiURL: 'https://base-sepolia.blockscout.com/api',
+          browserURL: 'https://base-sepolia.blockscout.com',
+        },
       },
       {
-        network: "optimism",
+        network: 'optimism',
         chainId: 11155420,
         urls: {
-          apiURL: "https://optimism-sepolia.blockscout.com/api",
-          browserURL: "https://optimism-sepolia.blockscout.com",
-        }
-      }
-    ]
+          apiURL: 'https://optimism-sepolia.blockscout.com/api',
+          browserURL: 'https://optimism-sepolia.blockscout.com',
+        },
+      },
+    ],
   },
 };
-
