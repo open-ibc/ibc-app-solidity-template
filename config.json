@@ -4,6 +4,22 @@
     "optimism": "XCounterUC",
     "base": "XCounterUC"
   },
+  "verify": {
+    "optimism": {
+      "contract": "XCounterUC",
+      "constructorArgs": [
+        "0xC3318ce027C560B559b09b1aA9cA4FEBDDF252F5"
+      ],
+      "address": "0x1234567890abcdef1234567890abcdef12345678"
+    },
+    "base": {
+      "contract": "XCounterUC",
+      "constructorArgs": [
+        "0x5031fb609569b67608Ffb9e224754bb317f174cD"
+      ],
+      "address": "0x1234567890abcdef1234567890abcdef12345678"
+    }
+  },
   "isUniversal": true,
   "createChannel": {
     "srcChain": "optimism",
