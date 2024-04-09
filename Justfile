@@ -95,3 +95,8 @@ clean-all:
     rm -rf artifacts cache
     forge clean
     rm -rf node_modules
+
+# Verify the smart contract on the chain provided (hardhat)
+# Usage: just verify-contract [chain] [contract address]
+verify CHAIN CONTRACT_ADDRESS:
+    node scripts/verify.js {{CHAIN}} {{CONTRACT_ADDRESS}}
