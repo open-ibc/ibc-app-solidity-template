@@ -1,6 +1,8 @@
 const fs = require('fs');
 const { getConfigPath } = require('./_helpers.js');
-const ibcConfig = require('../../ibc.json');
+
+const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
+const hhConfig = require('../../hardhat.config.js');
 
 // Function to update config.json
 function flipConfig() {
@@ -12,6 +14,8 @@ function flipConfig() {
     const tempConfig = { ...config };
     const source = tempConfig['createChannel']['srcChain'];
     const destination = tempConfig['createChannel']['dstChain'];
+    const srcChainId = hhConfig.networks[`${source}`].chainId;
+    const dstChainId = hhConfig.networks[`${destination}`].chainId;
 
     // Below, we'll update the config object
     if (config.backup !== undefined && typeof config.backup === 'object' && Object.keys(config.backup).length > 0) {
@@ -60,12 +64,12 @@ function flipConfig() {
     }
 
     // Update the universal channel values for new client
-    config['sendUniversalPacket']['optimism']['channelId'] = tempConfig.proofsEnabled
-      ? ibcConfig['optimism']['sim-client']['universalChannel']
-      : ibcConfig['optimism']['op-client']['universalChannel'];
-    config['sendUniversalPacket']['base']['channelId'] = tempConfig.proofsEnabled
-      ? ibcConfig['base']['sim-client']['universalChannel']
-      : ibcConfig['base']['op-client']['universalChannel'];
+    config['sendUniversalPacket'][`${srcChainId}`]['channelId'] = tempConfig.proofsEnabled
+      ? polyConfig[`${srcChainId}`]['clients']['op-client'].universalChannelId
+      : polyConfig[`${srcChainId}`]['clients']['sim-client'].universalChannelId;
+    config['sendUniversalPacket'][`${dstChainId}`]['channelId'] = tempConfig.proofsEnabled
+      ? polyConfig[`${dstChainId}`]['clients']['op-client'].universalChannelId
+      : polyConfig[`${dstChainId}`]['clients']['sim-client'].universalChannelId;
 
     // Write a new backup object to the config
     config['backup'] = {

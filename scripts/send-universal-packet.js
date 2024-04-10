@@ -20,8 +20,8 @@ async function main() {
   // Do logic to prepare the packet
 
   // If the network we are sending on is optimism, we need to use the base port address and vice versa
-  const destPortAddr =
-    networkName === 'optimism' ? config['sendUniversalPacket']['base']['portAddr'] : config['sendUniversalPacket']['optimism']['portAddr'];
+  const destChain = Object.keys(sendConfig).filter((chain) => chain !== networkName);
+  const destPortAddr = sendConfig[`${destChain}`]['portAddr'];
   const channelId = sendConfig[`${networkName}`]['channelId'];
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
   const timeoutSeconds = sendConfig[`${networkName}`]['timeout'];

@@ -3,6 +3,8 @@ require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
+const polyConfig = require('./lib/polymer-registry-poc/dist/output.json');
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
@@ -19,11 +21,18 @@ module.exports = {
     base: {
       url: 'https://sepolia.base.org',
       accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 84532,
     },
     // for OP testnet
     optimism: {
       url: 'https://sepolia.optimism.io',
       accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 11155420,
+    },
+    molten: {
+      url: 'https://sepolia.molten.io',
+      accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 49483,
     },
   },
   defaultNetwork: 'optimism',
@@ -58,4 +67,5 @@ module.exports = {
       },
     ],
   },
+  polymer: polyConfig,
 };
