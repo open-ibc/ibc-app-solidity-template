@@ -97,54 +97,6 @@ clean-all:
     rm -rf node_modules
 
 # Verify the smart contract on the chain provided (hardhat)
-# Usage: just verify [chain] [contract address]
+# Usage: just verify-contract [chain] [contract address]
 verify CHAIN CONTRACT_ADDRESS:
     node scripts/verify.js {{CHAIN}} {{CONTRACT_ADDRESS}}
-
-# Import environment variables
-set dotenv-load
-# Verify the smart contract on the chain provided (foundry)
-# Usage: just verify-contract [chain]
-verify-contract CHAIN:
-    #!/usr/bin/env sh
-
-    SOLIDITY_CACHE_FILE=./cache_forge/solidity-files-cache.json
-    OP_VERIFIER_URL=https://optimism-sepolia.blockscout.com/api?
-    BASE_VERIFIER_URL=https://base-sepolia.blockscout.com/api?
-
-    # Check if solidity files cache exists
-    if [ ! -f "$SOLIDITY_CACHE_FILE" ]; then
-        forge build
-    fi
-
-    # Check if jq is installed
-    if ! command -v jq &> /dev/null; then
-        echo "jq is not installed. Please install it first."
-        exit 1
-    fi
-
-    # Extract arguments from config file
-    contract=$(jq -r '.verify.{{CHAIN}}.contract' $CONFIG_PATH)
-    address=$(jq -r '.verify.{{CHAIN}}.address' $CONFIG_PATH)
-    args=$(jq -r '.verify.{{CHAIN}}.constructorArgs[]' $CONFIG_PATH)
-    # echo "args $args"
-    echo $args > args.txt
-
-    verifier_url=""
-    api_key=""
-    chain="{{CHAIN}}-sepolia"
-    if [ "$chain" == "optimism-sepolia" ]; then
-        verifier_url="$OP_VERIFIER_URL"
-        api_key="$OP_BLOCKSCOUT_API_KEY"
-    elif [ "$chain" = "base-sepolia" ]; then
-        verifier_url="$BASE_VERIFIER_URL"
-        api_key="$BASE_BLOCKSCOUT_API_KEY"
-    else
-        echo "Unknown chain: $chain"
-        exit 1
-    fi
-
-    forge verify-contract --verifier blockscout --verifier-url $verifier_url --constructor-args-path args.txt --chain $chain --etherscan-api-key $api_key --watch $address $contract
-
-    echo "Cleaning up..."
-    rm args.txt

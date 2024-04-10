@@ -13,7 +13,7 @@ function getConfigPath() {
 }
 
 // Function to update config.json
-function updateConfigDeploy(network, address, contractType, isSource) {
+function updateConfigDeploy(network, address, isSource) {
   try {
     const configPath = getConfigPath();
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -28,15 +28,11 @@ function updateConfigDeploy(network, address, contractType, isSource) {
       }
 
       config['sendPacket'][`${network}`]['portAddr'] = address;
-      config["verify"][`${network}`]["address"] = address;
-      config["verify"][`${network}`]["contract"] = contractType;
     } else if (config.isUniversal) {
       // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
       const client = config.proofsEnabled ? 'op-client' : 'sim-client';
       config['sendUniversalPacket'][`${network}`]['portAddr'] = address;
       config['sendUniversalPacket'][`${network}`]['channelId'] = ibcConfig[`${network}`][`${client}`]['universalChannel'];
-      config["verify"][`${network}`]["address"] = address;
-      config["verify"][`${network}`]["contract"] = contractType;
     }
 
     // Write the updated config back to the file
