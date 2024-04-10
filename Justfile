@@ -98,5 +98,5 @@ clean-all:
 
 # Verify the smart contract on the chain provided (hardhat)
 # Usage: just verify-contract [chain] [contract address]
-verify CHAIN CONTRACT_ADDRESS:
+verify-contract CHAIN CONTRACT_ADDRESS:
     node scripts/verify.js {{CHAIN}} {{CONTRACT_ADDRESS}}
