@@ -51,6 +51,29 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
     }
   });
 
+  dispatcher.on('ChannelOpenTry', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, channelId, event) => {
+    const txHash = event.log.transactionHash;
+    const channelIdString = hre.ethers.decodeBytes32String(channelId);
+    const url = `${explorerUrl}tx/${txHash}`;
+
+    console.log(`
+              -------------------------------------------
+          🔔 Event name: ${event.log.fragment.name}
+          ⛓️  Network: ${network}
+          🔗 Port Address: ${portAddress}
+          🔗 Counterparty Port ID: ${counterparytPortId}
+          🦘 Connection Hops: ${connectionHops}
+          👂 Channel ID: ${channelIdString}
+          🔀 Ordering: ${ordering}
+          💰 Fee Enabled: ${feeEnabled}
+          #️⃣  Version: ${version}
+          -------------------------------------------
+          🧾 TxHash: ${txHash}
+          🔍 Explorer URL: ${url}
+          -------------------------------------------\n`);
+    dispatcher.removeAllListeners();
+  });
+
   dispatcher.on('ChannelOpenAck', (portAddress, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
@@ -88,10 +111,9 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
     const url = `${explorerUrl}tx/${txHash}`;
-    if (filterChannelEvents(portAddress)) {
-      console.log(`
+    console.log(`
           -------------------------------------------
-          🔗 🔒   IBC CHANNEL CLOSED !!!   🔗 🔒
+          🔗 🔒   IBC CHANNEL Confirmed !!!   🔗 🔒
           -------------------------------------------
           🔔 Event name: ${event.log.fragment.name}
           ⛓️  Network: ${network}
@@ -101,7 +123,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
-    }
+
     dispatcher.removeAllListeners();
   });
 }
@@ -230,7 +252,7 @@ async function setupIbcChannelEventListener() {
   const opDispatcher = await getDispatcher('optimism');
   const baseDispatcher = await getDispatcher('base');
   listenForIbcChannelEvents('optimism', opIsSource, opDispatcher);
-  // listenForIbcChannelEvents('base', baseIsSource, baseDispatcher);
+  listenForIbcChannelEvents('base', baseIsSource, baseDispatcher);
 }
 
 module.exports = {

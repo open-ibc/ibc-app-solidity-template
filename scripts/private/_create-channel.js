@@ -42,8 +42,10 @@ async function main() {
   // Prepare the arguments to create the channel
   const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
   const connHop2 = ibcConfig[chanConfig.dstChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
-  const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
-  const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
+  const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}-sim-7`, chanConfig.srcAddr);
+  const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}-sim-7`, chanConfig.dstAddr);
+
+  // TODO -- add in port ids for proof -proof-7
 
   const local = {
     portId: srcPortId,
@@ -57,29 +59,31 @@ async function main() {
     version: '',
   };
 
+  const destPortIdtemp = 'polyibc.base-sim-7.505b11e8D792B46802851bB08Ff171ee49980B2E';
+
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId, createDummyProof());
+  await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], destPortIdtemp, createDummyProof());
 
-  if (!config.proofsEnabled) {
-    // Wait for the channel handshake to complete
-    await new Promise((r) => setTimeout(r, 90000));
+  // if (!config.proofsEnabled) {
+  //   // Wait for the channel handshake to complete
+  //   await new Promise((r) => setTimeout(r, 90000));
 
-    // Get the connected channels and print the new channel along with its counterparty
-    const connectedChannelsAfter = await ibcApp.getConnectedChannels();
+  //   // Get the connected channels and print the new channel along with its counterparty
+  //   const connectedChannelsAfter = await ibcApp.getConnectedChannels();
 
-    if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
-      const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
-      const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
+  //   if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
+  //     const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
+  //     const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
 
-      const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
-      const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
+  //     const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
+  //     const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
 
-      console.log(
-        `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
-      );
-    }
-  }
+  //     console.log(
+  //       `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
+  //     );
+  //   }
+  // }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

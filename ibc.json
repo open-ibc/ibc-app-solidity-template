@@ -1,8 +1,8 @@
 {
   "optimism": {
     "sim-client": {
-      "canonConnFrom": "connection-12",
-      "canonConnTo": "connection-13",
+      "canonConnFrom": "connection-48",
+      "canonConnTo": "connection-49",
       "universalChannel": "channel-10"
     },
     "op-client": {
@@ -13,8 +13,8 @@
   },
   "base": {
     "sim-client": {
-      "canonConnFrom": "connection-12",
-      "canonConnTo": "connection-13",
+      "canonConnFrom": "connection-50",
+      "canonConnTo": "connection-51",
       "universalChannel": "channel-11"
     },
     "op-client": {
