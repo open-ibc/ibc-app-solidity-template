@@ -5,14 +5,13 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const { exec } = require("child_process");
-const hre = require("hardhat");
-const {getConfigPath, getWhitelistedNetworks} = require('./private/_helpers.js');
-const { getDispatcherAddress, getUcHandlerAddress } = require('./private/_vibc-helpers.js');
+const {getConfigPath, getWhitelistedNetworks} = require('./_helpers.js');
+const { getDispatcherAddress, getUcHandlerAddress } = require('./_vibc-helpers.js');
 
 const network = process.argv[2];
 const address = process.argv[3];
 if (!network || !address) {
-  console.error('Usage: node verify.js <network> <address>');
+  console.error('Usage: node _verify.js <network> <address>');
   process.exit(1);
 }
 
@@ -50,7 +49,7 @@ async function runVerifyContract(constructorArgs) {
 
 async function main() {
   const config = require(getConfigPath());
-  const argsObject = require('../contracts/arguments.js');
+  const argsObject = require('../../contracts/arguments.js');
   
   // The config should have a deploy object with the network name as the key and contract type as the value
   const contractType = config["deploy"][`${network}`];
