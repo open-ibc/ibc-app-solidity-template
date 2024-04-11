@@ -1,3 +1,4 @@
+// DEPRECATED: This script is no longer used in the current version of the SDK
 const fs = require('fs');
 const { getConfigPath } = require('./_helpers.js');
 
