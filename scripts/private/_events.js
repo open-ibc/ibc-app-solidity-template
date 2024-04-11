@@ -13,9 +13,8 @@ function filterChannelEvents(portAddress) {
 function listenForIbcChannelEvents(network, source, dispatcher) {
   const explorerUrl = network === 'optimism' ? explorerOpUrl : explorerBaseUrl;
   console.log(`👂 Listening for IBC channel events on ${network}...`);
-  dispatcher.on('OpenIbcChannel', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, counterpartyChannelId, event) => {
+  dispatcher.on('ChannelOpenInit', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, event) => {
     const txHash = event.log.transactionHash;
-    const counterpartyChannelIdString = hre.ethers.decodeBytes32String(counterpartyChannelId);
     const url = `${explorerUrl}tx/${txHash}`;
 
     if (filterChannelEvents(portAddress)) {
@@ -35,7 +34,6 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
           ⛓️  Network: ${network}
           🔗 Port Address: ${portAddress}
           🔗 Counterparty Port ID: ${counterparytPortId}
-          🛣️  Counterparty Channel ID: ${counterpartyChannelIdString}
           🦘 Connection Hops: ${connectionHops}
           🔀 Ordering: ${ordering}
           💰 Fee Enabled: ${feeEnabled}
@@ -53,7 +51,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
     }
   });
 
-  dispatcher.on('ConnectIbcChannel', (portAddress, channelId, event) => {
+  dispatcher.on('ChannelOpenAck', (portAddress, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
     const url = `${explorerUrl}tx/${txHash}`;
@@ -86,7 +84,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
     dispatcher.removeAllListeners();
   });
 
-  dispatcher.on('CloseIbcChannel', (portAddress, channelId, event) => {
+  dispatcher.on('ChannelOpenConfirm', (portAddress, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
     const url = `${explorerUrl}tx/${txHash}`;
@@ -232,7 +230,7 @@ async function setupIbcChannelEventListener() {
   const opDispatcher = await getDispatcher('optimism');
   const baseDispatcher = await getDispatcher('base');
   listenForIbcChannelEvents('optimism', opIsSource, opDispatcher);
-  listenForIbcChannelEvents('base', baseIsSource, baseDispatcher);
+  // listenForIbcChannelEvents('base', baseIsSource, baseDispatcher);
 }
 
 module.exports = {

@@ -59,7 +59,7 @@ async function main() {
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  await ibcApp.createChannel(local, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], cp, createDummyProof());
+  await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId, createDummyProof());
 
   if (!config.proofsEnabled) {
     // Wait for the channel handshake to complete
