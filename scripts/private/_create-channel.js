@@ -7,7 +7,7 @@
 const hre = require('hardhat');
 const { getConfigPath, addressToPortId } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers.js');
-const polyConfig = require('./lib/polymer-registry-poc/dist/output.json');
+const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
 
 function createDummyProof() {
   return {

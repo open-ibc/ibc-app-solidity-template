@@ -35,12 +35,14 @@ async function getDispatcher(network) {
   const providerBase = new ethers.JsonRpcProvider(rpcBase);
 
   const chainId = convertNetworkToChainId(network);
-  const explorerUrl = polyConfig[`${chainId}`]['explorers'][0]['url'];
+  const explorerUrl = `${polyConfig[`${chainId}`]['explorers'][0]['url']}/`;
 
   let dispatcher;
   let dispatcherAddress;
   try {
     dispatcherAddress = getDispatcherAddress(network);
+    //console.log(`🗄️  Fetching dispatcher on ${network} at address: ${dispatcherAddress}`)
+    //console.log(`🔍  Fetching dispatcher ABI from: ${explorerUrl}`)
     const dispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
 
     // TODO: Update for multiple clients
@@ -68,7 +70,7 @@ async function getUcHandler(network) {
   const providerBase = new ethers.JsonRpcProvider(rpcBase);
 
   const chainId = convertNetworkToChainId(network);
-  const explorerUrl = polyConfig[`${chainId}`]['explorers'][0]['url'];
+  const explorerUrl = `${polyConfig[`${chainId}`]['explorers'][0]['url']}/`;
 
   const ucHandlerAddress = getUcHandlerAddress(network);
   try {
