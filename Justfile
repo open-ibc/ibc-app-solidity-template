@@ -8,7 +8,7 @@ install:
 # Usage: just build-config
 build-config SOURCE DESTINATION:
     echo "Building config file..."
-    node utils/build-config.js {{SOURCE}} {{DESTINATION}}
+    node utils/buildConfig.js {{SOURCE}} {{DESTINATION}}
 
 # Compile contracts using the specified compiler or default to Hardhat
 # The compiler argument is optional; if not provided, it defaults to "hardhat".
