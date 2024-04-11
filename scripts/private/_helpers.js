@@ -1,8 +1,8 @@
 const fs = require('fs');
 const axios = require('axios');
 const hre = require('hardhat');
-//const ibcConfig = require('../../ibc.json');
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
+
+const polyConfig = hre.config.polymer;
 
 // Function to get the path to the configuration file
 function getConfigPath() {
@@ -20,6 +20,19 @@ function convertNetworkToChainId(network) {
     throw new Error('❌ Chain ID not found for network:', network);
   }
   return chainId;
+}
+
+// Function that gets the explorer url and api url from HH config
+function getNetworkDataFromConfig(network) {
+  const networks = hre.config.networks;
+  return networks[`${network}`];
+}
+
+// Function that gets the explorer url and api url from HH config
+function getExplorerDataFromConfig(network) {
+  const customChains = hre.config.etherscan.customChains;
+  const chainInfo = customChains.filter((chain) => chain.network === network);
+  return chainInfo.urls;
 }
 
 // Function to update config.json
@@ -71,9 +84,9 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
   }
 }
 
-async function fetchABI(explorerUrl, contractAddress) {
+async function fetchABI(explorerApiUrl, contractAddress) {
   try {
-    const response = await axios.get(`${explorerUrl}api/v2/smart-contracts/${contractAddress}`);
+    const response = await axios.get(`${explorerApiUrl}/v2/smart-contracts/${contractAddress}`);
     if (response.status === 200) {
       const abi = response.data.abi;
       return abi;
@@ -118,6 +131,8 @@ function getWhitelistedNetworks() {
 module.exports = {
   getConfigPath,
   convertNetworkToChainId,
+  getNetworkDataFromConfig,
+  getExplorerDataFromConfig,
   updateConfigDeploy,
   updateConfigCreateChannel,
   fetchABI,

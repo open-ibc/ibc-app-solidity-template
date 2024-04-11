@@ -2,7 +2,7 @@ const hre = require('hardhat');
 const { areAddressesEqual, getConfigPath, convertNetworkToChainId } = require('./_helpers.js');
 const { getDispatcher, getUcHandlerAddress } = require('./_vibc-helpers.js');
 
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
+const polyConfig = hre.config.polymer;
 
 function filterChannelEvents(portAddress) {
   const config = require(getConfigPath());

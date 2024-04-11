@@ -1,8 +1,8 @@
 const fs = require('fs');
 const { getConfigPath } = require('./_helpers.js');
 
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
 const hhConfig = require('../../hardhat.config.js');
+const polyConfig = hhConfig.polymer;
 
 // Function to update config.json
 function flipConfig() {
@@ -64,10 +64,10 @@ function flipConfig() {
     }
 
     // Update the universal channel values for new client
-    config['sendUniversalPacket'][`${srcChainId}`]['channelId'] = tempConfig.proofsEnabled
+    config['sendUniversalPacket'][`${source}`]['channelId'] = tempConfig.proofsEnabled
       ? polyConfig[`${srcChainId}`]['clients']['op-client'].universalChannelId
       : polyConfig[`${srcChainId}`]['clients']['sim-client'].universalChannelId;
-    config['sendUniversalPacket'][`${dstChainId}`]['channelId'] = tempConfig.proofsEnabled
+    config['sendUniversalPacket'][`${destination}`]['channelId'] = tempConfig.proofsEnabled
       ? polyConfig[`${dstChainId}`]['clients']['op-client'].universalChannelId
       : polyConfig[`${dstChainId}`]['clients']['sim-client'].universalChannelId;
 

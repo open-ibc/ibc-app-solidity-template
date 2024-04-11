@@ -8,7 +8,7 @@ const hre = require('hardhat');
 const { getConfigPath, areAddressesEqual } = require('./_helpers.js');
 const { getIbcApp, getUcHandler } = require('./_vibc-helpers.js');
 
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
+const polyConfig = hre.config.polymer;
 
 async function main() {
   const config = require(getConfigPath());

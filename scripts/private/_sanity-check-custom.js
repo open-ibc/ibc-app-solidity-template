@@ -9,7 +9,7 @@ const { getConfigPath } = require('./_helpers');
 const { areAddressesEqual } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers');
 
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
+const polyConfig = hre.config.polymer;
 
 async function main() {
   const configPath = getConfigPath();

@@ -1,10 +1,8 @@
 const { ethers } = require('hardhat');
-const { getConfigPath, fetchABI, convertNetworkToChainId } = require('./_helpers.js');
+const { getConfigPath, fetchABI, convertNetworkToChainId, getExplorerDataFromConfig, getNetworkDataFromConfig } = require('./_helpers.js');
 
-const polyConfig = require('../../lib/polymer-registry-poc/dist/output.json');
-
-const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
-const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
+const hhConfig = require('../../hardhat.config.js');
+const polyConfig = hhConfig.polymer;
 
 async function getIbcApp(network) {
   try {
@@ -31,24 +29,13 @@ function getDispatcherAddress(network) {
 }
 
 async function getDispatcher(network) {
-  const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
-  const providerBase = new ethers.JsonRpcProvider(rpcBase);
-
-  const chainId = convertNetworkToChainId(network);
-  const explorerUrl = `${polyConfig[`${chainId}`]['explorers'][0]['url']}/`;
-
-  let dispatcher;
-  let dispatcherAddress;
+  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const rpc = getNetworkDataFromConfig(network).alchemyRPC;
+  const provider = new ethers.JsonRpcProvider(rpc);
   try {
-    dispatcherAddress = getDispatcherAddress(network);
-    //console.log(`🗄️  Fetching dispatcher on ${network} at address: ${dispatcherAddress}`)
-    //console.log(`🔍  Fetching dispatcher ABI from: ${explorerUrl}`)
-    const dispatcherAbi = await fetchABI(explorerUrl, dispatcherAddress);
-
-    // TODO: Update for multiple clients
-    const provider = network === 'optimism' ? providerOptimism : providerBase;
-
-    dispatcher = new ethers.Contract(dispatcherAddress, dispatcherAbi, provider);
+    const dispatcherAddress = getDispatcherAddress(network);
+    const dispatcherAbi = await fetchABI(explorerApiUrl, dispatcherAddress);
+    const dispatcher = new ethers.Contract(dispatcherAddress, dispatcherAbi, provider);
     return dispatcher;
   } catch (error) {
     console.log(`❌ Error getting dispatcher: ${error}`);
@@ -66,17 +53,12 @@ function getUcHandlerAddress(network) {
 }
 
 async function getUcHandler(network) {
-  const providerOptimism = new ethers.JsonRpcProvider(rpcOptimism);
-  const providerBase = new ethers.JsonRpcProvider(rpcBase);
-
-  const chainId = convertNetworkToChainId(network);
-  const explorerUrl = `${polyConfig[`${chainId}`]['explorers'][0]['url']}/`;
-
-  const ucHandlerAddress = getUcHandlerAddress(network);
+  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const rpc = getNetworkDataFromConfig(network).alchemyRPC;
+  const provider = new ethers.JsonRpcProvider(rpc);
   try {
-    const ucHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
-    const provider = network === 'optimism' ? providerOptimism : providerBase;
-
+    const ucHandlerAddress = getUcHandlerAddress(network);
+    const ucHandlerAbi = await fetchABI(explorerApiUrl, ucHandlerAddress);
     const ucHandler = new ethers.Contract(ucHandlerAddress, ucHandlerAbi, provider);
     return ucHandler;
   } catch (error) {
