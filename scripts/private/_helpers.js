@@ -31,7 +31,7 @@ function getNetworkDataFromConfig(network) {
 // Function that gets the explorer url and api url from HH config
 function getExplorerDataFromConfig(network) {
   const customChains = hre.config.etherscan.customChains;
-  const chainInfo = customChains.filter((chain) => chain.network === network);
+  const chainInfo = customChains.find((chain) => chain.network === network);
   return chainInfo.urls;
 }
 

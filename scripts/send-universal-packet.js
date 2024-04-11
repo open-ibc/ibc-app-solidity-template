@@ -20,7 +20,7 @@ async function main() {
   // Do logic to prepare the packet
 
   // If the network we are sending on is optimism, we need to use the base port address and vice versa
-  const destChain = Object.keys(sendConfig).filter((chain) => chain !== networkName);
+  const destChain = Object.keys(sendConfig).find((chain) => chain !== networkName);
   const destPortAddr = sendConfig[`${destChain}`]['portAddr'];
   const channelId = sendConfig[`${networkName}`]['channelId'];
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);

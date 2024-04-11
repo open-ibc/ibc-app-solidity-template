@@ -32,8 +32,8 @@ async function runSendPacket(config) {
   }
 
   const destination = config.isUniversal
-    ? Object.keys(config.sendUniversalPacket).filter((chain) => chain !== source)
-    : Object.keys(config.sendPacket).filter((chain) => chain !== source);
+    ? Object.keys(config.sendUniversalPacket).find((chain) => chain !== source)
+    : Object.keys(config.sendPacket).find((chain) => chain !== source);
 
   const script = config.isUniversal ? 'send-universal-packet.js' : 'send-packet.js';
   const command = `npx hardhat run scripts/${script} --network ${source}`;

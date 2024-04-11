@@ -1,8 +1,6 @@
 const hre = require('hardhat');
-const { areAddressesEqual, getConfigPath, convertNetworkToChainId } = require('./_helpers.js');
+const { areAddressesEqual, getConfigPath, getExplorerDataFromConfig } = require('./_helpers.js');
 const { getDispatcher, getUcHandlerAddress } = require('./_vibc-helpers.js');
-
-const polyConfig = hre.config.polymer;
 
 function filterChannelEvents(portAddress) {
   const config = require(getConfigPath());
@@ -10,14 +8,13 @@ function filterChannelEvents(portAddress) {
 }
 
 function listenForIbcChannelEvents(network, source, dispatcher) {
-  const chainId = convertNetworkToChainId(network);
-  const explorerUrl = polyConfig[`${chainId}`]['explorers'][0]['url'];
+  const explorerUrl = getExplorerDataFromConfig(network).browserURL;
   console.log(`👂 Listening for IBC channel events on ${network}...`);
 
   dispatcher.on('OpenIbcChannel', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, counterpartyChannelId, event) => {
     const txHash = event.log.transactionHash;
     const counterpartyChannelIdString = hre.ethers.decodeBytes32String(counterpartyChannelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
 
     if (filterChannelEvents(portAddress)) {
       console.log(`
@@ -57,7 +54,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
   dispatcher.on('ConnectIbcChannel', (portAddress, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
     if (filterChannelEvents(portAddress)) {
       console.log(`
           -------------------------------------------`);
@@ -90,7 +87,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
   dispatcher.on('CloseIbcChannel', (portAddress, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
     if (filterChannelEvents(portAddress)) {
       console.log(`
           -------------------------------------------
@@ -118,14 +115,13 @@ function filterPacketEvents(portAddress, network) {
 }
 
 function listenForIbcPacketEvents(network, dispatcher) {
-  const chainId = convertNetworkToChainId(network);
-  const explorerUrl = polyConfig[`${chainId}`]['explorers'][0]['url'];
+  const explorerUrl = getExplorerDataFromConfig(network).browserURL;
   console.log(`👂 Listening for IBC packet events on ${network}...`);
 
   dispatcher.on('SendPacket', (sourcePortAddress, sourceChannelId, packet, sequence, timeoutTimestamp, event) => {
     const txHash = event.log.transactionHash;
     const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
 
     if (filterPacketEvents(sourcePortAddress, network)) {
       console.log(` 
@@ -149,7 +145,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
   dispatcher.on('RecvPacket', (destPortAddress, destChannelId, sequence, event) => {
     const txHash = event.log.transactionHash;
     const destChannelIdString = hre.ethers.decodeBytes32String(destChannelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
 
     if (filterPacketEvents(destPortAddress, network)) {
       console.log(`
@@ -172,7 +168,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
   dispatcher.on('WriteAckPacket', (writerPortAddress, writerChannelId, sequence, ackPacket, event) => {
     const txHash = event.log.transactionHash;
     const writerChannelIdString = hre.ethers.decodeBytes32String(writerChannelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
     if (filterPacketEvents(writerPortAddress, network)) {
       console.log(` 
           -------------------------------------------
@@ -195,7 +191,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
   dispatcher.on('Acknowledgement', (sourcePortAddress, sourceChannelId, sequence, event) => {
     const txHash = event.log.transactionHash;
     const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
-    const url = `${explorerUrl}tx/${txHash}`;
+    const url = `${explorerUrl}/tx/${txHash}`;
     if (filterPacketEvents(sourcePortAddress, network)) {
       console.log(`   
           -------------------------------------------
