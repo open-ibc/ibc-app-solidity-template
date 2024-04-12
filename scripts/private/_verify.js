@@ -33,7 +33,7 @@ async function runVerifyContract(constructorArgs) {
   // Check if the chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
   if (!allowedNetworks.includes(network)) {
-    console.error("❌ Please provide a valid chain");
+    console.error("❌ Invalid network specified. Please provide one of the following whitelisted networks: " + allowedNetworks.join(', '));
     process.exit(1);
   }
 
