@@ -49,7 +49,7 @@ async function getDispatcher(network) {
         ? (dispatcherAddress = process.env.OP_DISPATCHER)
         : (dispatcherAddress = process.env.OP_DISPATCHER_SIM);
 
-      const opDispatcherAbi = await fetchABI(explorerUrl, '0x22192b514EA9D3607618df86109e291D56a85721');
+      const opDispatcherAbi = await fetchABI(explorerUrl, process.env.OP_DISPATCHER_IMP_SIM);
       dispatcher = new ethers.Contract(dispatcherAddress, opDispatcherAbi, providerOptimism);
     } else if (network === 'base') {
       explorerUrl = explorerBaseUrl;
@@ -57,7 +57,7 @@ async function getDispatcher(network) {
         ? (dispatcherAddress = process.env.BASE_DISPATCHER)
         : (dispatcherAddress = process.env.BASE_DISPATCHER_SIM);
 
-      const baseDispatcherAbi = await fetchABI(explorerUrl, '0x3a406E638F097949DB078C81EbC52cEFB4f0F1F0');
+      const baseDispatcherAbi = await fetchABI(explorerUrl, process.env.BASE_DISPATCHER_IMP_SIM);
       dispatcher = new ethers.Contract(dispatcherAddress, baseDispatcherAbi, providerBase);
     } else {
       throw new Error(`❌ Invalid network: ${network}`);

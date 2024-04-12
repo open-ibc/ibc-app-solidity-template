@@ -71,7 +71,6 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
-    dispatcher.removeAllListeners();
   });
 
   dispatcher.on('ChannelOpenAck', (portAddress, channelId, event) => {
@@ -108,10 +107,11 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
   });
 
   dispatcher.on('ChannelOpenConfirm', (portAddress, channelId, event) => {
-    const txHash = event.log.transactionHash;
-    const channelIdString = hre.ethers.decodeBytes32String(channelId);
-    const url = `${explorerUrl}tx/${txHash}`;
-    console.log(`
+    if (filterChannelEvents(portAddress)) {
+      const txHash = event.log.transactionHash;
+      const channelIdString = hre.ethers.decodeBytes32String(channelId);
+      const url = `${explorerUrl}tx/${txHash}`;
+      console.log(`
           -------------------------------------------
           🔗 🔒   IBC CHANNEL Confirmed !!!   🔗 🔒
           -------------------------------------------
@@ -123,7 +123,7 @@ function listenForIbcChannelEvents(network, source, dispatcher) {
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
-
+    }
     dispatcher.removeAllListeners();
   });
 }

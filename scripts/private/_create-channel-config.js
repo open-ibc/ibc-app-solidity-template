@@ -1,9 +1,9 @@
 const { exec } = require('child_process');
-const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks } = require('./_helpers.js');
+const { getConfigPath, updateConfigCreateChannel, updateConfigCreateChannelCP, getWhitelistedNetworks } = require('./_helpers.js');
 const { setupIbcChannelEventListener } = require('./_events.js');
 
 // Function to run the deploy script and capture output
-function createChannelAndCapture() {
+async function createChannelAndCapture() {
   const config = require(getConfigPath());
   const srcChain = config.createChannel.srcChain;
 
@@ -13,7 +13,7 @@ function createChannelAndCapture() {
     console.error('❌ Invalid network name');
     return;
   }
-  exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout) => {
+  await exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return;
@@ -36,14 +36,52 @@ function createChannelAndCapture() {
           🛣️  Channel ID: ${channel}
           🔗 Port ID: ${portId}
           🌍 Network: ${network}
-          -----------------------------------------
-          🛣️  Counterparty Channel ID: ${cpChannel}
-          🪐 Counterparty Network: ${cpNetwork}
           -----------------------------------------\n`);
 
       // Update the config.json file
       updateConfigCreateChannel(network, channel, cpNetwork, cpChannel);
-      console.log(`🆗 Updated config.json with ${channel} on network ${network} and ${cpChannel} on network ${cpNetwork}`);
+      console.log(`🆗 Updated config.json with ${channel} on network ${network}`);
+    } else {
+      console.error('❌ Could not find required parameters in output');
+    }
+  });
+  await getCPInfo();
+}
+
+async function getCPInfo() {
+  const config = require(getConfigPath());
+  const dstChain = config.createChannel.dstChain;
+
+  // Check if the source chain from user input is whitelisted
+  const allowedNetworks = getWhitelistedNetworks();
+  if (!allowedNetworks.includes(dstChain)) {
+    console.error('❌ Invalid network name');
+    return;
+  }
+  await exec(`npx hardhat run scripts/private/_get_cp_channel.js --network ${dstChain}`, (error, stdout) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+
+    // Process stdout to find the contract address and network
+    const output = stdout.trim();
+    const match = output.match(/Counterparty: (\S+) on network (\S+)/);
+
+    if (match) {
+      const channel = match[1];
+      const cpNetwork = match[2];
+
+      console.log(`
+          🎊   Counterparty Channel   🎊
+          -----------------------------------------
+          🛣️  Counterparty Channel ID: ${channel}
+          🪐 Counterparty Network: ${cpNetwork}
+          -----------------------------------------\n`);
+
+      // Update the config.json file
+      updateConfigCreateChannelCP(cpNetwork, channel);
+      console.log(`🆗 Updated config.json with ${channel} on network ${cpNetwork}`);
     } else {
       console.error('❌ Could not find required parameters in output');
     }
@@ -52,7 +90,7 @@ function createChannelAndCapture() {
 
 async function main() {
   await setupIbcChannelEventListener();
-  createChannelAndCapture();
+  await createChannelAndCapture();
 }
 
 main().catch((error) => {

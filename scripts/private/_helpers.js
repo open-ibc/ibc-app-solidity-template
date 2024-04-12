@@ -42,6 +42,20 @@ function updateConfigDeploy(network, address, isSource) {
   }
 }
 
+function updateConfigCreateChannelCP(cpNetwork, cpChannel) {
+  try {
+    const configPath = getConfigPath();
+    const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+    // Update the config object
+    upConfig['sendPacket'][`${cpNetwork}`]['channelId'] = cpChannel;
+
+    // Write the updated config back to the file
+    fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
+  } catch (error) {
+    console.error('❌ Error updating config:', error);
+  }
+}
 // Function to update config.json
 function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
   try {
@@ -91,11 +105,11 @@ function areAddressesEqual(address1, address2) {
 }
 
 // Helper function to convert an address to a port ID
-function addressToPortId(portPrefix, address) {
+function addressToPortId(portPrefix, address, version) {
   const config = require(getConfigPath());
   const simAddOn = config.proofsEnabled ? '-proofs-1' : '-sim';
   const suffix = address.slice(2);
-  return `${portPrefix}${simAddOn}.${suffix}`;
+  return `${portPrefix}${simAddOn}-${version}.${suffix}`;
 }
 
 function getWhitelistedNetworks() {
@@ -106,6 +120,7 @@ module.exports = {
   getConfigPath,
   updateConfigDeploy,
   updateConfigCreateChannel,
+  updateConfigCreateChannelCP,
   fetchABI,
   areAddressesEqual,
   addressToPortId,

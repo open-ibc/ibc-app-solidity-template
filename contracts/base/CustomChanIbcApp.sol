@@ -210,6 +210,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
 
     function onChanOpenTry(string calldata counterpartyVersion)
         external
+        pure
         override
         returns (string memory selectedVersion)
     {

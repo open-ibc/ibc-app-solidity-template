@@ -7,22 +7,22 @@
   "isUniversal": false,
   "createChannel": {
     "srcChain": "optimism",
-    "srcAddr": "0xf0ced0B0A22CbD400A01eCB06b27210C1a917214",
+    "srcAddr": "0x4b90FEe6cF29D9b91e54E023CC15b705657298c4",
     "dstChain": "base",
-    "dstAddr": "0x505b11e8D792B46802851bB08Ff171ee49980B2E",
+    "dstAddr": "0x24285152C4b0172E1f264C6BB1036f09c1d007F3",
     "version": "1.0",
     "ordering": 0,
     "fees": false
   },
   "sendPacket": {
     "optimism": {
-      "portAddr": "0xf0ced0B0A22CbD400A01eCB06b27210C1a917214",
-      "channelId": "channel-n",
+      "portAddr": "0x4b90FEe6cF29D9b91e54E023CC15b705657298c4",
+      "channelId": "channel-152",
       "timeout": 36000
     },
     "base": {
-      "portAddr": "0x505b11e8D792B46802851bB08Ff171ee49980B2E",
-      "channelId": "channel-n",
+      "portAddr": "0x24285152C4b0172E1f264C6BB1036f09c1d007F3",
+      "channelId": "channel-153",
       "timeout": 36000
     }
   },
