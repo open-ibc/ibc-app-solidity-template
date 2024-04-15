@@ -1,5 +1,5 @@
 const { exec } = require('child_process');
-const { updateConfigDeploy, getWhitelistedNetworks } = require('./_helpers');
+const { updateConfigDeploy, getWhitelistedNetworks, convertNetworkToChainId } = require('./_helpers');
 
 // Run script with source and destination networks as arguments
 // Example:
@@ -15,7 +15,9 @@ if (!source || !destination) {
 // Function to run the deploy script and capture output
 function deployAndCapture(network, isSource) {
   const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(network)) {
+  const chainId = convertNetworkToChainId(network);
+
+  if (!allowedNetworks.includes(`${chainId}`)) {
     console.error('Invalid network. Please provide a valid network as an argument.');
     return;
   }

@@ -41,7 +41,26 @@ Additionally Hardhat will be installed as a dev dependency with some useful plug
 
 > Note: In case you're experiencing issues with dependencies using the `just install` recipe, check that all prerequisites are correctly installed. If issues persist with forge, try to do the individual dependency installations...
 
-## ⚙️ Set up your environment variables
+## ⚙️ Set up your environment and configuration
+
+The idea is to ensure that most configuration to add Polymer's vIBC is added as custom data in the configuration file of your development environment, e.g. Hardhat or Foundry. (Note that at the time of writing, only Hardhat is fully supported).
+
+Make sure to add network information to the Hardhat configuration for all supported networks you're interested in building on, following this schema:
+```javascript
+networks: {
+    // for OP testnet
+    optimism: {
+      url: 'https://sepolia.optimism.io',
+      alchemyRPC: `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`,
+      accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 11155420,
+    }
+}
+```
+
+Especially make sure the chain ID is added as it will be used to fetch the correct data from the Polymer registry by ID, while you can locally refer to the chain as the name you've specified in the Hardhat config.
+
+### Environment variables
 
 Convert the `.env.example` file into an `.env` file. This will ignore the file for future git commits as well as expose the environment variables. Add your private keys and update the other values if you want to customize (advanced usage feature).
 
@@ -55,16 +74,22 @@ This will enable you to sign transactions with your private key(s). If not added
 
 The configuration file is where all important data is stored for the just commands and automation. We strive to make direct interaction with the config file as little as possible.
 
-By default the configuration file is stored at root as `config.json`.
+By default the configuration file is stored in the config folder as `config.json`.
 
-However, it is recommended to split up different contracts/projects in the same repo into different config file in case you want to switch between them.
+> 💡 However, it is recommended to split up different contracts/projects in the same repo into different config files in case you want to switch between them.
 
-Store alternate config files in the /config directory and set
-```sh
-# .env file
-CONFIG_PATH='config/alt-config.json'
+Store alternate config files in the /config directory and set the path in the Hardhat coniguration file:
+```javascript
+    // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
+    vibcConfigPath: 'config/alt-config.json',  
 ```
 to use a different config file.
+
+Contrary to previous version, you have to build the default configuration file by specifying the networks (from the Hardhat config) you want it to include:
+```sh
+# Usage: just build-config SOURCE DESTINATION
+just build-config optimism base
+```
 
 ### Obtaining testnet ETH
 
@@ -240,56 +265,19 @@ to send a packet over a channel (script looks at the config's isUniversal flag t
 
 ## Verify, don't trust
 
-As a starter value, the sim-client is used to improve latency. **The sim-client is useful for iterative development and testing BUT also insecure as it involves no proofs**. Make sure to move to the client **with proofs** by running another just command...
+As a starter value, the sim-client is used to improve latency. **The sim-client is useful for iterative development and testing BUT also insecure as it involves no proofs**. Make sure to move to the client **with proofs** by setting the `proofsEnabled` flag in the config file to true:
 
-```bash
-# Usage: just switch-client
-just switch-client
-```
-
-This will use the op-stack client with proofs, making sure that the relayer is proving what is being submitted every step along the way, ensuring there's no trust assumption on the relayer.
-
-An overview of the different clients can be found in `ibc.json`:
 ```json
+// In config/proof-config.json
 {
-    "optimism": {
-        "sim-client": {
-            "canonConnFrom": "connection-0",
-            "canonConnTo": "connection-1",
-            "universalChannel": "channel-10"
-        },
-        "op-client": {
-            "canonConnFrom": "connection-8",
-            "canonConnTo": "connection-9",
-            "universalChannel": "channel-16"
-        }
-    },
-    "base": {
-        "sim-client" : {
-            "canonConnFrom": "connection-4",
-            "canonConnTo": "connection-5",
-            "universalChannel": "channel-11"
-        },
-        "op-client": {
-            "canonConnFrom": "connection-10",
-            "canonConnTo": "connection-11",
-            "universalChannel": "channel-17"
-        }
-    }
+    ...,
+    "proofsEnabled": true,
+    ...
 }
 ```
 
-## 🦾 Advanced usage
 
-For advanced users, there's multiple custimizations to follow. These includes configuring the config.json manually and/or running the scripts without using just.
-
-For example, the last action to send a packet on a universal channel could be executed with this command:
-
-```bash
-npx hardhat run scripts/send-universal-packet.js --network base
-```
-
-To send a universal packet from the contract specified in the config.sendUniversalPacket field in the config.
+This will use the op-stack client with proofs, making sure that the relayer is proving what is being submitted every step along the way, ensuring there's no trust assumption on the relayer.
 
 ## 🤝 Contributing
 

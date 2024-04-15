@@ -7,7 +7,7 @@
 const hre = require('hardhat');
 const { getConfigPath, addressToPortId } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers.js');
-const ibcConfig = require('../../ibc.json');
+const polyConfig = hre.config.polymer;
 
 function createDummyProof() {
   return {
@@ -34,14 +34,17 @@ async function main() {
   const config = require(getConfigPath());
   const chanConfig = config.createChannel;
   const networkName = hre.network.name;
+  const chainId = hre.config.networks[`${networkName}`].chainId;
 
   // Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName);
   const connectedChannelsBefore = await ibcApp.getConnectedChannels();
 
   // Prepare the arguments to create the channel
-  const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
-  const connHop2 = ibcConfig[chanConfig.dstChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
+  // TODO: Update to allow dynamic choice of client type
+  const connHop1 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
+  const connHop2 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
+
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
 

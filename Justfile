@@ -4,6 +4,12 @@ install:
     npm install
     forge install --shallow
 
+# Build config file at location specified in the .env file
+# Usage: just build-config
+build-config SOURCE DESTINATION:
+    echo "Building config file..."
+    node utils/buildConfig.js {{SOURCE}} {{DESTINATION}}
+
 # Compile contracts using the specified compiler or default to Hardhat
 # The compiler argument is optional; if not provided, it defaults to "hardhat".
 # Usage: just compile [compiler]
@@ -62,13 +68,14 @@ send-packet SOURCE:
     echo "Sending a packet with the values from the config..."
     node scripts/private/_send-packet-config.js {{SOURCE}}
 
+# DEPRECATED: Use single config file per client type
 # Switch between the sim client and the client with proofs
 # Usage: just switch-client
-switch-client:
-    echo "Switching between sim client and client with proofs..."
-    npx hardhat run scripts/private/_update-vibc-address.js --network optimism
-    npx hardhat run scripts/private/_update-vibc-address.js --network base
-    node scripts/private/_switch-clients.js
+# switch-client:
+#     echo "Switching between sim client and client with proofs..."
+#     npx hardhat run scripts/private/_update-vibc-address.js --network optimism
+#     npx hardhat run scripts/private/_update-vibc-address.js --network base
+#     node scripts/private/_switch-clients.js
 
 # Run the full E2E flow by setting the contracts, deploying them, creating a channel, and sending a packet
 # Usage: just do-it

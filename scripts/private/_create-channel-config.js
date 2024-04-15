@@ -1,16 +1,20 @@
 const { exec } = require('child_process');
-const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks } = require('./_helpers.js');
+const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks, convertNetworkToChainId } = require('./_helpers.js');
 const { setupIbcChannelEventListener } = require('./_events.js');
 
 // Function to run the deploy script and capture output
-function createChannelAndCapture() {
-  const config = require(getConfigPath());
-  const srcChain = config.createChannel.srcChain;
-
+function createChannelAndCapture(config, srcChain, dstChain) {
   // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(srcChain)) {
-    console.error('❌ Invalid network name');
+  const srcChainId = convertNetworkToChainId(srcChain);
+  const dstChainId = convertNetworkToChainId(dstChain);
+
+  if (!allowedNetworks.includes(`${srcChainId}`)) {
+    console.error('❌ Invalid network name: Please provide a valid source chain');
+    return;
+  }
+  if (!allowedNetworks.includes(`${dstChainId}`)) {
+    console.error('❌ Invalid network name: Please provide a valid destination chain');
     return;
   }
   exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout) => {
@@ -51,8 +55,11 @@ function createChannelAndCapture() {
 }
 
 async function main() {
-  await setupIbcChannelEventListener();
-  createChannelAndCapture();
+  const config = require(getConfigPath());
+  const srcChain = config.createChannel.srcChain;
+  const dstChain = config.createChannel.dstChain;
+  await setupIbcChannelEventListener(srcChain, dstChain);
+  createChannelAndCapture(config, srcChain, dstChain);
 }
 
 main().catch((error) => {

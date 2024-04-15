@@ -2,10 +2,15 @@
 
 pragma solidity ^0.8.9;
 
-import '@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol';
+import { IbcUtils, UniversalPacket, AckPacket } from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
+import { 
+    IbcUniversalPacketReceiver,
+    IbcMwPacketSender,
+    IbcMwPacketReceiver,
+    IbcMwUser,
+    IbcMwEventsEmitter,
+    IbcMiddleware
+} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol";
 
 contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
     /**
@@ -21,7 +26,6 @@ contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
     /**
      * @param _middleware The middleware contract address this contract sends packets to and receives packets from.
      */
-
     constructor(uint256 mwId, address _middleware) IbcMwUser(_middleware) {
         MW_ID = mwId;
     }

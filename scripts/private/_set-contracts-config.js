@@ -2,7 +2,7 @@
 // Example:
 // $ node set-contracts-config.js optimism XCounterUC true
 const fs = require('fs');
-const { getConfigPath } = require('./_helpers.js');
+const { getConfigPath, convertNetworkToChainId, getWhitelistedNetworks } = require('./_helpers.js');
 
 if (process.argv.length < 5) {
   console.error('❌ Incorrect number of args. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
@@ -11,8 +11,13 @@ if (process.argv.length < 5) {
 const chain = process.argv[2];
 const contractType = process.argv[3];
 const universalBoolean = process.argv[4].trim().toLowerCase();
-
-if (chain !== 'optimism' && chain !== 'base') {
+try {
+  const allowedNetworks = getWhitelistedNetworks();
+  const chainId = convertNetworkToChainId(chain);
+  if (!allowedNetworks.includes(`${chainId}`)) {
+    throw new Error('Invalid network. Please provide a valid network as an argument.');
+  }
+} catch (error) {
   console.error('❌ Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
   process.exit(1);
 }

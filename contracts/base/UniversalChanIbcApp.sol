@@ -2,10 +2,8 @@
 
 pragma solidity ^0.8.9;
 
-import '@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol';
-import '@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol';
+import { UniversalPacket, AckPacket, IbcUtils } from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
+import { IbcMwUser, IbcUniversalPacketReceiver, IbcUniversalPacketSender } from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol";
 
 // UniversalChanIbcApp is a contract that can be used as a base contract 
 // for IBC-enabled contracts that send packets over the universal channel.
@@ -57,7 +55,7 @@ contract UniversalChanIbcApp is IbcMwUser, IbcUniversalPacketReceiver {
         // 2. do logic
         // 3. encode the ack packet (encoding format should be agreed between the two applications)
         // below is an example, the actual ackpacket data should be implemented by the contract developer
-        return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), 'ack-', packet.appData));
+        return AckPacket(true, abi.encodePacked(address(this), IbcUtils.toAddress(packet.srcPortAddr), "ack-", packet.appData));
     }
 
     /**

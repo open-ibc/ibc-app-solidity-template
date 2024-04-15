@@ -3,6 +3,8 @@ require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
+const polyConfig = require('./lib/polymer-registry-poc/dist/output.json');
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
@@ -18,12 +20,21 @@ module.exports = {
     // for Base testnet
     base: {
       url: 'https://sepolia.base.org',
+      alchemyRPC: `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 84532,
     },
     // for OP testnet
     optimism: {
       url: 'https://sepolia.optimism.io',
+      alchemyRPC: `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 11155420,
+    },
+    molten: {
+      url: 'https://sepolia.molten.io',
+      accounts: [process.env.PRIVATE_KEY_1],
+      chainId: 49483,
     },
   },
   defaultNetwork: 'optimism',
@@ -35,16 +46,13 @@ module.exports = {
     libraries: './lib',
   },
   etherscan: {
-    apiKey: {
-      optimism: process.env.OP_BLOCKSCOUT_API_KEY,
-      base: process.env.BASE_BLOCKSCOUT_API_KEY,
-    },
     customChains: [
       {
         network: 'base',
         chainId: 84532,
         urls: {
           apiURL: 'https://base-sepolia.blockscout.com/api',
+          apiKey: process.env.BASE_BLOCKSCOUT_API_KEY,
           browserURL: 'https://base-sepolia.blockscout.com',
         },
       },
@@ -53,9 +61,12 @@ module.exports = {
         chainId: 11155420,
         urls: {
           apiURL: 'https://optimism-sepolia.blockscout.com/api',
+          apiKey: process.env.OP_BLOCKSCOUT_API_KEY,
           browserURL: 'https://optimism-sepolia.blockscout.com',
         },
       },
     ],
   },
+  polymer: polyConfig,
+  vibcConfigPath: 'config/config.json',  // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
 };

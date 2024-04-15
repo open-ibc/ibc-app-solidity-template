@@ -9,10 +9,13 @@ const { getConfigPath } = require('./_helpers');
 const { areAddressesEqual } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers');
 
+const polyConfig = hre.config.polymer;
+
 async function main() {
   const configPath = getConfigPath();
   const config = require(configPath);
   const networkName = hre.network.name;
+  const chainId = hre.config.networks[`${networkName}`].chainId;
 
   // Get the Dispatcher from your IBC enabled contract and compare it with the stored value in the .env file
 
@@ -32,13 +35,11 @@ async function main() {
   let sanityCheck = false;
   let envDispatcherAddr;
   try {
-    if (networkName === 'optimism') {
-      envDispatcherAddr = config.proofsEnabled === true ? process.env.OP_DISPATCHER : process.env.OP_DISPATCHER_SIM;
-      sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-    } else if (networkName === 'base') {
-      envDispatcherAddr = config.proofsEnabled === true ? process.env.BASE_DISPATCHER : process.env.BASE_DISPATCHER_SIM;
-      sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
-    }
+    envDispatcherAddr =
+      config.proofsEnabled === true
+        ? polyConfig[`${chainId}`]['clients']['op-client'].dispatcherAddr
+        : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
+    sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
   } catch (error) {
     console.log(`❌ Error comparing dispatcher addresses in .env file and IBC app: ${error}`);
     return;
