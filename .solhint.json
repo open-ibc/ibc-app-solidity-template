@@ -1,0 +1,23 @@
+{
+    "extends": "solhint:all",
+    "rules":{
+      "compiler-version": ["error", "^0.8.0"],
+      "const-name-snakecase": "error",
+      "constructor-syntax": "error",
+      "no-global-import" : ["error"],
+      "custom-errors": ["error"],
+      "no-inline-assembly": "off",
+      "named-return-values": ["error"],
+      "private-vars-leading-underscore": ["error"],
+      "ordering": ["error"],
+      "func-visibility": [
+        "error",
+        {
+          "ignoreConstructors": true
+        }
+  
+      ],
+      "max-line-length": ["error", 160]
+    }
+  
+  }
