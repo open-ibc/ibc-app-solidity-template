@@ -204,7 +204,6 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     */
 
     function onChanOpenInit(string calldata version) external override returns (string memory selectedVersion) {
-        // do logic
         return _openChannel(version);
     }
 
@@ -214,17 +213,14 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         override
         returns (string memory selectedVersion)
     {
-        // do logic
         return _openChannel(counterpartyVersion);
     }
 
     function onChanOpenAck(bytes32 channelId, string calldata counterpartyVersion) external override {
-        // do logic
         _connectChannel(channelId, counterpartyVersion);
     }
 
     function onChanOpenConfirm(bytes32 channelId, string calldata counterpartyVersion) external override {
-        // do logic
         _connectChannel(channelId, counterpartyVersion);
     }
 

@@ -54,6 +54,7 @@ update-vibc CHAIN:
 create-channel:
     echo "Attempting to create a channel with the values from the config..."
     node scripts/private/_create-channel-config.js
+    node scripts/private/_create-cp-channel-config.js
 
 # Send a packet over the universal channel or a custom channel as defined in the config.json file
 # The source argument is REQUIRED;
