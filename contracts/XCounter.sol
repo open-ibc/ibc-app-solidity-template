@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.9;
 
-import './base/CustomChanIbcApp.sol';
+import "./base/CustomChanIbcApp.sol";
 
 contract XCounter is CustomChanIbcApp {
     // app specific state
@@ -28,7 +28,6 @@ contract XCounter is CustomChanIbcApp {
      * @param channelId The ID of the channel (locally) to send the packet to.
      * @param timeoutSeconds The timeout in seconds (relative).
      */
-
     function sendPacket( bytes32 channelId, uint64 timeoutSeconds) external {
         // incrementing counter on source chain
         increment();
@@ -46,14 +45,14 @@ contract XCounter is CustomChanIbcApp {
     /**
      * @dev Packet lifecycle callback that implements packet receipt logic and returns and acknowledgement packet.
      *      MUST be overriden by the inheriting contract.
-     * 
      * @param packet the IBC packet encoded by the source and relayed by the relayer.
      */
     function onRecvPacket(IbcPacket memory packet) external override onlyIbcDispatcher returns (AckPacket memory ackPacket) {
         recvedPackets.push(packet);
+        // decoding the caller address from the packet data
         address _caller = abi.decode(packet.data, (address));
+        // updating the counterMap with the caller address and incrementing the counter
         counterMap[packet.sequence] = _caller;
-
         increment();
 
         return AckPacket(true, abi.encode(counter));
@@ -62,24 +61,22 @@ contract XCounter is CustomChanIbcApp {
     /**
      * @dev Packet lifecycle callback that implements packet acknowledgment logic.
      *      MUST be overriden by the inheriting contract.
-     * 
      * @param ack the acknowledgment packet encoded by the destination and relayed by the relayer.
      */
     function onAcknowledgementPacket(IbcPacket calldata, AckPacket calldata ack) external override onlyIbcDispatcher {
         ackPackets.push(ack);
-        
+        // decoding the counter from the acknowledgment packet
         (uint64 _counter) = abi.decode(ack.data, (uint64));
-        
-       if (_counter != counter) {
-        resetCounter();
-       }
+        // resetting the counter if the counter in the acknowledgment packet is different from the local counter
+        if (_counter != counter) {
+            resetCounter();
+        }
     }
 
     /**
      * @dev Packet lifecycle callback that implements packet receipt logic and return and acknowledgement packet.
      *      MUST be overriden by the inheriting contract.
      *      NOT SUPPORTED YET
-     * 
      * @param packet the IBC packet encoded by the counterparty and relayed by the relayer
      */
     function onTimeoutPacket(IbcPacket calldata packet) external override onlyIbcDispatcher {
