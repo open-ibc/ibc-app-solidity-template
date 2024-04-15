@@ -7,7 +7,7 @@ const polyConfig = hre.config.polymer;
 // Function to get the path to the configuration file
 function getConfigPath() {
   const path = require('path');
-  const configRelativePath = process.env.CONFIG_PATH ? process.env.CONFIG_PATH : 'config.json';
+  const configRelativePath = hre.config.vibcConfigPath ? hre.config.vibcConfigPath : 'config/config.json';
   // console.log(`📔 Using config file at ${configRelativePath}`);
   const configPath = path.join(__dirname, '../..', configRelativePath);
   return configPath;
