@@ -20,6 +20,10 @@ contract XCounter is CustomChanIbcApp {
         counter++;
     }
 
+    function decerement() internal {
+        counter--;
+    }
+
     // IBC logic
 
     /**

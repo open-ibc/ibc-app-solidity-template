@@ -3,6 +3,11 @@ const axios = require('axios');
 const hre = require('hardhat');
 const ibcConfig = require('../../ibc.json');
 
+const ibcABI = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol/IbcDispatcher.json');
+const ibcEventsABI = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol/IbcEventsEmitter.json');
+
+// console.log(ibcABI);
+
 // Function to get the path to the configuration file
 function getConfigPath() {
   const path = require('path');
@@ -74,19 +79,23 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
 }
 
 async function fetchABI(explorerUrl, contractAddress) {
-  try {
-    const response = await axios.get(`${explorerUrl}api/v2/smart-contracts/${contractAddress}`);
-    if (response.status === 200) {
-      const abi = response.data.abi;
-      return abi;
-    } else {
-      console.error(`❌ Failed to fetch ABI, status code: ${response.status}`);
-      return null;
-    }
-  } catch (error) {
-    console.error('❌ Error fetching ABI:', error);
-    return null;
-  }
+  console.log(explorerUrl, contractAddress);
+  // try {
+  //   const response = await axios.get(`${explorerUrl}api/v2/smart-contracts/${contractAddress}`);
+  //   if (response.status === 200) {
+  //     const abi = response.data.abi;
+  //     console.log(abi);
+  //     return abi;
+  //   } else {
+  //     console.error(`❌ Failed to fetch ABI, status code: ${response.status}`);
+  //     return null;
+  //   }
+  // } catch (error) {
+  //   console.error('❌ Error fetching ABI:', error);
+  //   return null;
+  // }
+  console.log;
+  return ibcEventsABI.abi;
 }
 
 function areAddressesEqual(address1, address2) {

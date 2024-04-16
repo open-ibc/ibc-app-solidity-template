@@ -18,7 +18,6 @@ async function main() {
 
   // 1. Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName);
-
   // 2. Query your contract for the Dispatcher address
   let dispatcherAddr;
   try {

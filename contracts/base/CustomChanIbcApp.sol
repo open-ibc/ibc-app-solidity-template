@@ -96,99 +96,20 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
 
     /**
      * @dev Create a custom channel between two IbcReceiver contracts
-     * @param local a ChannelEnd struct with the local chain's portId and version (channelId can be empty)
+     * @param version a ChannelEnd struct with the local chain's portId and version (channelId can be empty)
      * @param ordering the channel ordering (NONE, UNORDERED, ORDERED) equivalent to (0, 1, 2)
      * @param feeEnabled in production, you'll want to enable this to avoid spamming create channel calls (costly for relayers)
      * @param connectionHops 2 connection hops to connect to the destination via Polymer
      * @param counterparty the address of the destination chain contract you want to connect to
      */
     function createChannel(
-        string calldata local,
+        string calldata version,
         uint8 ordering,
         bool feeEnabled,
         string[] calldata connectionHops,
         string calldata counterparty
     ) external virtual onlyOwner {
-        dispatcher.channelOpenInit(local, ChannelOrder(ordering), feeEnabled, connectionHops, counterparty);
-    }
-
-    function onOpenIbcChannel(
-        string calldata version,
-        ChannelOrder,
-        bool,
-        string[] calldata,
-        ChannelEnd calldata counterparty
-    ) external view virtual onlyIbcDispatcher returns (string memory selectedVersion) {
-        if (bytes(counterparty.portId).length <= 8) {
-            revert IBCErrors.invalidCounterPartyPortId();
-        }
-        /**
-         * Version selection is determined by if the callback is invoked on behalf of ChanOpenInit or ChanOpenTry.
-         * ChanOpenInit: self version should be provided whereas the counterparty version is empty.
-         * ChanOpenTry: counterparty version should be provided whereas the self version is empty.
-         * In both cases, the selected version should be in the supported versions list.
-         */
-        bool foundVersion = false;
-        selectedVersion =
-            keccak256(abi.encodePacked(version)) == keccak256(abi.encodePacked("")) ? counterparty.version : version;
-        for (uint256 i = 0; i < supportedVersions.length; i++) {
-            if (keccak256(abi.encodePacked(selectedVersion)) == keccak256(abi.encodePacked(supportedVersions[i]))) {
-                foundVersion = true;
-                break;
-            }
-        }
-        require(foundVersion, "Unsupported version");
-        // if counterpartyVersion is not empty, then it must be the same foundVersion
-        if (keccak256(abi.encodePacked(counterparty.version)) != keccak256(abi.encodePacked(""))) {
-            require(
-                keccak256(abi.encodePacked(counterparty.version)) == keccak256(abi.encodePacked(selectedVersion)),
-                "Version mismatch"
-            );
-        }
-
-        // do logic
-
-        return selectedVersion;
-    }
-
-    function onConnectIbcChannel(bytes32 channelId, bytes32 counterpartyChannelId, string calldata counterpartyVersion)
-        external
-        virtual
-        onlyIbcDispatcher
-    {
-        // ensure negotiated version is supported
-        bool foundVersion = false;
-        for (uint256 i = 0; i < supportedVersions.length; i++) {
-            if (keccak256(abi.encodePacked(counterpartyVersion)) == keccak256(abi.encodePacked(supportedVersions[i]))) {
-                foundVersion = true;
-                break;
-            }
-        }
-        require(foundVersion, "Unsupported version");
-
-        // do logic
-
-        ChannelMapping memory channelMapping =
-            ChannelMapping({channelId: channelId, cpChannelId: counterpartyChannelId});
-        connectedChannels.push(channelId);
-    }
-
-    function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external virtual onlyIbcDispatcher {
-        // logic to determin if the channel should be closed
-        bool channelFound = false;
-        for (uint256 i = 0; i < connectedChannels.length; i++) {
-            if (connectedChannels[i] == channelId) {
-                for (uint256 j = i; j < connectedChannels.length - 1; j++) {
-                    connectedChannels[j] = connectedChannels[j + 1];
-                }
-                connectedChannels.pop();
-                channelFound = true;
-                break;
-            }
-        }
-        require(channelFound, "Channel not found");
-
-        // do logic
+        dispatcher.channelOpenInit(version, ChannelOrder(ordering), feeEnabled, connectionHops, counterparty);
     }
 
     /**
@@ -203,38 +124,81 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     IbcChannelReceiver Interface Functions
     */
 
-    function onChanOpenInit(string calldata version) external override returns (string memory selectedVersion) {
+    // function onChanOpenInit(string calldata version) external returns (string memory selectedVersion) {
+    //     return _openChannel(version);
+    // }
+
+    function onChanOpenInit(
+        ChannelOrder order,
+        string[] calldata connectionHops,
+        string calldata counterpartyPortIdentifier,
+        string calldata version
+    ) external returns (string memory selectedVersion) {
         return _openChannel(version);
     }
 
-    function onChanOpenTry(string calldata counterpartyVersion)
-        external
-        pure
-        override
-        returns (string memory selectedVersion)
-    {
+    function onChanOpenTry(
+        ChannelOrder order,
+        string[] memory connectionHops,
+        bytes32 channelId,
+        string memory counterpartyPortIdentifier,
+        bytes32 counterpartychannelId,
+        string calldata counterpartyVersion
+    ) external returns (string memory selectedVersion) {
+        _connectChannel(channelId, counterpartyVersion);
         return _openChannel(counterpartyVersion);
     }
 
-    function onChanOpenAck(bytes32 channelId, string calldata counterpartyVersion) external override {
-        _connectChannel(channelId, counterpartyVersion);
+    function onChanOpenAck(bytes32 channelId, bytes32, string calldata counterpartyVersion)
+        external
+        virtual
+        onlyIbcDispatcher
+    {
+        _connectChannel(channelId);
     }
 
-    function onChanOpenConfirm(bytes32 channelId, string calldata counterpartyVersion) external override {
-        _connectChannel(channelId, counterpartyVersion);
+    function onChanOpenConfirm(bytes32 channelId) external {
+        _connectChannel(channelId);
     }
 
-    function _connectChannel(bytes32 channelId, string calldata version) private {
-        if (keccak256(abi.encodePacked(version)) != keccak256(abi.encodePacked(VERSION))) {
+    function onCloseIbcChannel(
+        bytes32 channelId,
+        string calldata counterpartyPortIdentifier,
+        bytes32 counterpartyChannelId
+    ) external override {
+        _closeChannel(channelId);
+    }
+
+    function _connectChannel(bytes32 channelId, string calldata counterpartyVersion) private {
+        if (keccak256(abi.encodePacked(counterpartyVersion)) != keccak256(abi.encodePacked(VERSION))) {
             revert UnsupportedVersion();
         }
         connectedChannels.push(channelId);
     }
 
-    function _openChannel(string calldata version) private pure returns (string memory selectedVersion) {
+    function _connectChannel(bytes32 channelId) private {
+        connectedChannels.push(channelId);
+    }
+
+    function _openChannel(string calldata version) private view returns (string memory selectedVersion) {
         if (keccak256(abi.encodePacked(version)) != keccak256(abi.encodePacked(VERSION))) {
             revert UnsupportedVersion();
         }
         return VERSION;
+    }
+
+    function _closeChannel(bytes32 channelId) private {
+        bool channelFound = false;
+        for (uint256 i = 0; i < connectedChannels.length; i++) {
+            if (connectedChannels[i] == channelId) {
+                for (uint256 j = i; j < connectedChannels.length - 1; j++) {
+                    connectedChannels[j] = connectedChannels[j + 1];
+                }
+                connectedChannels.pop();
+                channelFound = true;
+                break;
+            }
+        }
+        require(channelFound, "Channel not found");
     }
 }
