@@ -6,7 +6,6 @@ import {
     IbcPacket,
     AckPacket,
     ChannelOrder,
-    CounterParty,
     IBCErrors
 } from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
 import {
@@ -109,7 +108,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
      * @param ordering the channel ordering (NONE, UNORDERED, ORDERED) equivalent to (0, 1, 2)
      * @param feeEnabled in production, you'll want to enable this to avoid spamming create channel calls (costly for relayers)
      * @param connectionHops 2 connection hops to connect to the destination via Polymer
-     * @param counterparty the address of the destination chain contract you want to connect to
+     * @param counterpartyPortId the portID of the destination chain contract you want to connect to
      */
     function createChannel(
         string calldata version,

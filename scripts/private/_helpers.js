@@ -116,12 +116,14 @@ function areAddressesEqual(address1, address2) {
 }
 
 // Helper function to convert an address to a port ID
-function addressToPortId(portPrefix, address) {
+function addressToPortId(address, network) {
   const config = require(getConfigPath());
   // TODO: implement dynamic suffix for selected client
-  const simAddOn = config.proofsEnabled ? '-proofs-1' : '-sim';
+  const chainId = hre.config.networks[`${network}`].chainId;
+  const client = config.proofsEnabled ? 'op-client' : 'sim-client';
+  const portPrefix = 'polyibc.' + polyConfig[`${chainId}`]['clients'][`${client}`].clientSuffix; 
   const suffix = address.slice(2);
-  return `${portPrefix}${simAddOn}.${suffix}`;
+  return `${portPrefix}.${suffix}`;
 }
 
 function getWhitelistedNetworks() {

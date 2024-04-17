@@ -29,12 +29,11 @@ function getDispatcherAddress(network) {
 }
 
 async function getDispatcher(network) {
-  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const dispatcherAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/bundle/Dispatcher.sol/Dispatcher.json');
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {
     const dispatcherAddress = getDispatcherAddress(network);
-    const dispatcherAbi = await fetchABI(explorerApiUrl, dispatcherAddress);
     const dispatcher = new ethers.Contract(dispatcherAddress, dispatcherAbi, provider);
     return dispatcher;
   } catch (error) {
@@ -53,12 +52,11 @@ function getUcHandlerAddress(network) {
 }
 
 async function getUcHandler(network) {
-  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const ucHandlerAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/bundle/UniversalChannelHandler.sol/UniversalChannelHandler.json');
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {
     const ucHandlerAddress = getUcHandlerAddress(network);
-    const ucHandlerAbi = await fetchABI(explorerApiUrl, ucHandlerAddress);
     const ucHandler = new ethers.Contract(ucHandlerAddress, ucHandlerAbi, provider);
     return ucHandler;
   } catch (error) {

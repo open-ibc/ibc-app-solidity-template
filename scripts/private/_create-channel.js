@@ -9,27 +9,6 @@ const { getConfigPath, addressToPortId } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers.js');
 const polyConfig = hre.config.polymer;
 
-function createDummyProof() {
-  return {
-    proof: [
-      {
-        path: [
-          {
-            prefix: hre.ethers.toUtf8Bytes('prefixExample1'),
-            suffix: hre.ethers.toUtf8Bytes('suffixExample1'),
-          },
-          // Add more OpIcs23ProofPath objects as needed
-        ],
-        key: hre.ethers.toUtf8Bytes('keyExample'),
-        value: hre.ethers.toUtf8Bytes('valueExample'),
-        prefix: hre.ethers.toUtf8Bytes('prefixExample'),
-      },
-      // Add more OpIcs23Proof objects as needed
-    ],
-    height: 123456, // example block height
-  };
-}
-
 async function main() {
   const config = require(getConfigPath());
   const chanConfig = config.createChannel;
@@ -45,24 +24,12 @@ async function main() {
   const connHop1 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
   const connHop2 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
 
-  const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
-  const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
-
-  const local = {
-    portId: srcPortId,
-    channelId: hre.ethers.encodeBytes32String(''),
-    version: chanConfig.version,
-  };
-
-  const cp = {
-    portId: dstPortId,
-    channelId: hre.ethers.encodeBytes32String(''),
-    version: '',
-  };
+  const srcPortId = addressToPortId(chanConfig.srcAddr, networkName);
+  const dstPortId = addressToPortId(chanConfig.dstAddr, networkName);
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  await ibcApp.createChannel(local, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], cp, createDummyProof());
+  await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId);
 
   if (!config.proofsEnabled) {
     // Wait for the channel handshake to complete

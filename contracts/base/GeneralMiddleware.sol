@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.9;
 
-import {Ibc, IbcUtils, UniversalPacket, AckPacket} from "../libs/Ibc.sol";
+import {Ibc, IbcUtils, UniversalPacket, AckPacket} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
 import {
     IbcUniversalPacketReceiver,
     IbcMwUser,
@@ -10,7 +10,7 @@ import {
     IbcMwEventsEmitter,
     IbcMwPacketReceiver,
     IbcMwPacketSender
-} from "../interfaces/IbcMiddleware.sol";
+} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol";
 
 contract GeneralMiddleware is IbcMwUser, IbcMiddleware, IbcMwEventsEmitter {
     /**
