@@ -5,7 +5,7 @@ install:
     forge install --shallow
     echo "Dependencies installed"
     echo "Building VIBC core smart contracts in lib..."
-    cd lib/vibc-core-smart-contracts && forge build --contracts ./contracts/core --out ../../artifacts/@open-ibc/vibc-core-smart-contracts/bundle && cd ../..
+    cd lib/vibc-core-smart-contracts && forge build --contracts ./contracts/core --out ../../vibcArtifacts && cd ../..
     echo "VIBC core smart contracts built"
 
 # Build config file at location specified in the .env file

@@ -29,7 +29,7 @@ function getDispatcherAddress(network) {
 }
 
 async function getDispatcher(network) {
-  const dispatcherAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/bundle/Dispatcher.sol/Dispatcher.json');
+  const dispatcherAbi = require('../../vibcArtifacts/Dispatcher.sol/Dispatcher.json').abi;
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {
@@ -52,7 +52,7 @@ function getUcHandlerAddress(network) {
 }
 
 async function getUcHandler(network) {
-  const ucHandlerAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/bundle/UniversalChannelHandler.sol/UniversalChannelHandler.json');
+  const ucHandlerAbi = require('../../vibcArtifacts/UniversalChannelHandler.sol/UniversalChannelHandler.json').abi;
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {

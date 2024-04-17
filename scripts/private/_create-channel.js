@@ -29,26 +29,27 @@ async function main() {
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
+  console.log(`📡 Creating channel on ${networkName} with srcPortId: ${srcPortId} and dstPortId: ${dstPortId}`)
+  console.log(`📡 Connection Hops: ${connHop1} and ${connHop2}`);
   await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId);
 
-  if (!config.proofsEnabled) {
-    // Wait for the channel handshake to complete
-    await new Promise((r) => setTimeout(r, 90000));
+  // Wait for the channel handshake to complete
+  const sleepTime = config.proofsEnabled ? 12000000 : 90000;
+  await new Promise((r) => setTimeout(r, sleepTime));
 
-    // Get the connected channels and print the new channel along with its counterparty
-    const connectedChannelsAfter = await ibcApp.getConnectedChannels();
+  // Get the connected channels and print the new channel along with its counterparty
+  const connectedChannelsAfter = await ibcApp.getConnectedChannels();
 
-    if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
-      const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
-      const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
+  if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
+    const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].channelId;
+    const newChannel = hre.ethers.decodeBytes32String(newChannelBytes);
 
-      const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
-      const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
+    const cpChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1].cpChannelId;
+    const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
 
-      console.log(
-        `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
-      );
-    }
+    console.log(
+      `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
+    );
   }
 }
 
