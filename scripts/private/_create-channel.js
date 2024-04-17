@@ -18,7 +18,7 @@ async function main() {
   const dstChainId = hre.config.networks[`${dstChainName}`].chainId;
 
   // Get the contract type from the config and get the contract
-  const ibcApp = await getIbcApp(networkName);
+  const ibcApp = await getIbcApp(srcChainName);
   const connectedChannelsBefore = await ibcApp.getConnectedChannels();
 
   // Prepare the arguments to create the channel
