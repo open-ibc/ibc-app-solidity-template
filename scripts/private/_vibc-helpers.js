@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat');
-const { getConfigPath, fetchABI, convertNetworkToChainId, getExplorerDataFromConfig, getNetworkDataFromConfig } = require('./_helpers.js');
+const { getConfigPath, convertNetworkToChainId, getNetworkDataFromConfig } = require('./_helpers.js');
 
 const hhConfig = require('../../hardhat.config.js');
 const polyConfig = hhConfig.polymer;

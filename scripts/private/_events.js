@@ -90,7 +90,7 @@ function listenForIbcChannelEvents(network, dispatcher) {
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
-      
+
       console.log(` ⏱️  Waiting for channel open confirm...`);
     }
     dispatcher.removeAllListeners();

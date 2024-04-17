@@ -68,5 +68,5 @@ module.exports = {
     ],
   },
   polymer: polyConfig,
-  vibcConfigPath: 'config/config.json',  // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
+  vibcConfigPath: 'config/config.json', // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
 };

@@ -121,7 +121,7 @@ function addressToPortId(address, network) {
   // TODO: implement dynamic suffix for selected client
   const chainId = hre.config.networks[`${network}`].chainId;
   const client = config.proofsEnabled ? 'op-client' : 'sim-client';
-  const portPrefix = 'polyibc.' + polyConfig[`${chainId}`]['clients'][`${client}`].clientSuffix; 
+  const portPrefix = 'polyibc.' + polyConfig[`${chainId}`]['clients'][`${client}`].clientSuffix;
   const suffix = address.slice(2);
   return `${portPrefix}.${suffix}`;
 }

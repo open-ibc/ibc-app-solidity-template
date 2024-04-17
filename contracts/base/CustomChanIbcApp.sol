@@ -3,10 +3,7 @@
 pragma solidity ^0.8.9;
 
 import {
-    IbcPacket,
-    AckPacket,
-    ChannelOrder,
-    IBCErrors
+    IbcPacket, AckPacket, ChannelOrder, IBCErrors
 } from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
 import {
     IbcReceiverBase,
