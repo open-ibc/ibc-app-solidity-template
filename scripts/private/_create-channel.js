@@ -12,8 +12,10 @@ const polyConfig = hre.config.polymer;
 async function main() {
   const config = require(getConfigPath());
   const chanConfig = config.createChannel;
-  const networkName = hre.network.name;
-  const chainId = hre.config.networks[`${networkName}`].chainId;
+  const srcChainName = hre.network.name;
+  const srcChainId = hre.config.networks[`${srcChainName}`].chainId;
+  const dstChainName = chanConfig.dstChain;
+  const dstChainId = hre.config.networks[`${dstChainName}`].chainId;
 
   // Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName);
@@ -21,16 +23,14 @@ async function main() {
 
   // Prepare the arguments to create the channel
   // TODO: Update to allow dynamic choice of client type
-  const connHop1 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
-  const connHop2 = polyConfig[`${chainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
+  const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
+  const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
 
-  const srcPortId = addressToPortId(chanConfig.srcAddr, networkName);
-  const dstPortId = addressToPortId(chanConfig.dstAddr, networkName);
+  const srcPortId = addressToPortId(chanConfig.srcAddr, srcChainName);
+  const dstPortId = addressToPortId(chanConfig.dstAddr, dstChainName);
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
-  console.log(`📡 Creating channel on ${networkName} with srcPortId: ${srcPortId} and dstPortId: ${dstPortId}`)
-  console.log(`📡 Connection Hops: ${connHop1} and ${connHop2}`);
   await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId);
 
   // Wait for the channel handshake to complete
@@ -48,7 +48,7 @@ async function main() {
     const cpChannel = hre.ethers.decodeBytes32String(cpChannelBytes);
 
     console.log(
-      `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${networkName}, Counterparty: ${cpChannel} on network ${chanConfig.dstChain}`,
+      `✅ Channel created: ${newChannel} with portID ${srcPortId} on network ${srcChainName}, Counterparty: ${cpChannel} on network ${dstChainName}`,
     );
   }
 }
