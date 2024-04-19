@@ -7,6 +7,8 @@ const explorerBaseUrl = 'https://base-sepolia.blockscout.com/';
 const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
+const ibcMWUserAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol/IbcMwUser.json');
+
 async function getIbcApp(network) {
   try {
     const config = require(getConfigPath());
@@ -96,13 +98,13 @@ async function getUcHandler(network) {
       explorerUrl = explorerOpUrl;
       ucHandlerAddress = config.proofsEnabled ? process.env.OP_UC_MW : process.env.OP_UC_MW_SIM;
 
-      const opUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+      const opUcHandlerAbi = await fetchABI(explorerUrl, process.env.OP_UC_MW_IMP_SIM);
       ucHandler = new ethers.Contract(ucHandlerAddress, opUcHandlerAbi, providerOptimism);
     } else if (network === 'base') {
       explorerUrl = explorerBaseUrl;
       ucHandlerAddress = config.proofsEnabled ? process.env.BASE_UC_MW : process.env.BASE_UC_MW_SIM;
 
-      const baseUcHandlerAbi = await fetchABI(explorerUrl, ucHandlerAddress);
+      const baseUcHandlerAbi = await fetchABI(explorerUrl, process.env.BASE_UC_MW_IMP_SIM);
       ucHandler = new ethers.Contract(ucHandlerAddress, baseUcHandlerAbi, providerBase);
     } else {
       throw new Error(`❌ Invalid network: ${network}`);

@@ -98,6 +98,23 @@ async function fetchABI(explorerUrl, contractAddress) {
   return ibcEventsABI.abi;
 }
 
+async function fetchUCABI(explorerUrl, contractAddress) {
+  try {
+    const response = await axios.get(`${explorerUrl}api/v2/smart-contracts/${contractAddress}`);
+    if (response.status === 200) {
+      const abi = response.data.abi;
+      console.log(abi);
+      return abi;
+    } else {
+      console.error(`❌ Failed to fetch ABI, status code: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Error fetching ABI:', error);
+    return null;
+  }
+}
+
 function areAddressesEqual(address1, address2) {
   // Validate input addresses
   if (!hre.ethers.isAddress(address1) || !hre.ethers.isAddress(address2)) {
@@ -114,11 +131,11 @@ function areAddressesEqual(address1, address2) {
 }
 
 // Helper function to convert an address to a port ID
-function addressToPortId(portPrefix, address, version) {
+function addressToPortId(portPrefix, address) {
   const config = require(getConfigPath());
-  const simAddOn = config.proofsEnabled ? '-proofs-1' : '-sim';
+  const simAddOn = config.proofsEnabled ? '-proofs-2' : '-sim';
   const suffix = address.slice(2);
-  return `${portPrefix}${simAddOn}-${version}.${suffix}`;
+  return `${portPrefix}${simAddOn}.${suffix}`;
 }
 
 function getWhitelistedNetworks() {
@@ -131,6 +148,7 @@ module.exports = {
   updateConfigCreateChannel,
   updateConfigCreateChannelCP,
   fetchABI,
+  fetchUCABI,
   areAddressesEqual,
   addressToPortId,
   getWhitelistedNetworks,

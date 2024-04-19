@@ -26,11 +26,15 @@ async function main() {
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
   const timeoutSeconds = sendConfig[`${networkName}`]['timeout'];
 
+  await console.log('Sending packet to', destPortAddr, 'on channel', channelId, 'with timeout', timeoutSeconds, 'seconds');
   // Send the packet
   await ibcApp.connect(accounts[0]).sendUniversalPacket(
     destPortAddr,
     channelIdBytes,
     timeoutSeconds,
+    {
+      gasLimit: 600000, // Specify the gas limit here
+    },
     // Define and pass optionalArgs appropriately or remove if not needed
   );
 }
