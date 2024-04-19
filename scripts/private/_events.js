@@ -13,7 +13,6 @@ function listenForIbcChannelEvents(network, dispatcher) {
 
   dispatcher.on('ChannelOpenInit', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, event) => {
     const txHash = event.log.transactionHash;
-    const counterpartyChannelIdString = hre.ethers.decodeBytes32String(counterpartyChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
 
     if (filterChannelEvents(portAddress)) {
@@ -27,7 +26,6 @@ function listenForIbcChannelEvents(network, dispatcher) {
           ⛓️  Network: ${network}
           🔗 Port Address: ${portAddress}
           🔗 Counterparty Port ID: ${counterparytPortId}
-          🛣️  Counterparty Channel ID: ${counterpartyChannelIdString}
           🦘 Connection Hops: ${connectionHops}
           🔀 Ordering: ${ordering}
           💰 Fee Enabled: ${feeEnabled}
