@@ -3,7 +3,7 @@
   "isUniversal": true,
   "deploy": {
     "optimism": "",
-    "molten": ""
+    "base": ""
   },
   "createChannel": {
     "srcChain": "",
@@ -20,7 +20,7 @@
       "channelId": "channel-n",
       "timeout": 36000
     },
-    "molten": {
+    "base": {
       "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
       "channelId": "channel-n",
       "timeout": 36000
@@ -32,7 +32,7 @@
       "channelId": "channel-n",
       "timeout": 36000
     },
-    "molten": {
+    "base": {
       "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
       "channelId": "channel-n",
       "timeout": 36000

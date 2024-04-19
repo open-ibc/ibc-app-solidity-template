@@ -11,7 +11,7 @@ function listenForIbcChannelEvents(network, dispatcher) {
   const explorerUrl = getExplorerDataFromConfig(network).browserURL;
   console.log(`👂 Listening for IBC channel events on ${network}...`);
 
-  dispatcher.on('ChannelOpenInit', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, counterpartyChannelId, event) => {
+  dispatcher.on('ChannelOpenInit', (portAddress, version, ordering, feeEnabled, connectionHops, counterparytPortId, event) => {
     const txHash = event.log.transactionHash;
     const counterpartyChannelIdString = hre.ethers.decodeBytes32String(counterpartyChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
