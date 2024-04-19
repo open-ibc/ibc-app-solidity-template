@@ -5,13 +5,8 @@ pragma solidity ^0.8.9;
 import {
     IbcPacket, AckPacket, ChannelOrder, IBCErrors
 } from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
-import {
-    IbcReceiverBase,
-    IbcReceiver,
-    IbcChannelReceiver
-} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol";
+import {IbcReceiverBase, IbcReceiver} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol";
 import {IbcDispatcher} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol";
-import {Ics23Proof} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/ProofVerifier.sol";
 
 // CustomChanIbcApp is a contract that can be used as a base contract
 // for IBC-enabled contracts that send packets over a custom IBC channel.
