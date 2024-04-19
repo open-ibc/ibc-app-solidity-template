@@ -3,7 +3,7 @@ require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
-const polyConfig = require('./lib/polymer-registry-poc/dist/output.json');
+const polyConfig = require('./lib/polymer-registry/dist/output.json');
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
