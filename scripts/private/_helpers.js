@@ -3,10 +3,7 @@ const axios = require('axios');
 const hre = require('hardhat');
 const ibcConfig = require('../../ibc.json');
 
-const ibcABI = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol/IbcDispatcher.json');
 const ibcEventsABI = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol/IbcEventsEmitter.json');
-
-// console.log(ibcABI);
 
 // Function to get the path to the configuration file
 function getConfigPath() {

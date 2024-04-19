@@ -7,8 +7,6 @@ const explorerBaseUrl = 'https://base-sepolia.blockscout.com/';
 const rpcOptimism = `https://opt-sepolia.g.alchemy.com/v2/${process.env.OP_ALCHEMY_API_KEY}`;
 const rpcBase = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_ALCHEMY_API_KEY}`;
 
-const ibcMWUserAbi = require('../../artifacts/@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcMiddleware.sol/IbcMwUser.json');
-
 async function getIbcApp(network) {
   try {
     const config = require(getConfigPath());

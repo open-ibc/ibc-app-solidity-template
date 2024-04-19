@@ -63,7 +63,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     {
         recvedPackets.push(packet);
         // do logic
-        return AckPacket(true, abi.encodePacked('{ "account": "account", "reply": "got the message" }'));
+        return AckPacket(true, abi.encodePacked("{\"account\": \"account\", \"reply\": \"got the message\"}"));
     }
 
     /**
@@ -199,6 +199,8 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
                 break;
             }
         }
-        require(channelFound, "Channel not found");
+        if (!channelFound) {
+            revert ChannelNotFound();
+        }
     }
 }

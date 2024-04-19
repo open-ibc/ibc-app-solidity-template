@@ -32,9 +32,6 @@ async function main() {
     destPortAddr,
     channelIdBytes,
     timeoutSeconds,
-    {
-      gasLimit: 600000, // Specify the gas limit here
-    },
     // Define and pass optionalArgs appropriately or remove if not needed
   );
 }
