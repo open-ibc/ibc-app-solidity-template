@@ -7,11 +7,11 @@ async function getCPInfo() {
   const dstChain = config.createChannel.dstChain;
 
   // Check if the source chain from user input is whitelisted
-  const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(dstChain)) {
-    console.error('❌ Invalid network name');
-    return;
-  }
+  // const allowedNetworks = getWhitelistedNetworks();
+  // if (!allowedNetworks.includes(dstChain)) {
+  //   console.error('❌ Invalid network name');
+  //   return;
+  // }
   await exec(`npx hardhat run scripts/private/_get_cp_channel.js --network ${dstChain}`, (error, stdout) => {
     if (error) {
       console.error(`exec error: ${error}`);
@@ -43,7 +43,10 @@ async function getCPInfo() {
 }
 
 async function main() {
-  await setupIbcChannelEventListener();
+  // const config = require(getConfigPath());
+  // const srcChain = config.createChannel.srcChain;
+  // const dstChain = config.createChannel.dstChain;
+  // await setupIbcChannelEventListener(srcChain, dstChain);
   await getCPInfo();
 }
 

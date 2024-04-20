@@ -8,11 +8,11 @@ async function createChannelAndCapture() {
   const srcChain = config.createChannel.srcChain;
 
   // Check if the source chain from user input is whitelisted
-  const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(srcChain)) {
-    console.error('❌ Invalid network name');
-    return;
-  }
+  // const allowedNetworks = getWhitelistedNetworks();
+  // if (!allowedNetworks.includes(srcChain)) {
+  //   console.error('❌ Invalid network name');
+  //   return;
+  // }
   await exec(`npx hardhat run scripts/private/_create-channel.js --network ${srcChain}`, (error, stdout) => {
     if (error) {
       console.error(`exec error: ${error}`);
@@ -48,8 +48,11 @@ async function createChannelAndCapture() {
 }
 
 async function main() {
-  await setupIbcChannelEventListener();
-  await createChannelAndCapture();
+  const config = require(getConfigPath());
+  const srcChain = config.createChannel.srcChain;
+  const dstChain = config.createChannel.dstChain;
+  await setupIbcChannelEventListener(srcChain, dstChain);
+  createChannelAndCapture(config, srcChain, dstChain);
 }
 
 main().catch((error) => {

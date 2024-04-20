@@ -35,7 +35,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         dispatcher = _dispatcher;
     }
 
-    function getConnectedChannels() external view returns (bytes32[] memory) {
+    function getConnectedChannels() public view returns (bytes32[] memory) {
         return connectedChannels;
     }
 

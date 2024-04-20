@@ -1,5 +1,5 @@
 const { exec } = require('child_process');
-const { getConfigPath, getWhitelistedNetworks } = require('./_helpers.js');
+const { getConfigPath, getWhitelistedNetworks, convertNetworkToChainId } = require('./_helpers.js');
 const { setupIbcPacketEventListener } = require('./_events.js');
 
 const source = process.argv[2];
@@ -25,16 +25,21 @@ function runSendPacketCommand(command) {
 async function runSendPacket(config) {
   // Check if the source chain from user input is whitelisted
   const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(source)) {
+  const srcChainId = convertNetworkToChainId(source);
+  if (!allowedNetworks.includes(`${srcChainId}`)) {
     console.error('❌ Please provide a valid source chain');
     process.exit(1);
   }
+
+  const destination = config.isUniversal
+    ? Object.keys(config.sendUniversalPacket).find((chain) => chain !== source)
+    : Object.keys(config.sendPacket).find((chain) => chain !== source);
 
   const script = config.isUniversal ? 'send-universal-packet.js' : 'send-packet.js';
   const command = `npx hardhat run scripts/${script} --network ${source}`;
 
   try {
-    await setupIbcPacketEventListener();
+    await setupIbcPacketEventListener(source, destination);
     await runSendPacketCommand(command);
   } catch (error) {
     console.error('❌ Error sending packet: ', error);

@@ -58,9 +58,10 @@ contract XCounter is CustomChanIbcApp {
         returns (AckPacket memory ackPacket)
     {
         recvedPackets.push(packet);
+        // decoding the caller address from the packet data
         address _caller = abi.decode(packet.data, (address));
+        // updating the counterMap with the caller address and incrementing the counter
         counterMap[packet.sequence] = _caller;
-
         increment();
 
         return AckPacket(true, abi.encode(counter));
@@ -74,9 +75,10 @@ contract XCounter is CustomChanIbcApp {
      */
     function onAcknowledgementPacket(IbcPacket calldata, AckPacket calldata ack) external override onlyIbcDispatcher {
         ackPackets.push(ack);
+        // decoding the counter from the acknowledgment packet
 
         (uint64 _counter) = abi.decode(ack.data, (uint64));
-
+        // resetting the counter if the counter in the acknowledgment packet is different from the local counter
         if (_counter != counter) {
             resetCounter();
         }

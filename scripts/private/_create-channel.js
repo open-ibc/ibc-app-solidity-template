@@ -38,6 +38,7 @@ async function main() {
   // Get the contract type from the config and get the contract
   const ibcApp = await getIbcApp(networkName);
   const connectedChannelsBefore = await ibcApp.getConnectedChannels();
+  console.log('Connected channels before: ', connectedChannelsBefore);
 
   // Prepare the arguments to create the channel
   const connHop1 = ibcConfig[chanConfig.srcChain][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
@@ -45,6 +46,7 @@ async function main() {
   const srcPortId = addressToPortId(`polyibc.${chanConfig.srcChain}`, chanConfig.srcAddr);
   const dstPortId = addressToPortId(`polyibc.${chanConfig.dstChain}`, chanConfig.dstAddr);
 
+  console.log('IBC APP: ', ibcApp);
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
   await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId, createDummyProof());
@@ -55,6 +57,7 @@ async function main() {
 
     // Get the connected channels and print the new channel along with its counterparty
     const connectedChannelsAfter = await ibcApp.getConnectedChannels();
+    console.log('Connected channels after: ', connectedChannelsAfter);
 
     if (connectedChannelsAfter !== undefined && connectedChannelsAfter.length > connectedChannelsBefore.length) {
       const newChannelBytes = connectedChannelsAfter[connectedChannelsAfter.length - 1];
