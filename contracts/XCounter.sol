@@ -7,8 +7,7 @@ import "./base/CustomChanIbcApp.sol";
 contract XCounter is CustomChanIbcApp {
     // app specific state
     uint64 public counter;
-    mapping (uint64 => address) public counterMap;
-
+    mapping(uint64 => address) public counterMap;
 
     constructor(IbcDispatcher _dispatcher) CustomChanIbcApp(_dispatcher) {}
 
@@ -28,7 +27,7 @@ contract XCounter is CustomChanIbcApp {
      * @param channelId The ID of the channel (locally) to send the packet to.
      * @param timeoutSeconds The timeout in seconds (relative).
      */
-    function sendPacket( bytes32 channelId, uint64 timeoutSeconds) external {
+    function sendPacket(bytes32 channelId, uint64 timeoutSeconds) external {
         // incrementing counter on source chain
         increment();
 
@@ -47,7 +46,12 @@ contract XCounter is CustomChanIbcApp {
      *      MUST be overriden by the inheriting contract.
      * @param packet the IBC packet encoded by the source and relayed by the relayer.
      */
-    function onRecvPacket(IbcPacket memory packet) external override onlyIbcDispatcher returns (AckPacket memory ackPacket) {
+    function onRecvPacket(IbcPacket memory packet)
+        external
+        override
+        onlyIbcDispatcher
+        returns (AckPacket memory ackPacket)
+    {
         recvedPackets.push(packet);
         // decoding the caller address from the packet data
         address _caller = abi.decode(packet.data, (address));

@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat');
-const { getConfigPath, fetchABI, convertNetworkToChainId, getExplorerDataFromConfig, getNetworkDataFromConfig } = require('./_helpers.js');
+const { getConfigPath, convertNetworkToChainId, getNetworkDataFromConfig } = require('./_helpers.js');
 
 const hhConfig = require('../../hardhat.config.js');
 const polyConfig = hhConfig.polymer;
@@ -29,12 +29,11 @@ function getDispatcherAddress(network) {
 }
 
 async function getDispatcher(network) {
-  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const dispatcherAbi = require('../../vibcArtifacts/Dispatcher.sol/Dispatcher.json').abi;
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {
     const dispatcherAddress = getDispatcherAddress(network);
-    const dispatcherAbi = await fetchABI(explorerApiUrl, dispatcherAddress);
     const dispatcher = new ethers.Contract(dispatcherAddress, dispatcherAbi, provider);
     return dispatcher;
   } catch (error) {
@@ -53,12 +52,11 @@ function getUcHandlerAddress(network) {
 }
 
 async function getUcHandler(network) {
-  const explorerApiUrl = getExplorerDataFromConfig(network).apiURL;
+  const ucHandlerAbi = require('../../vibcArtifacts/UniversalChannelHandler.sol/UniversalChannelHandler.json').abi;
   const rpc = getNetworkDataFromConfig(network).alchemyRPC;
   const provider = new ethers.JsonRpcProvider(rpc);
   try {
     const ucHandlerAddress = getUcHandlerAddress(network);
-    const ucHandlerAbi = await fetchABI(explorerApiUrl, ucHandlerAddress);
     const ucHandler = new ethers.Contract(ucHandlerAddress, ucHandlerAbi, provider);
     return ucHandler;
   } catch (error) {

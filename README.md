@@ -35,11 +35,20 @@ From the root directory run:
 just install
 ```
 
-to install the [vIBC core smart contracts](https://github.com/open-ibc/vibc-core-smart-contracts) as a dependency.
+to install the [vIBC core smart contracts](https://github.com/open-ibc/vibc-core-smart-contracts) and the [Polymer registry](https://github.com/polymerdao/polymer-registry) as a dependency.
 
 Additionally Hardhat will be installed as a dev dependency with some useful plugins. Check `package.json` for an exhaustive list.
 
 > Note: In case you're experiencing issues with dependencies using the `just install` recipe, check that all prerequisites are correctly installed. If issues persist with forge, try to do the individual dependency installations...
+
+### Version compatibility
+
+| IBC-App-Solidity | vIBC core | Polymer Registry |
+|-------------------|-----------|-----------|
+| v0.1.0       | v1.0.0       | X       |
+| v0.2.0       | v1.0.0        | v0.1.0*      |
+| v1.0.0        | v2.0.0       | X     |
+| v1.1.0      | Yes       | v0.0.1      |
 
 ## ⚙️ Set up your environment and configuration
 
