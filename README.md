@@ -45,10 +45,9 @@ Additionally Hardhat will be installed as a dev dependency with some useful plug
 
 | IBC-App-Solidity | vIBC core | Polymer Registry | Supported? |
 |-------------------|-----------|-----------| --------|
-| v0.1.0       | v1.0.0       | X       | Deprecated
-| v0.2.0       | v1.0.0        | v0.1.0*      | Deprecated
+| v0.1.0       | v1.0.0       | X       | Deprecated |
+| v0.2.0       | v1.0.0        | v0.1.0*      | Deprecated |
 | v1.0.0        | v2.0.0       | v0.0.1    | Yes |
-
 Note (*): v0.2.0 uses a [POC version](https://github.com/tmsdkeys/polymer-registry-poc/releases/tag/v0.1.0) 
 
 ## ⚙️ Set up your environment and configuration
