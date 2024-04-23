@@ -77,28 +77,41 @@ check if the values provided in the .env file for the Universal Channel Mw and t
   }
 
   if (sanityCheck) {
-    const channelBytes = await ucHandler.connectedChannels(0);
-    const channelId = hre.ethers.decodeBytes32String(channelBytes);
-    const envChannelId = config['sendUniversalPacket'][networkName]['channelId'];
-
-    if (channelId !== envChannelId) {
-      sanityCheck = false;
-      console.log(`
+    let counter = 0;
+    let channelId, envChannelId;
+    let channelBytes;
+    let foundChannel = true;
+    // We don't know how many channels are connected to the Universal Channel Mw, so we loop until we get an error
+    do {
+      // Try to get the channel ID at the index
+      try {
+        channelBytes = await ucHandler.connectedChannels(counter);
+      } catch (error) {
+        // If we get an error, it means we reached the end of the list, do not return, just log the error and set foundChannel to false
+        // console.log(`❌ No channel ID at index: ${counter}`);
+        foundChannel = false;
+      }
+      if (!foundChannel) {
+        channelId = hre.ethers.decodeBytes32String(channelBytes);
+        console.log(`Channel ID in UCH contract: ${channelId}`);
+        envChannelId = config['sendUniversalPacket'][networkName]['channelId'];
+      }
+      // Compare the channel ID with the one in the .env file and log an error if they don't match
+      // Run only after we've encountered an error fetching a channel ID at a new index
+      if (!foundChannel && channelId !== envChannelId) {
+        sanityCheck = false;
+        console.log(`
 ⛔ Sanity check failed for network ${networkName}, 
 check if the channel id value for the Universal channel in the config is correct.
 --------------------------------------------------
 🔮 Expected Channel ID (in Universal Channel Handler contract): ${channelId}...
-🗃️  Found Dispatcher (in .env file): ${envChannelId}...
+🗃️  Found Channel ID (in config file): ${envChannelId}...
 --------------------------------------------------
-`);
-      return;
-    }
-  }
-
-  // 5. Print the result of the sanity check
-  // If true, it means all values in the contracts check out with those in the .env file and we can continue with the script.
-  if (sanityCheck) {
-    console.log(`✅ Sanity check passed for network ${networkName}`);
+  `);
+        return;
+      }
+      counter++;
+    } while (foundChannel);
   } else {
     console.log(`
 ⛔ Sanity check failed for network ${networkName}, 
@@ -107,10 +120,14 @@ check if the values provided in the .env file for the Universal Channel Mw and t
 🔮 Expected Dispatcher (in Universal Channel Handler contract): ${dispatcherAddr}...
 🗃️  Found Dispatcher (in .env file): ${envDispatcherAddr}...
 --------------------------------------------------
-`);
+    `);
+    return;
   }
-}
 
+  // 5. Print the result of the sanity check
+  // If true, it means all values in the contracts check out with those in the .env file and we can continue with the script.
+  console.log(`✅ Sanity check passed for network ${networkName}`);
+}
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
