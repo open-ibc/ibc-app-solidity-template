@@ -51,7 +51,18 @@ async function main() {
   let dispatcherAddr;
   let ucHandler;
 
-  if (sanityCheck) {
+  // If the sanity check fails, we don't need to continue with the rest of the checks
+  if (!sanityCheck) {
+    console.log(`
+⛔ Sanity check failed for network ${networkName}, 
+check if the values provided in the .env file for the Universal Channel Mw and the dispatcher are correct.
+--------------------------------------------------
+🔮 Expected Universal Channel Handler (in IBC contract): ${ucHandlerAddr}...
+🗃️  Found Universal Channel Handler (in .env file): ${envUcHandlerAddr}...
+--------------------------------------------------
+        `);
+    return;
+  } else {
     try {
       ucHandler = await getUcHandler(networkName);
       dispatcherAddr = await ucHandler.dispatcher();
@@ -64,19 +75,21 @@ async function main() {
       console.log(`❌ Error getting dispatcher address from Universal Channel Mw or from config: ${error}`);
       return;
     }
-  } else {
+  }
+
+  // If sanity check is false, log an error and return
+  if (!sanityCheck) {
     console.log(`
 ⛔ Sanity check failed for network ${networkName}, 
 check if the values provided in the .env file for the Universal Channel Mw and the dispatcher are correct.
 --------------------------------------------------
-🔮 Expected Universal Channel Handler (in IBC contract): ${ucHandlerAddr}...
-🗃️  Found Universal Channel Handler (in .env file): ${envUcHandlerAddr}...
+🔮 Expected Dispatcher (in Universal Channel Handler contract): ${dispatcherAddr}...
+🗃️  Found Dispatcher (in .env file): ${envDispatcherAddr}...
 --------------------------------------------------
-        `);
+    `);
     return;
-  }
-
-  if (sanityCheck) {
+  } else {
+    // If the sanity check passes, we can continue to check the channel ID stored in the Universal Channel Mw
     let counter = 0;
     let channelId, envChannelId;
     let channelBytes;
@@ -91,16 +104,19 @@ check if the values provided in the .env file for the Universal Channel Mw and t
         // console.log(`❌ No channel ID at index: ${counter}`);
         foundChannel = false;
       }
-      if (!foundChannel) {
-        channelId = hre.ethers.decodeBytes32String(channelBytes);
-        console.log(`Channel ID in UCH contract: ${channelId}`);
-        envChannelId = config['sendUniversalPacket'][networkName]['channelId'];
-      }
-      // Compare the channel ID with the one in the .env file and log an error if they don't match
-      // Run only after we've encountered an error fetching a channel ID at a new index
-      if (!foundChannel && channelId !== envChannelId) {
-        sanityCheck = false;
-        console.log(`
+      counter++;
+    } while (foundChannel);
+
+    // channelBytes should be the last (populated) index in the connectedChannels array
+    channelId = hre.ethers.decodeBytes32String(channelBytes);
+    console.log(`Channel ID in UCH contract: ${channelId}`);
+    envChannelId = config['sendUniversalPacket'][networkName]['channelId'];
+
+    // Compare the channel ID with the one in the .env file and log an error if they don't match
+    // Run only after we've encountered an error fetching a channel ID at a new index
+    if (channelId === undefined && channelId !== envChannelId) {
+      sanityCheck = false;
+      console.log(`
 ⛔ Sanity check failed for network ${networkName}, 
 check if the channel id value for the Universal channel in the config is correct.
 --------------------------------------------------
@@ -108,20 +124,8 @@ check if the channel id value for the Universal channel in the config is correct
 🗃️  Found Channel ID (in config file): ${envChannelId}...
 --------------------------------------------------
   `);
-        return;
-      }
-      counter++;
-    } while (foundChannel);
-  } else {
-    console.log(`
-⛔ Sanity check failed for network ${networkName}, 
-check if the values provided in the .env file for the Universal Channel Mw and the dispatcher are correct.
---------------------------------------------------
-🔮 Expected Dispatcher (in Universal Channel Handler contract): ${dispatcherAddr}...
-🗃️  Found Dispatcher (in .env file): ${envDispatcherAddr}...
---------------------------------------------------
-    `);
-    return;
+      return;
+    }
   }
 
   // 5. Print the result of the sanity check
