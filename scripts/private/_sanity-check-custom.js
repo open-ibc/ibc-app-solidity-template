@@ -35,10 +35,8 @@ async function main() {
   let sanityCheck = false;
   let envDispatcherAddr;
   try {
-    envDispatcherAddr =
-      config.proofsEnabled === true
-        ? polyConfig[`${chainId}`]['clients']['op-client'].dispatcherAddr
-        : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
+    envDispatcherAddr = polyConfig[`${chainId}`].dispatcherAddr;
+
     sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
   } catch (error) {
     console.log(`❌ Error comparing dispatcher addresses in .env file and IBC app: ${error}`);

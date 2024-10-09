@@ -6,7 +6,7 @@
 // global scope, and execute the script.
 const hre = require('hardhat');
 const { getConfigPath, convertNetworkToChainId, addressToPortId } = require('./_helpers');
-const { getIbcApp } = require('./_vibc-helpers.js');
+const { getIbcApp, getDispatcher } = require('./_vibc-helpers.js');
 const polyConfig = hre.config.polymer;
 
 async function main() {
@@ -26,8 +26,17 @@ async function main() {
   const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
   const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
 
-  const srcPortId = addressToPortId(chanConfig.srcAddr, srcChainName);
-  const dstPortId = addressToPortId(chanConfig.dstAddr, dstChainName);
+  const input = [
+    { address: chanConfig.srcAddr, network: srcChainName },
+    { address: chanConfig.dstAddr, network: dstChainName },
+  ];
+  const [srcPortId, dstPortId] = await Promise.all(
+    input.map(async (channelEnd) => {
+      const dispatcher = await getDispatcher(channelEnd.network);
+      const portPrefix = await dispatcher.portPrefix();
+      return addressToPortId(channelEnd.address, portPrefix);
+    }),
+  );
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
