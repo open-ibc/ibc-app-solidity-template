@@ -50,7 +50,7 @@ contract XCounter is CustomChanIbcApp {
         external
         override
         onlyIbcDispatcher
-        returns (AckPacket memory ackPacket)
+        returns (AckPacket memory ackPacket, bool skipAck)
     {
         recvedPackets.push(packet);
         // decoding the caller address from the packet data
@@ -59,7 +59,7 @@ contract XCounter is CustomChanIbcApp {
         counterMap[packet.sequence] = _caller;
         increment();
 
-        return AckPacket(true, abi.encode(counter));
+        return (AckPacket(true, abi.encode(counter)), false);
     }
 
     /**
