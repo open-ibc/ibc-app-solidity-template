@@ -119,18 +119,39 @@ function listenForIbcChannelEvents(network, dispatcher) {
     dispatcher.removeAllListeners();
   });
 
-  dispatcher.on('CloseIbcChannel', (portAddress, channelId, event) => {
+  dispatcher.on('ChannelCloseInit', (sender, channelId, event) => {
     const txHash = event.log.transactionHash;
     const channelIdString = hre.ethers.decodeBytes32String(channelId);
     const url = `${explorerUrl}/tx/${txHash}`;
-    if (filterChannelEvents(portAddress)) {
+    if (filterChannelEvents(sender)) {
       console.log(`
           -------------------------------------------
-          🔗 🔒   IBC CHANNEL CLOSED !!!   🔗 🔒
+          🔗 🔒   IBC CHANNEL CLOSE INIT !!!   🔗 🔒
           -------------------------------------------
           🔔 Event name: ${event.log.fragment.name}
           ⛓️  Network: ${network}
-          🔗 Port Address: ${portAddress}
+          🔗 Port Address: ${sender}
+          🛣️  Channel ID: ${channelIdString}
+          -------------------------------------------
+          🧾 TxHash: ${txHash}
+          🔍 Explorer URL: ${url}
+          -------------------------------------------\n`);
+    }
+    dispatcher.removeAllListeners();
+  });
+
+  dispatcher.on('ChannelCloseConfirm', (sender, channelId, event) => {
+    const txHash = event.log.transactionHash;
+    const channelIdString = hre.ethers.decodeBytes32String(channelId);
+    const url = `${explorerUrl}/tx/${txHash}`;
+    if (filterChannelEvents(sender)) {
+      console.log(`
+          -------------------------------------------
+          🔗 🔒   IBC CHANNEL CLOSE CONFIRM!!!   🔗 🔒
+          -------------------------------------------
+          🔔 Event name: ${event.log.fragment.name}
+          ⛓️  Network: ${network}
+          🔗 Port Address: ${sender}
           🛣️  Channel ID: ${channelIdString}
           -------------------------------------------
           🧾 TxHash: ${txHash}

@@ -19,13 +19,8 @@ async function getIbcApp(network) {
 }
 
 function getDispatcherAddress(network) {
-  const config = require(getConfigPath());
   const chainId = convertNetworkToChainId(network);
-
-  const dispatcherAddr = config.proofsEnabled
-    ? polyConfig[`${chainId}`]['clients']['op-client'].dispatcherAddr
-    : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
-  return dispatcherAddr;
+  return polyConfig[`${chainId}`].dispatcherAddr;
 }
 
 async function getDispatcher(network) {
