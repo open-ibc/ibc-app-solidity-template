@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.9;
 
-import {
-    IbcPacket, AckPacket, ChannelOrder, IBCErrors
-} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
+import {IbcPacket, AckPacket, ChannelOrder} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
+
+import {IBCErrors} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/IbcErrors.sol";
 import {IbcReceiverBase, IbcReceiver} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol";
 import {IbcDispatcher} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcDispatcher.sol";
 
@@ -58,13 +58,13 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         external
         virtual
         onlyIbcDispatcher
-        returns (AckPacket memory ackPacket)
+        returns (AckPacket memory ackPacket, bool skipAck)
     {
         recvedPackets.push(packet);
         // do logic
 
         // solhint-disable-next-line quotes
-        return AckPacket(true, abi.encodePacked("{ 'account': 'account', 'reply': 'got the message' }"));
+        return (AckPacket(true, abi.encodePacked("{ 'account': 'account', 'reply': 'got the message' }")), false);
     }
 
     /**
@@ -143,8 +143,27 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
     }
 
     function onChanOpenConfirm(bytes32 channelId) external virtual onlyIbcDispatcher {
-        // do logic
+        // do logic.
     }
+
+       /**
+     * @notice Handles channel close callback on the dest chain
+     * @param channelId The unique identifier of the channel
+     * @dev Make sure to validate channelId and counterpartyVersion
+     */
+    function onChanCloseConfirm(bytes32 channelId, string calldata, bytes32) external virtual onlyIbcDispatcher {
+        // logic to determine if the channel should be closed
+        bool channelFound = false;
+        for (uint256 i = 0; i < connectedChannels.length; i++) {
+            if (connectedChannels[i].channelId == channelId) {
+                delete connectedChannels[i];
+                channelFound = true;
+                break;
+            }
+        }
+        if (!channelFound) revert ChannelNotFound();
+    }
+
 
     function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external virtual onlyIbcDispatcher {
         // logic to determin if the channel should be closed
@@ -187,9 +206,9 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
 
     /**
      * This func triggers channel closure from the dApp.
-     * Func args can be arbitary, as long as dispatcher.closeIbcChannel is invoked propperly.
+     * Func args can be arbitary, as long as dispatcher.triggerChannelClose is invoked propperly.
      */
-    function triggerChannelClose(bytes32 channelId) external virtual onlyOwner {
-        dispatcher.closeIbcChannel(channelId);
+    function triggerChannelClose(bytes32 channelId) external onlyOwner {
+        dispatcher.channelCloseInit(channelId);
     }
 }
