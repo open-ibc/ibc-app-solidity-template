@@ -3,6 +3,7 @@
 pragma solidity ^0.8.9;
 
 import {IbcPacket, AckPacket, ChannelOrder} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/Ibc.sol";
+import {FeeSender} from "@open-ibc/vibc-core-smart-contracts/contracts/implementation_templates/FeeSender.sol";
 
 import {IBCErrors} from "@open-ibc/vibc-core-smart-contracts/contracts/libs/IbcErrors.sol";
 import {IbcReceiverBase, IbcReceiver} from "@open-ibc/vibc-core-smart-contracts/contracts/interfaces/IbcReceiver.sol";
@@ -10,7 +11,7 @@ import {IbcDispatcher} from "@open-ibc/vibc-core-smart-contracts/contracts/inter
 
 // CustomChanIbcApp is a contract that can be used as a base contract
 // for IBC-enabled contracts that send packets over a custom IBC channel.
-contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
+contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver, FeeSender {
     struct ChannelMapping {
         bytes32 channelId;
         bytes32 cpChannelId;
@@ -146,7 +147,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         // do logic.
     }
 
-       /**
+    /**
      * @notice Handles channel close callback on the dest chain
      * @param channelId The unique identifier of the channel
      * @dev Make sure to validate channelId and counterpartyVersion
@@ -163,7 +164,6 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver {
         }
         if (!channelFound) revert ChannelNotFound();
     }
-
 
     function onCloseIbcChannel(bytes32 channelId, string calldata, bytes32) external virtual onlyIbcDispatcher {
         // logic to determin if the channel should be closed
