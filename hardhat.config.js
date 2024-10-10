@@ -59,6 +59,9 @@ module.exports = {
     libraries: './lib',
   },
   etherscan: {
+    apiKey: {
+      optimism: process.env.OP_BLOCKSCOUT_API_KEY,
+    },
     customChains: [
       {
         network: 'base',

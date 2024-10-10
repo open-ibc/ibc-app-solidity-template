@@ -121,8 +121,37 @@ function addressToPortId(address, portPrefix) {
   return `${portPrefix}${suffix}`;
 }
 
+function networkIsAllowed(network) {
+  return hre.config.networks[network] !== undefined;
+}
+
 function getWhitelistedNetworks() {
   return Object.keys(polyConfig);
+}
+
+// Estimate fees from polymer's fee estimation for relayer
+async function estimateRelayerFees(srcChainId, destChainId, maxRecvExecGas, maxAckExecGas) {
+  const configPath = getConfigPath();
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const baseUrl = config['feeEstimatorApiUrl'];
+  const url = `${baseUrl}/v2/packetEstimate`;
+  const data = {
+    destChainId: destChainId,
+    srcChainId: srcChainId,
+    maxRecvExecGas: maxRecvExecGas,
+    maxAckExecGas: maxAckExecGas,
+  };
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
 module.exports = {
@@ -136,4 +165,6 @@ module.exports = {
   areAddressesEqual,
   addressToPortId,
   getWhitelistedNetworks,
+  networkIsAllowed,
+  estimateRelayerFees,
 };
