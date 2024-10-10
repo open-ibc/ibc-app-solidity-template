@@ -23,11 +23,22 @@ contract XCounter is CustomChanIbcApp {
     // IBC logic
 
     /**
-     * @dev Sends a packet with the caller address over a specified channel.
+     * @dev Sends a packet with the caller address over a specified channel, and also deposits a relayer fee.
      * @param channelId The ID of the channel (locally) to send the packet to.
      * @param timeoutSeconds The timeout in seconds (relative).
+     * @param gasLimits An array containing two gas limit values:
+     *                  - gasLimits[0] for `recvPacket` fees
+     *                  - gasLimits[1] for `ackPacket` fees.
+     * @param gasPrices An array containing two gas price values:
+     *                  - gasPrices[0] for `recvPacket` fees, for the dest chain
+     *                  - gasPrices[1] for `ackPacket` fees, for the src chain
      */
-    function sendPacket(bytes32 channelId, uint64 timeoutSeconds) external {
+    function sendPacketWithFee(
+        bytes32 channelId,
+        uint64 timeoutSeconds,
+        uint256[2] memory gasLimits,
+        uint256[2] memory gasPrices
+    ) external payable {
         // incrementing counter on source chain
         increment();
 
@@ -38,7 +49,8 @@ contract XCounter is CustomChanIbcApp {
         uint64 timeoutTimestamp = uint64((block.timestamp + timeoutSeconds) * 1000000000);
 
         // calling the Dispatcher to send the packet
-        dispatcher.sendPacket(channelId, payload, timeoutTimestamp);
+        uint64 sequence = dispatcher.sendPacket(channelId, payload, timeoutTimestamp);
+        _depositSendPacketFee(dispatcher, channelId, sequence, gasLimits, gasPrices);
     }
 
     /**

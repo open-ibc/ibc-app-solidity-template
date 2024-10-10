@@ -1,30 +1,33 @@
 {
   "proofsEnabled": false,
   "isUniversal": false,
+  "feeEstimatorApiUrl": "https://fee.sepolia.polymer.zone",
   "deploy": {
     "optimism": "XCounter",
     "base": "XCounter"
   },
   "createChannel": {
     "srcChain": "optimism",
-    "srcAddr": "0xbb9269d02887Fea3F954D5CA0e1402c0Ab0BCaae",
+    "srcAddr": "0xf1C81952231e1B08B55D41D01d4D19Be1919D6A8",
     "dstChain": "base",
-    "dstAddr": "0x71E984BAd0C02500a5aF3305096110BaC24a18E5",
+    "dstAddr": "0x03b3E5f77cB63345420D9e11Fe176504b181f652",
     "version": "1.0",
     "ordering": 0,
     "fees": false
   },
   "sendPacket": {
     "optimism": {
-      "portAddr": "0xbb9269d02887Fea3F954D5CA0e1402c0Ab0BCaae",
-      "channelId": "channel-n",
+      "portAddr": "0xf1C81952231e1B08B55D41D01d4D19Be1919D6A8",
+      "channelId": "channel-40858",
       "timeout": 36000
     },
     "base": {
-      "portAddr": "0x71E984BAd0C02500a5aF3305096110BaC24a18E5",
-      "channelId": "channel-n",
+      "portAddr": "0x03b3E5f77cB63345420D9e11Fe176504b181f652",
+      "channelId": "channel-40859",
       "timeout": 36000
-    }
+    },
+    "recvPacketGasLimit": 800000,
+    "ackPacketGasLimit": 600000
   },
   "sendUniversalPacket": {
     "optimism": {
