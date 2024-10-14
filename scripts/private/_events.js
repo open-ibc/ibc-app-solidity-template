@@ -162,15 +162,14 @@ function listenForIbcChannelEvents(network, dispatcher) {
   });
 }
 
-function filterPacketEvents(portAddress, network) {
+function filterPacketEvents(portAddress, network, ucHandlerAddr) {
   const config = require(getConfigPath());
-  const sendPacketConfig = config.sendPacket;
-  const ucHandlerAddr = getUcHandlerAddress(network);
+  const sendPacketConfig = config.sendPacket.networks;
 
   return areAddressesEqual(portAddress, sendPacketConfig[`${network}`].portAddr) || areAddressesEqual(portAddress, ucHandlerAddr);
 }
 
-function listenForIbcPacketEvents(network, dispatcher) {
+function listenForIbcPacketEvents(network, dispatcher, ucHandlerAddress) {
   const explorerUrl = getExplorerDataFromConfig(network).browserURL;
   console.log(`👂 Listening for IBC packet events on ${network}...`);
 
@@ -179,7 +178,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
     const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
 
-    if (filterPacketEvents(sourcePortAddress, network)) {
+    if (filterPacketEvents(sourcePortAddress, network, ucHandlerAddress)) {
       console.log(` 
           -------------------------------------------
           📦 📮   PACKET HAS BEEN SENT !!!   📦 📮
@@ -203,7 +202,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
     const destChannelIdString = hre.ethers.decodeBytes32String(destChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
 
-    if (filterPacketEvents(destPortAddress, network)) {
+    if (filterPacketEvents(destPortAddress, network, ucHandlerAddress)) {
       console.log(`
           -------------------------------------------
           📦 📬   PACKET IS RECEIVED !!!   📦 📬
@@ -225,7 +224,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
     const txHash = event.log.transactionHash;
     const writerChannelIdString = hre.ethers.decodeBytes32String(writerChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
-    if (filterPacketEvents(writerPortAddress, network)) {
+    if (filterPacketEvents(writerPortAddress, network, ucHandlerAddress)) {
       console.log(` 
           -------------------------------------------
           📦 📝   ACKNOWLEDGEMENT WRITTEN !!!   📦 📝
@@ -248,7 +247,7 @@ function listenForIbcPacketEvents(network, dispatcher) {
     const txHash = event.log.transactionHash;
     const sourceChannelIdString = hre.ethers.decodeBytes32String(sourceChannelId);
     const url = `${explorerUrl}/tx/${txHash}`;
-    if (filterPacketEvents(sourcePortAddress, network)) {
+    if (filterPacketEvents(sourcePortAddress, network, ucHandlerAddress)) {
       console.log(`   
           -------------------------------------------
           📦 🏁   PACKET IS ACKNOWLEDGED !!!   📦 🏁
@@ -272,8 +271,10 @@ async function setupIbcPacketEventListener(src, dst) {
   // Get the dispatchers for both source and destination to listen for IBC packet events
   const srcDispatcher = await getDispatcher(src);
   const dstDispatcher = await getDispatcher(dst);
-  listenForIbcPacketEvents(src, srcDispatcher);
-  listenForIbcPacketEvents(dst, dstDispatcher);
+  const srcUcHandlerAddress = await getUcHandlerAddress(src);
+  const destUcHandlerAddress = await getUcHandlerAddress(dst);
+  listenForIbcPacketEvents(src, srcDispatcher, srcUcHandlerAddress);
+  listenForIbcPacketEvents(dst, dstDispatcher, destUcHandlerAddress);
 }
 
 async function setupIbcChannelEventListener(src, dst) {

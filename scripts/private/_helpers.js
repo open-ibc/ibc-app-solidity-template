@@ -2,8 +2,6 @@ const fs = require('fs');
 const axios = require('axios');
 const hre = require('hardhat');
 
-const polyConfig = hre.config.polymer;
-
 // Function to get the path to the configuration file
 function getConfigPath() {
   const path = require('path');
@@ -36,7 +34,8 @@ function getExplorerDataFromConfig(network) {
 }
 
 // Function to update config.json
-function updateConfigDeploy(network, address, isSource) {
+async function updateConfigDeploy(network, address, isSource) {
+  const polyConfig = await fetchRegistryConfig();
   const chainId = hre.config.networks[`${network}`].chainId;
   try {
     const configPath = getConfigPath();
@@ -84,6 +83,14 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
   }
 }
 
+async function fetchRegistryConfig() {
+  const configPath = getConfigPath();
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const baseUrl = config['polymerRegistryTestnetRepoUrl'];
+  const res = await axios.get(baseUrl);
+  return res.data;
+}
+
 async function fetchABI(explorerApiUrl, contractAddress) {
   try {
     const response = await axios.get(`${explorerApiUrl}/v2/smart-contracts/${contractAddress}`);
@@ -125,8 +132,9 @@ function networkIsAllowed(network) {
   return hre.config.networks[network] !== undefined;
 }
 
-function getWhitelistedNetworks() {
-  return Object.keys(polyConfig);
+async function getWhitelistedNetworks() {
+  const config = await fetchRegistryConfig();
+  return Object.keys(config);
 }
 
 // Estimate fees from polymer's fee estimation for relayer
@@ -167,4 +175,5 @@ module.exports = {
   getWhitelistedNetworks,
   networkIsAllowed,
   estimateRelayerFees,
+  fetchRegistryConfig,
 };

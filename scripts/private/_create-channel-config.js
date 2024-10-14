@@ -3,9 +3,9 @@ const { getConfigPath, updateConfigCreateChannel, getWhitelistedNetworks, conver
 const { setupIbcChannelEventListener } = require('./_events.js');
 
 // Function to run the deploy script and capture output
-function createChannelAndCapture(config, srcChain, dstChain) {
+async function createChannelAndCapture(config, srcChain, dstChain) {
   // Check if the source chain from user input is whitelisted
-  const allowedNetworks = getWhitelistedNetworks();
+  const allowedNetworks = await getWhitelistedNetworks();
   const srcChainId = convertNetworkToChainId(srcChain);
   const dstChainId = convertNetworkToChainId(dstChain);
 
@@ -59,7 +59,7 @@ async function main() {
   const srcChain = config.createChannel.srcChain;
   const dstChain = config.createChannel.dstChain;
   await setupIbcChannelEventListener(srcChain, dstChain);
-  createChannelAndCapture(config, srcChain, dstChain);
+  await createChannelAndCapture(config, srcChain, dstChain);
 }
 
 main().catch((error) => {

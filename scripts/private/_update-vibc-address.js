@@ -15,7 +15,7 @@ async function main() {
 
   if (!config.isUniversal) {
     // Determine the new dispatcher, based on the network.
-    const newDispatcher = getDispatcherAddress(networkName);
+    const newDispatcher = await getDispatcherAddress(networkName);
 
     // Get the contract type from the config and get the contract
     const ibcApp = await getIbcApp(networkName);
@@ -28,7 +28,7 @@ async function main() {
     console.log(`✅ Dispatcher updated to ${newDispatcher}`);
   } else if (config.isUniversal) {
     // Determine the new universal channel handler, based on the network.
-    const newUcHandler = getUcHandlerAddress(networkName);
+    const newUcHandler = await getUcHandlerAddress(networkName);
 
     // Get the contract type from the config and get the contract
     const ibcApp = await getIbcApp(networkName, true);

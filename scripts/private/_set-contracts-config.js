@@ -12,7 +12,7 @@ const chain = process.argv[2];
 const contractType = process.argv[3];
 const universalBoolean = process.argv[4].trim().toLowerCase();
 try {
-  const allowedNetworks = getWhitelistedNetworks();
+  const allowedNetworks = await getWhitelistedNetworks();
   const chainId = convertNetworkToChainId(chain);
   if (!allowedNetworks.includes(`${chainId}`)) {
     throw new Error('Invalid network. Please provide a valid network as an argument.');

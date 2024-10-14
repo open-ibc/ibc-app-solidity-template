@@ -1,6 +1,8 @@
 {
   "proofsEnabled": false,
   "isUniversal": false,
+  "polymerRegistryTestnetRepoUrl": "https://raw.githubusercontent.com/polymerdao/polymer-registry/testnet/dist/output.json",
+  "polymerRegistryMainnetRepoUrl": "",
   "feeEstimatorApiUrl": "https://fee.sepolia.polymer.zone",
   "deploy": {
     "optimism": "XCounter",
@@ -16,29 +18,35 @@
     "fees": false
   },
   "sendPacket": {
-    "optimism": {
-      "portAddr": "0xf1C81952231e1B08B55D41D01d4D19Be1919D6A8",
-      "channelId": "channel-40858",
-      "timeout": 36000
-    },
-    "base": {
-      "portAddr": "0x03b3E5f77cB63345420D9e11Fe176504b181f652",
-      "channelId": "channel-40859",
-      "timeout": 36000
+    "networks": {
+      "optimism": {
+        "portAddr": "0xf1C81952231e1B08B55D41D01d4D19Be1919D6A8",
+        "channelId": "channel-40858",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "0x03b3E5f77cB63345420D9e11Fe176504b181f652",
+        "channelId": "channel-40859",
+        "timeout": 36000
+      }
     },
     "recvPacketGasLimit": 800000,
     "ackPacketGasLimit": 600000
   },
   "sendUniversalPacket": {
-    "optimism": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
+    "networks": {
+      "optimism": {
+        "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
+        "channelId": "channel-n",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
+        "channelId": "channel-n",
+        "timeout": 36000
+      }
     },
-    "base": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
-    }
+    "recvPacketGasLimit": 800000,
+    "ackPacketGasLimit": 600000
   }
 }

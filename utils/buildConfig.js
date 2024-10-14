@@ -23,17 +23,18 @@ if (!chainName1 || !chainName2) {
   console.error('Usage: node buildConfig.js <chainName1> <chainName2>');
   process.exit(1);
 }
-const allowedNetworks = getWhitelistedNetworks();
 const chainId1 = convertNetworkToChainId(chainName1);
 const chainId2 = convertNetworkToChainId(chainName2);
 console.log(`Chain ID 1: ${chainId1}`);
 console.log(`Chain ID 2: ${chainId2}`);
-if (!allowedNetworks.includes(`${chainId1}`) || !allowedNetworks.includes(`${chainId2}`)) {
-  console.error('Invalid network name. Please use one of the following:', allowedNetworks);
-  process.exit(1);
-}
 
-function main() {
+async function main() {
+  const allowedNetworks = await getWhitelistedNetworks();
+  if (!allowedNetworks.includes(`${chainId1}`) || !allowedNetworks.includes(`${chainId2}`)) {
+    console.error('Invalid network name. Please use one of the following:', allowedNetworks);
+    process.exit(1);
+  }
+
   try {
     const configPath = getConfigPath();
     const config = {
@@ -47,8 +48,8 @@ function main() {
 
     config.sendUniversalPacket[`${chainName1}`] = sendPacketInfo;
     config.sendUniversalPacket[`${chainName2}`] = sendPacketInfo;
-    config.sendPacket[`${chainName1}`] = sendPacketInfo;
-    config.sendPacket[`${chainName2}`] = sendPacketInfo;
+    config.sendPacket[`${chainName1}`].networks = sendPacketInfo;
+    config.sendPacket[`${chainName2}`].networks = sendPacketInfo;
     config.deploy[`${chainName1}`] = '';
     config.deploy[`${chainName2}`] = '';
 
@@ -58,4 +59,7 @@ function main() {
   }
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

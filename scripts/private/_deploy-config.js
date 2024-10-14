@@ -13,7 +13,7 @@ if (!source || !destination) {
 }
 
 // Function to run the deploy script and capture output
-function deployAndCapture(network, isSource) {
+async function deployAndCapture(network, isSource) {
   const allowedNetworks = getWhitelistedNetworks();
   const chainId = convertNetworkToChainId(network);
 
@@ -56,9 +56,8 @@ function deployAndCapture(network, isSource) {
   });
 }
 
-function main() {
-  deployAndCapture(source, true);
-  deployAndCapture(destination, false);
+async function main() {
+  await Promise.all([deployAndCapture(source, true), deployAndCapture(destination, false)]);
 }
 
 main();

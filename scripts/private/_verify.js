@@ -57,10 +57,10 @@ async function main() {
   }
   let constructorArgs;
   if (config.isUniversal) {
-    const ucHandlerAddr = getUcHandlerAddress(network);
+    const ucHandlerAddr = await getUcHandlerAddress(network);
     constructorArgs = [ucHandlerAddr, ...(args ?? [])];
   } else if (!config.isUniversal) {
-    const dispatcherAddr = getDispatcherAddress(network);
+    const dispatcherAddr = await getDispatcherAddress(network);
     constructorArgs = [dispatcherAddr, ...(args ?? [])];
   }
 

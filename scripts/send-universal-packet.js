@@ -20,11 +20,11 @@ async function main() {
   // Do logic to prepare the packet
 
   // If the network we are sending on is optimism, we need to use the base port address and vice versa
-  const destChain = Object.keys(sendConfig).find((chain) => chain !== networkName);
-  const destPortAddr = sendConfig[`${destChain}`]['portAddr'];
-  const channelId = sendConfig[`${networkName}`]['channelId'];
+  const destChain = Object.keys(sendConfig.networks).find((chain) => chain !== networkName);
+  const destPortAddr = sendConfig.networks[`${destChain}`]['portAddr'];
+  const channelId = sendConfig.networks[`${networkName}`]['channelId'];
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
-  const timeoutSeconds = sendConfig[`${networkName}`]['timeout'];
+  const timeoutSeconds = sendConfig.networks[`${networkName}`]['timeout'];
 
   // Send the packet
   await ibcApp.connect(accounts[0]).sendUniversalPacket(
