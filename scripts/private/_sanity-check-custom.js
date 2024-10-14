@@ -5,11 +5,9 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath } = require('./_helpers');
+const { getConfigPath, fetchRegistryConfig } = require('./_helpers');
 const { areAddressesEqual } = require('./_helpers');
 const { getIbcApp } = require('./_vibc-helpers');
-
-const polyConfig = hre.config.polymer;
 
 async function main() {
   const configPath = getConfigPath();
@@ -34,11 +32,10 @@ async function main() {
   // 3. Compare with the value expected in the .env config file
   let sanityCheck = false;
   let envDispatcherAddr;
+  const polyConfig = await fetchRegistryConfig();
   try {
-    envDispatcherAddr =
-      config.proofsEnabled === true
-        ? polyConfig[`${chainId}`]['clients']['op-client'].dispatcherAddr
-        : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
+    envDispatcherAddr = polyConfig[`${chainId}`].dispatcherAddr;
+
     sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
   } catch (error) {
     console.log(`❌ Error comparing dispatcher addresses in .env file and IBC app: ${error}`);

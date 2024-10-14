@@ -2,8 +2,6 @@ const fs = require('fs');
 const axios = require('axios');
 const hre = require('hardhat');
 
-const polyConfig = hre.config.polymer;
-
 // Function to get the path to the configuration file
 function getConfigPath() {
   const path = require('path');
@@ -36,7 +34,8 @@ function getExplorerDataFromConfig(network) {
 }
 
 // Function to update config.json
-function updateConfigDeploy(network, address, isSource) {
+async function updateConfigDeploy(network, address, isSource) {
+  const polyConfig = await fetchRegistryConfig();
   const chainId = hre.config.networks[`${network}`].chainId;
   try {
     const configPath = getConfigPath();
@@ -50,14 +49,13 @@ function updateConfigDeploy(network, address, isSource) {
         config['createChannel']['dstChain'] = network;
         config['createChannel']['dstAddr'] = address;
       }
-
-      config['sendPacket'][`${network}`]['portAddr'] = address;
+      config['sendPacket'].networks[`${network}`]['portAddr'] = address;
     } else if (config.isUniversal) {
       // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
       //TODO: update for multi-client selection
-      const client = config.proofsEnabled ? 'op-client' : 'sim-client';
-      config['sendUniversalPacket'][`${network}`]['portAddr'] = address;
-      config['sendUniversalPacket'][`${network}`]['channelId'] = polyConfig[`${chainId}`]['clients'][`${client}`]['universalChannelId'];
+      const client = config.proofsEnabled ? 'subfinality' : 'sim-client';
+      config['sendUniversalPacket'].networks[`${network}`]['portAddr'] = address;
+      config['sendUniversalPacket'].networks[`${network}`]['channelId'] = polyConfig[`${chainId}`]['clients'][`${client}`]['universalChannelId'];
     }
 
     // Write the updated config back to the file
@@ -74,14 +72,22 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
     const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
     // Update the config object
-    upConfig['sendPacket'][`${network}`]['channelId'] = channel;
-    upConfig['sendPacket'][`${cpNetwork}`]['channelId'] = cpChannel;
+    upConfig['sendPacket'].networks[`${network}`]['channelId'] = channel;
+    upConfig['sendPacket'].networks[`${cpNetwork}`]['channelId'] = cpChannel;
 
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));
   } catch (error) {
     console.error('❌ Error updating config:', error);
   }
+}
+
+async function fetchRegistryConfig() {
+  const configPath = getConfigPath();
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const baseUrl = config['polymerRegistryTestnetRepoUrl'];
+  const res = await axios.get(baseUrl);
+  return res.data;
 }
 
 async function fetchABI(explorerApiUrl, contractAddress) {
@@ -116,18 +122,43 @@ function areAddressesEqual(address1, address2) {
 }
 
 // Helper function to convert an address to a port ID
-function addressToPortId(address, network) {
-  const config = require(getConfigPath());
-  // TODO: implement dynamic suffix for selected client
-  const chainId = hre.config.networks[`${network}`].chainId;
-  const client = config.proofsEnabled ? 'op-client' : 'sim-client';
-  const portPrefix = 'polyibc.' + polyConfig[`${chainId}`]['clients'][`${client}`].clientSuffix;
+function addressToPortId(address, portPrefix) {
   const suffix = address.slice(2);
-  return `${portPrefix}.${suffix}`;
+  return `${portPrefix}${suffix}`;
 }
 
-function getWhitelistedNetworks() {
-  return Object.keys(polyConfig);
+function networkIsAllowed(network) {
+  return hre.config.networks[network] !== undefined;
+}
+
+async function getWhitelistedNetworks() {
+  const config = await fetchRegistryConfig();
+  return Object.keys(config);
+}
+
+// Estimate fees from polymer's fee estimation for relayer
+async function estimateRelayerFees(srcChainId, destChainId, maxRecvExecGas, maxAckExecGas) {
+  const configPath = getConfigPath();
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const baseUrl = config['feeEstimatorApiUrl'];
+  const url = `${baseUrl}/v2/packetEstimate`;
+  const data = {
+    destChainId: destChainId,
+    srcChainId: srcChainId,
+    maxRecvExecGas: maxRecvExecGas,
+    maxAckExecGas: maxAckExecGas,
+  };
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
 module.exports = {
@@ -141,4 +172,7 @@ module.exports = {
   areAddressesEqual,
   addressToPortId,
   getWhitelistedNetworks,
+  networkIsAllowed,
+  estimateRelayerFees,
+  fetchRegistryConfig,
 };

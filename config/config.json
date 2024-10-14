@@ -1,41 +1,52 @@
 {
-  "proofsEnabled": false,
-  "isUniversal": true,
+  "proofsEnabled": true,
+  "isUniversal": false,
+  "polymerRegistryTestnetRepoUrl": "https://raw.githubusercontent.com/polymerdao/polymer-registry/testnet/dist/output.json",
+  "polymerRegistryMainnetRepoUrl": "",
+  "feeEstimatorApiUrl": "https://fee.sepolia.polymer.zone",
   "deploy": {
-    "optimism": "",
-    "base": ""
+    "optimism": "XCounter",
+    "base": "XCounter"
   },
   "createChannel": {
-    "srcChain": "",
-    "srcAddr": "0x1234567890AbCdEf1234567890aBcDeF12345678",
-    "dstChain": "",
-    "dstAddr": "0x1234567890AbCdEf1234567890aBcDeF12345678",
+    "srcChain": "optimism",
+    "srcAddr": "",
+    "dstChain": "base",
+    "dstAddr": "",
     "version": "1.0",
     "ordering": 0,
     "fees": false
   },
   "sendPacket": {
-    "optimism": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
+    "networks": {
+      "optimism": {
+        "portAddr": "",
+        "channelId": "",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "",
+        "channelId": "",
+        "timeout": 36000
+      }
     },
-    "base": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
-    }
+    "recvPacketGasLimit": 800000,
+    "ackPacketGasLimit": 600000
   },
   "sendUniversalPacket": {
-    "optimism": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
+    "networks": {
+      "optimism": {
+        "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
+        "channelId": "channel-n",
+        "timeout": 36000
+      },
+      "base": {
+        "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
+        "channelId": "channel-n",
+        "timeout": 36000
+      }
     },
-    "base": {
-      "portAddr": "0x1234567890abcdef1234567890abcdef12345678",
-      "channelId": "channel-n",
-      "timeout": 36000
-    }
+    "recvPacketGasLimit": 800000,
+    "ackPacketGasLimit": 600000
   }
 }

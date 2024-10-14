@@ -17,7 +17,7 @@ function runSanityCheck(config, network) {
 
 function main() {
   const config = require(getConfigPath());
-  const configChains = config.isUniversal ? Object.keys(config.sendUniversalPacket) : Object.keys(config.sendPacket);
+  const configChains = config.isUniversal ? Object.keys(config.sendUniversalPacket.networks) : Object.keys(config.sendPacket.networks);
 
   configChains.forEach((network) => {
     runSanityCheck(config, network);

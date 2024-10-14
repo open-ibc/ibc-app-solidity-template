@@ -49,7 +49,7 @@ contract XCounterUC is UniversalChanIbcApp {
         external
         override
         onlyIbcMw
-        returns (AckPacket memory ackPacket)
+        returns (AckPacket memory ackPacket, bool skipAck)
     {
         recvedPackets.push(UcPacketWithChannel(channelId, packet));
         // decode the packet data
@@ -58,7 +58,7 @@ contract XCounterUC is UniversalChanIbcApp {
         counterMap[c] = payload;
         increment();
 
-        return AckPacket(true, abi.encode(counter));
+        return (AckPacket(true, abi.encode(counter)), false);
     }
 
     /**

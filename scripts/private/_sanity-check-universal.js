@@ -5,13 +5,12 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath, areAddressesEqual } = require('./_helpers.js');
+const { getConfigPath, areAddressesEqual, fetchRegistryConfig } = require('./_helpers.js');
 const { getIbcApp, getUcHandler } = require('./_vibc-helpers.js');
-
-const polyConfig = hre.config.polymer;
 
 async function main() {
   const config = require(getConfigPath());
+  const polyConfig = await fetchRegistryConfig();
   const networkName = hre.network.name;
   const chainId = hre.config.networks[`${networkName}`].chainId;
 
@@ -38,7 +37,7 @@ async function main() {
     // TODO: update for multi-client selection
     envUcHandlerAddr =
       config.proofsEnabled === true
-        ? polyConfig[`${chainId}`]['clients']['op-client'].universalChannelAddr
+        ? polyConfig[`${chainId}`]['clients']['subfinality'].universalChannelAddr
         : polyConfig[`${chainId}`]['clients']['sim-client'].universalChannelAddr;
     sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
   } catch (error) {
@@ -68,7 +67,7 @@ check if the values provided in the .env file for the Universal Channel Mw and t
       dispatcherAddr = await ucHandler.dispatcher();
       envDispatcherAddr =
         config.proofsEnabled === true
-          ? polyConfig[`${chainId}`]['clients']['op-client'].dispatcherAddr
+          ? polyConfig[`${chainId}`]['clients']['subfinality'].dispatcherAddr
           : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
       sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
     } catch (error) {
@@ -110,7 +109,7 @@ check if the values provided in the .env file for the Universal Channel Mw and t
     // channelBytes should be the last (populated) index in the connectedChannels array
     channelId = hre.ethers.decodeBytes32String(channelBytes);
     console.log(`Channel ID in UCH contract: ${channelId}`);
-    envChannelId = config['sendUniversalPacket'][networkName]['channelId'];
+    envChannelId = config['sendUniversalPacket'].networks[networkName]['channelId'];
 
     // Compare the channel ID with the one in the .env file and log an error if they don't match
     // Run only after we've encountered an error fetching a channel ID at a new index

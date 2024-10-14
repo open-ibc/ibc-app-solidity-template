@@ -3,18 +3,29 @@ require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
-const polyConfig = require('./lib/polymer-registry/dist/output.json');
-
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: '0.8.23',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200, // Optimize for a typical number of runs
+    compilers: [
+      {
+        version: '0.8.23',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200, // Optimize for a typical number of runs
+          },
+        },
       },
-    },
+      {
+        version: '0.8.15',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200, // Optimize for a typical number of runs
+          },
+        },
+      },
+    ],
   },
   networks: {
     // for Base testnet
@@ -46,6 +57,9 @@ module.exports = {
     libraries: './lib',
   },
   etherscan: {
+    apiKey: {
+      optimism: process.env.OP_BLOCKSCOUT_API_KEY,
+    },
     customChains: [
       {
         network: 'base',
@@ -67,6 +81,5 @@ module.exports = {
       },
     ],
   },
-  polymer: polyConfig,
   vibcConfigPath: 'config/config.json', // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
 };

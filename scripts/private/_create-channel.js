@@ -5,12 +5,12 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath, convertNetworkToChainId, addressToPortId } = require('./_helpers');
-const { getIbcApp } = require('./_vibc-helpers.js');
-const polyConfig = hre.config.polymer;
+const { getConfigPath, convertNetworkToChainId, addressToPortId, fetchRegistryConfig } = require('./_helpers');
+const { getIbcApp, getDispatcher } = require('./_vibc-helpers.js');
 
 async function main() {
   const config = require(getConfigPath());
+  const polyConfig = await fetchRegistryConfig();
   const chanConfig = config.createChannel;
   const srcChainName = hre.network.name;
   const srcChainId = convertNetworkToChainId(srcChainName);
@@ -23,18 +23,27 @@ async function main() {
 
   // Prepare the arguments to create the channel
   // TODO: Update to allow dynamic choice of client type
-  const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
-  const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
+  const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'subfinality' : 'sim-client'}`].canonConnFrom;
+  const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'subfinality' : 'sim-client'}`].canonConnTo;
 
-  const srcPortId = addressToPortId(chanConfig.srcAddr, srcChainName);
-  const dstPortId = addressToPortId(chanConfig.dstAddr, dstChainName);
+  const input = [
+    { address: chanConfig.srcAddr, network: srcChainName },
+    { address: chanConfig.dstAddr, network: dstChainName },
+  ];
+  const [srcPortId, dstPortId] = await Promise.all(
+    input.map(async (channelEnd) => {
+      const dispatcher = await getDispatcher(channelEnd.network);
+      const portPrefix = await dispatcher.portPrefix();
+      return addressToPortId(channelEnd.address, portPrefix);
+    }),
+  );
 
   // Create the channel
   // Note: The proofHeight and proof are dummy values and will be dropped in the future
   await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId);
 
   // Wait for the channel handshake to complete
-  const sleepTime = config.proofsEnabled ? 12000000 : 90000;
+  const sleepTime = config.proofsEnabled ? 480000 : 90000;
   await new Promise((r) => setTimeout(r, sleepTime));
 
   // Get the connected channels and print the new channel along with its counterparty

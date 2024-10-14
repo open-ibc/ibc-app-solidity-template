@@ -5,7 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const { exec } = require('child_process');
-const { getConfigPath, getWhitelistedNetworks } = require('./_helpers.js');
+const { getConfigPath, networkIsAllowed } = require('./_helpers.js');
 const { getDispatcherAddress, getUcHandlerAddress } = require('./_vibc-helpers.js');
 
 const network = process.argv[2];
@@ -31,8 +31,7 @@ function runVerifyContractCommand(command) {
 
 async function runVerifyContract(constructorArgs) {
   // Check if the chain from user input is whitelisted
-  const allowedNetworks = getWhitelistedNetworks();
-  if (!allowedNetworks.includes(network)) {
+  if (!networkIsAllowed(network)) {
     console.error('❌ Invalid network specified. Please provide one of the following whitelisted networks: ' + allowedNetworks.join(', '));
     process.exit(1);
   }
@@ -58,10 +57,10 @@ async function main() {
   }
   let constructorArgs;
   if (config.isUniversal) {
-    const ucHandlerAddr = getUcHandlerAddress(network);
+    const ucHandlerAddr = await getUcHandlerAddress(network);
     constructorArgs = [ucHandlerAddr, ...(args ?? [])];
   } else if (!config.isUniversal) {
-    const dispatcherAddr = getDispatcherAddress(network);
+    const dispatcherAddr = await getDispatcherAddress(network);
     constructorArgs = [dispatcherAddr, ...(args ?? [])];
   }
 
