@@ -5,12 +5,12 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require('hardhat');
-const { getConfigPath, convertNetworkToChainId, addressToPortId } = require('./_helpers');
+const { getConfigPath, convertNetworkToChainId, addressToPortId, fetchRegistryConfig } = require('./_helpers');
 const { getIbcApp, getDispatcher } = require('./_vibc-helpers.js');
-const polyConfig = hre.config.polymer;
 
 async function main() {
   const config = require(getConfigPath());
+  const polyConfig = await fetchRegistryConfig();
   const chanConfig = config.createChannel;
   const srcChainName = hre.network.name;
   const srcChainId = convertNetworkToChainId(srcChainName);

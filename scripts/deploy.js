@@ -23,10 +23,10 @@ async function main() {
   // TODO: update to switch statement when supporting more networks
   let constructorArgs;
   if (config.isUniversal) {
-    const ucHandlerAddr = getUcHandlerAddress(networkName);
+    const ucHandlerAddr = await getUcHandlerAddress(networkName);
     constructorArgs = [ucHandlerAddr, ...(args ?? [])];
   } else if (!config.isUniversal) {
-    const dispatcherAddr = getDispatcherAddress(networkName);
+    const dispatcherAddr = await getDispatcherAddress(networkName);
     constructorArgs = [dispatcherAddr, ...(args ?? [])];
   }
 

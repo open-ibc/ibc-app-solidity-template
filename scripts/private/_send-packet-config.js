@@ -24,7 +24,7 @@ function runSendPacketCommand(command) {
 
 async function runSendPacket(config) {
   // Check if the source chain from user input is whitelisted
-  const allowedNetworks = getWhitelistedNetworks();
+  const allowedNetworks = await getWhitelistedNetworks();
   const srcChainId = convertNetworkToChainId(source);
   if (!allowedNetworks.includes(`${srcChainId}`)) {
     console.error('❌ Please provide a valid source chain');
@@ -32,8 +32,8 @@ async function runSendPacket(config) {
   }
 
   const destination = config.isUniversal
-    ? Object.keys(config.sendUniversalPacket).find((chain) => chain !== source)
-    : Object.keys(config.sendPacket).find((chain) => chain !== source);
+    ? Object.keys(config.sendUniversalPacket.networks).find((chain) => chain !== source)
+    : Object.keys(config.sendPacket.networks).find((chain) => chain !== source);
 
   const script = config.isUniversal ? 'send-universal-packet.js' : 'send-packet.js';
   const command = `npx hardhat run scripts/${script} --network ${source}`;

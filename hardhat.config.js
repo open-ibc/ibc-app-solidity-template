@@ -3,8 +3,6 @@ require('@nomicfoundation/hardhat-foundry');
 
 require('dotenv').config();
 
-const polyConfig = require('./lib/polymer-registry/dist/output.json');
-
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
@@ -83,6 +81,5 @@ module.exports = {
       },
     ],
   },
-  polymer: polyConfig,
   vibcConfigPath: 'config/config.json', // path to configuration file the scripts will use for Polymer's vibc, defaulting to config/config.json when not set
 };

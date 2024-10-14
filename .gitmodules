@@ -4,6 +4,3 @@
 [submodule "lib/vibc-core-smart-contracts"]
 	path = lib/vibc-core-smart-contracts
 	url = https://github.com/open-ibc/vibc-core-smart-contracts
-[submodule "lib/polymer-registry"]
-	path = lib/polymer-registry
-	url = https://github.com/polymerdao/polymer-registry

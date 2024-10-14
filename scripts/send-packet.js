@@ -28,8 +28,8 @@ async function main() {
   // Once polymer has multi-chain expansion, this should really be converted into a hardhat task and the user should specify the source and dest chain through cli args.
   const source = networkName; // Source is always the chain we run this command on, dest is found by process of elimination
   const destination = config.isUniversal
-    ? Object.keys(config.sendUniversalPacket).find((chain) => chain !== source)
-    : Object.keys(config.sendPacket).find((chain) => chain !== source);
+    ? Object.keys(config.sendUniversalPacket.networks).find((chain) => chain !== source)
+    : Object.keys(config.sendPacket.networks).find((chain) => chain !== source);
 
   const [srcChainId, destChainId] = [source, destination].map((networkName) => convertNetworkToChainId(networkName));
   const feeEstimatorData = await estimateRelayerFees(srcChainId, destChainId, recvPacketGasLimit.toString(), ackPacketGasLimit.toString());
