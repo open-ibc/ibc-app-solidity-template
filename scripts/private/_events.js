@@ -165,8 +165,12 @@ function listenForIbcChannelEvents(network, dispatcher) {
 function filterPacketEvents(portAddress, network, ucHandlerAddr) {
   const config = require(getConfigPath());
   const sendPacketConfig = config.sendPacket.networks;
-
-  return areAddressesEqual(portAddress, sendPacketConfig[`${network}`].portAddr) || areAddressesEqual(portAddress, ucHandlerAddr);
+  const checks = [[portAddress, ucHandlerAddr]];
+  const customPortAddr = sendPacketConfig[`${network}`].portAddr;
+  if (customPortAddr) {
+    checks.push([portAddress, customPortAddr]);
+  }
+  return checks.map((args) => areAddressesEqual(args[0], args[1])).some(Boolean);
 }
 
 function listenForIbcPacketEvents(network, dispatcher, ucHandlerAddress) {
@@ -239,8 +243,9 @@ function listenForIbcPacketEvents(network, dispatcher, ucHandlerAddress) {
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
       console.log(` ⏱️  Waiting for acknowledgement...`);
+      console.log('REMOVING ALL LISTENERS write ack');
+      dispatcher.removeAllListeners();
     }
-    dispatcher.removeAllListeners();
   });
 
   dispatcher.on('Acknowledgement', (sourcePortAddress, sourceChannelId, sequence, event) => {
@@ -261,8 +266,9 @@ function listenForIbcPacketEvents(network, dispatcher, ucHandlerAddress) {
           🧾 TxHash: ${txHash}
           🔍 Explorer URL: ${url}
           -------------------------------------------\n`);
+      console.log('REMOVING ALL LISTENERS', 'ack');
+      dispatcher.removeAllListeners();
     }
-    dispatcher.removeAllListeners();
   });
 }
 
