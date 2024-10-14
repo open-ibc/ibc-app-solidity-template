@@ -49,14 +49,13 @@ async function updateConfigDeploy(network, address, isSource) {
         config['createChannel']['dstChain'] = network;
         config['createChannel']['dstAddr'] = address;
       }
-
-      config['sendPacket'][`${network}`]['portAddr'] = address;
+      config['sendPacket'].networks[`${network}`]['portAddr'] = address;
     } else if (config.isUniversal) {
       // When using the universal channel, we can skip channel creation and instead update the sendUniversalPacket field in the config
       //TODO: update for multi-client selection
-      const client = config.proofsEnabled ? 'op-client' : 'sim-client';
-      config['sendUniversalPacket'][`${network}`]['portAddr'] = address;
-      config['sendUniversalPacket'][`${network}`]['channelId'] = polyConfig[`${chainId}`]['clients'][`${client}`]['universalChannelId'];
+      const client = config.proofsEnabled ? 'subfinality' : 'sim-client';
+      config['sendUniversalPacket'].networks[`${network}`]['portAddr'] = address;
+      config['sendUniversalPacket'].networks[`${network}`]['channelId'] = polyConfig[`${chainId}`]['clients'][`${client}`]['universalChannelId'];
     }
 
     // Write the updated config back to the file
@@ -73,8 +72,8 @@ function updateConfigCreateChannel(network, channel, cpNetwork, cpChannel) {
     const upConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
     // Update the config object
-    upConfig['sendPacket'][`${network}`]['channelId'] = channel;
-    upConfig['sendPacket'][`${cpNetwork}`]['channelId'] = cpChannel;
+    upConfig['sendPacket'].networks[`${network}`]['channelId'] = channel;
+    upConfig['sendPacket'].networks[`${cpNetwork}`]['channelId'] = cpChannel;
 
     // Write the updated config back to the file
     fs.writeFileSync(configPath, JSON.stringify(upConfig, null, 2));

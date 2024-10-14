@@ -11,16 +11,6 @@ if (process.argv.length < 5) {
 const chain = process.argv[2];
 const contractType = process.argv[3];
 const universalBoolean = process.argv[4].trim().toLowerCase();
-try {
-  const allowedNetworks = await getWhitelistedNetworks();
-  const chainId = convertNetworkToChainId(chain);
-  if (!allowedNetworks.includes(`${chainId}`)) {
-    throw new Error('Invalid network. Please provide a valid network as an argument.');
-  }
-} catch (error) {
-  console.error('❌ Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
-  process.exit(1);
-}
 
 let isUniversal;
 if (universalBoolean === 'true') {
@@ -52,4 +42,22 @@ function updateConfig(network, contractType) {
   }
 }
 
-updateConfig(chain, contractType);
+async function main() {
+  try {
+    const allowedNetworks = await getWhitelistedNetworks();
+    const chainId = convertNetworkToChainId(chain);
+    if (!allowedNetworks.includes(`${chainId}`)) {
+      throw new Error('Invalid network. Please provide a valid network as an argument.');
+    }
+  } catch (error) {
+    console.error('❌ Incorrect chain value. Usage: node set-contracts-config.js <chain> <contractType> <isUniversal>');
+    process.exit(1);
+  }
+
+  updateConfig(chain, contractType);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

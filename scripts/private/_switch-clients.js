@@ -39,37 +39,45 @@ function flipConfig() {
         fees: false,
       };
       config['sendPacket'] = {
-        optimism: {
-          portAddr: '0x1234567890abcdef1234567890abcdef12345678',
-          channelId: 'channel-n',
-          timeout: 36000,
+        networks: {
+          optimism: {
+            portAddr: '0x1234567890abcdef1234567890abcdef12345678',
+            channelId: 'channel-n',
+            timeout: 36000,
+          },
+          base: {
+            portAddr: '0x1234567890abcdef1234567890abcdef12345678',
+            channelId: 'channel-n',
+            timeout: 36000,
+          },
         },
-        base: {
-          portAddr: '0x1234567890abcdef1234567890abcdef12345678',
-          channelId: 'channel-n',
-          timeout: 36000,
-        },
+        recvPacketGasLimit: 800000,
+        ackPacketGasLimit: 600000,
       };
       config['sendUniversalPacket'] = {
-        optimism: {
-          portAddr: '0x1234567890abcdef1234567890abcdef12345678',
-          channelId: 'channel-x',
-          timeout: 36000,
+        networks: {
+          optimism: {
+            portAddr: '0x1234567890abcdef1234567890abcdef12345678',
+            channelId: 'channel-x',
+            timeout: 36000,
+          },
+          base: {
+            portAddr: '0x1234567890abcdef1234567890abcdef12345678',
+            channelId: 'channel-y',
+            timeout: 36000,
+          },
         },
-        base: {
-          portAddr: '0x1234567890abcdef1234567890abcdef12345678',
-          channelId: 'channel-y',
-          timeout: 36000,
-        },
+        recvPacketGasLimit: 800000,
+        ackPacketGasLimit: 600000,
       };
     }
 
     // Update the universal channel values for new client
-    config['sendUniversalPacket'][`${source}`]['channelId'] = tempConfig.proofsEnabled
-      ? polyConfig[`${srcChainId}`]['clients']['op-client'].universalChannelId
+    config['sendUniversalPacket'].networks[`${source}`]['channelId'] = tempConfig.proofsEnabled
+      ? polyConfig[`${srcChainId}`]['clients']['subfinality'].universalChannelId
       : polyConfig[`${srcChainId}`]['clients']['sim-client'].universalChannelId;
-    config['sendUniversalPacket'][`${destination}`]['channelId'] = tempConfig.proofsEnabled
-      ? polyConfig[`${dstChainId}`]['clients']['op-client'].universalChannelId
+    config['sendUniversalPacket'].networks[`${destination}`]['channelId'] = tempConfig.proofsEnabled
+      ? polyConfig[`${dstChainId}`]['clients']['subfinality'].universalChannelId
       : polyConfig[`${dstChainId}`]['clients']['sim-client'].universalChannelId;
 
     // Write a new backup object to the config

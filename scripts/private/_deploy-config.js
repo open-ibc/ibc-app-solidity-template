@@ -14,7 +14,7 @@ if (!source || !destination) {
 
 // Function to run the deploy script and capture output
 async function deployAndCapture(network, isSource) {
-  const allowedNetworks = getWhitelistedNetworks();
+  const allowedNetworks = await getWhitelistedNetworks();
   const chainId = convertNetworkToChainId(network);
 
   if (!allowedNetworks.includes(`${chainId}`)) {

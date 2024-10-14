@@ -42,7 +42,7 @@ async function getUcHandlerAddress(network) {
   const config = require(getConfigPath());
   const chainId = convertNetworkToChainId(network);
   const ucHandlerAddr = config.proofsEnabled
-    ? polyConfig[`${chainId}`]['clients']['op-client'].universalChannelAddr
+    ? polyConfig[`${chainId}`]['clients']['subfinality'].universalChannelAddr
     : polyConfig[`${chainId}`]['clients']['sim-client'].universalChannelAddr;
   return ucHandlerAddr;
 }

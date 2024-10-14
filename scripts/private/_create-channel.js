@@ -23,8 +23,8 @@ async function main() {
 
   // Prepare the arguments to create the channel
   // TODO: Update to allow dynamic choice of client type
-  const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnFrom;
-  const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'op-client' : 'sim-client'}`].canonConnTo;
+  const connHop1 = polyConfig[`${srcChainId}`]['clients'][`${config.proofsEnabled ? 'subfinality' : 'sim-client'}`].canonConnFrom;
+  const connHop2 = polyConfig[`${dstChainId}`]['clients'][`${config.proofsEnabled ? 'subfinality' : 'sim-client'}`].canonConnTo;
 
   const input = [
     { address: chanConfig.srcAddr, network: srcChainName },
@@ -43,7 +43,7 @@ async function main() {
   await ibcApp.createChannel(chanConfig.version, chanConfig.ordering, chanConfig.fees, [connHop1, connHop2], dstPortId);
 
   // Wait for the channel handshake to complete
-  const sleepTime = config.proofsEnabled ? 12000000 : 90000;
+  const sleepTime = config.proofsEnabled ? 480000 : 90000;
   await new Promise((r) => setTimeout(r, sleepTime));
 
   // Get the connected channels and print the new channel along with its counterparty

@@ -18,9 +18,9 @@ async function main() {
   const ibcApp = await getIbcApp(networkName);
 
   // Do logic to prepare the packet
-  const channelId = sendConfig[`${networkName}`]['channelId'];
+  const channelId = sendConfig.networks[`${networkName}`]['channelId'];
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
-  const timeoutSeconds = sendConfig[`${networkName}`]['timeout'];
+  const timeoutSeconds = sendConfig.networks[`${networkName}`]['timeout'];
   const recvPacketGasLimit = hre.ethers.toBigInt(config.sendPacket['recvPacketGasLimit']);
   const ackPacketGasLimit = hre.ethers.toBigInt(config.sendPacket['ackPacketGasLimit']);
 
