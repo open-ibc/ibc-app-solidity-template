@@ -32,23 +32,18 @@ async function main() {
     : Object.keys(config.sendPacket.networks).find((chain) => chain !== source);
 
   const [srcChainId, destChainId] = [source, destination].map((networkName) => convertNetworkToChainId(networkName));
-  const feeEstimatorData = await estimateRelayerFees(srcChainId, destChainId, recvPacketGasLimit.toString(), ackPacketGasLimit.toString());
 
-  // Even though we have our initial gas limits from our config, we should use the gas limits returned by the api, which pads for vibc-contracts gas overhead
-  const destFeeBigInt = hre.ethers.toBigInt(feeEstimatorData.destMaxFeePerGas);
-  const srcFeeBigInt = hre.ethers.toBigInt(feeEstimatorData.srcMaxFeePerGas);
-  const recvFeeEstGas = hre.ethers.toBigInt(feeEstimatorData.maxRecvGas);
-  const ackFeeEstGas = hre.ethers.toBigInt(feeEstimatorData.maxAckGas);
+  const feeData = await estimateRelayerFees(srcChainId, destChainId, recvPacketGasLimit.toString(), ackPacketGasLimit.toString());
 
-  // Send the packet using the fee estimator api. 
+  // Send the packet using the fee estimator api.
   // NOTE: We also send a value of ether equal to the maxTotalFee returned by the API. The tx will revert if you don't send *exactly* this amount
   await ibcApp.connect(accounts[0]).sendPacketWithFee(
     channelIdBytes,
     timeoutSeconds,
-    [recvFeeEstGas, ackFeeEstGas],
-    [destFeeBigInt, srcFeeBigInt],
+    [feeData.recvFeeEstGas, feeData.ackFeeEstGas],
+    [feeData.destFeeBigInt, feeData.srcFeeBigInt],
     // Define and pass optionalArgs appropriately or remove if not needed
-    { value: feeEstimatorData.maxTotalFee },
+    { value: feeData.totalValue },
   );
 }
 

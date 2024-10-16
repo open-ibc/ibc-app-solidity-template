@@ -28,14 +28,20 @@ contract XCounterUC is UniversalChanIbcApp {
      * @param channelId The ID of the channel to send the packet to.
      * @param timeoutSeconds The timeout in seconds (relative).
      */
-    function sendUniversalPacket(address destPortAddr, bytes32 channelId, uint64 timeoutSeconds) external {
+    function sendUniversalPacketWithFee(
+        address destPortAddr,
+        bytes32 channelId,
+        uint64 timeoutSeconds,
+        uint256[2] memory gasLimits,
+        uint256[2] memory gasPrices
+    ) external payable {
         increment();
         bytes memory payload = abi.encode(msg.sender, counter);
 
         uint64 timeoutTimestamp = uint64((block.timestamp + timeoutSeconds) * 1000000000);
 
-        IbcUniversalPacketSender(mw).sendUniversalPacket(
-            channelId, IbcUtils.toBytes32(destPortAddr), payload, timeoutTimestamp
+        IbcUniversalPacketSender(mw).sendUniversalPacketWithFee{value: msg.value}(
+            channelId, IbcUtils.toBytes32(destPortAddr), payload, timeoutTimestamp, gasLimits, gasPrices
         );
     }
 

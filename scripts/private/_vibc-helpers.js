@@ -39,11 +39,8 @@ async function getDispatcher(network) {
 
 async function getUcHandlerAddress(network) {
   const polyConfig = await fetchRegistryConfig();
-  const config = require(getConfigPath());
   const chainId = convertNetworkToChainId(network);
-  const ucHandlerAddr = config.proofsEnabled
-    ? polyConfig[`${chainId}`]['clients']['subfinality'].universalChannelAddr
-    : polyConfig[`${chainId}`]['clients']['sim-client'].universalChannelAddr;
+  const ucHandlerAddr = polyConfig[`${chainId}`].uchAddr;
   return ucHandlerAddr;
 }
 

@@ -35,10 +35,7 @@ async function main() {
   let envUcHandlerAddr;
   try {
     // TODO: update for multi-client selection
-    envUcHandlerAddr =
-      config.proofsEnabled === true
-        ? polyConfig[`${chainId}`]['clients']['subfinality'].universalChannelAddr
-        : polyConfig[`${chainId}`]['clients']['sim-client'].universalChannelAddr;
+    envUcHandlerAddr = polyConfig[`${chainId}`].uchAddr;
     sanityCheck = areAddressesEqual(ucHandlerAddr, envUcHandlerAddr);
   } catch (error) {
     console.log(`❌ Error comparing Universal Channel Mw addresses in .env file and IBC app: ${error}`);
@@ -65,10 +62,7 @@ check if the values provided in the .env file for the Universal Channel Mw and t
     try {
       ucHandler = await getUcHandler(networkName);
       dispatcherAddr = await ucHandler.dispatcher();
-      envDispatcherAddr =
-        config.proofsEnabled === true
-          ? polyConfig[`${chainId}`]['clients']['subfinality'].dispatcherAddr
-          : polyConfig[`${chainId}`]['clients']['sim-client'].dispatcherAddr;
+      envDispatcherAddr = polyConfig[`${chainId}`].dispatcherAddr;
       sanityCheck = areAddressesEqual(dispatcherAddr, envDispatcherAddr);
     } catch (error) {
       console.log(`❌ Error getting dispatcher address from Universal Channel Mw or from config: ${error}`);
@@ -87,44 +81,6 @@ check if the values provided in the .env file for the Universal Channel Mw and t
 --------------------------------------------------
     `);
     return;
-  } else {
-    // If the sanity check passes, we can continue to check the channel ID stored in the Universal Channel Mw
-    let counter = 0;
-    let channelId, envChannelId;
-    let channelBytes;
-    let foundChannel = true;
-    // We don't know how many channels are connected to the Universal Channel Mw, so we loop until we get an error
-    do {
-      // Try to get the channel ID at the index
-      try {
-        channelBytes = await ucHandler.connectedChannels(counter);
-      } catch (error) {
-        // If we get an error, it means we reached the end of the list, do not return, just log the error and set foundChannel to false
-        // console.log(`❌ No channel ID at index: ${counter}`);
-        foundChannel = false;
-      }
-      counter++;
-    } while (foundChannel);
-
-    // channelBytes should be the last (populated) index in the connectedChannels array
-    channelId = hre.ethers.decodeBytes32String(channelBytes);
-    console.log(`Channel ID in UCH contract: ${channelId}`);
-    envChannelId = config['sendUniversalPacket'].networks[networkName]['channelId'];
-
-    // Compare the channel ID with the one in the .env file and log an error if they don't match
-    // Run only after we've encountered an error fetching a channel ID at a new index
-    if (channelId === undefined && channelId !== envChannelId) {
-      sanityCheck = false;
-      console.log(`
-⛔ Sanity check failed for network ${networkName}, 
-check if the channel id value for the Universal channel in the config is correct.
---------------------------------------------------
-🔮 Expected Channel ID (in Universal Channel Handler contract): ${channelId}...
-🗃️  Found Channel ID (in config file): ${envChannelId}...
---------------------------------------------------
-  `);
-      return;
-    }
   }
 
   // 5. Print the result of the sanity check

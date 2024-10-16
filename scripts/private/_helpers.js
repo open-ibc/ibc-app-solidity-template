@@ -136,8 +136,7 @@ async function getWhitelistedNetworks() {
   return Object.keys(config);
 }
 
-// Estimate fees from polymer's fee estimation for relayer
-async function estimateRelayerFees(srcChainId, destChainId, maxRecvExecGas, maxAckExecGas) {
+async function fetchFeesFromApi(srcChainId, destChainId, maxRecvExecGas, maxAckExecGas) {
   const configPath = getConfigPath();
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   const baseUrl = config['feeEstimatorApiUrl'];
@@ -159,6 +158,18 @@ async function estimateRelayerFees(srcChainId, destChainId, maxRecvExecGas, maxA
   } catch (error) {
     console.error('Error:', error);
   }
+}
+
+// Estimate fees from polymer's fee estimation for relayer
+async function estimateRelayerFees(srcChainId, destChainId, maxRecvExecGas, maxAckExecGas) {
+  const feeEstimatorData = await fetchFeesFromApi(srcChainId, destChainId, maxRecvExecGas.toString(), maxAckExecGas.toString());
+
+  // Even though we have our initial gas limits from our config, we should use the gas limits returned by the api, which pads for vibc-contracts gas overhead
+  const destFeeBigInt = hre.ethers.toBigInt(feeEstimatorData.destMaxFeePerGas);
+  const srcFeeBigInt = hre.ethers.toBigInt(feeEstimatorData.srcMaxFeePerGas);
+  const recvFeeEstGas = hre.ethers.toBigInt(feeEstimatorData.maxRecvGas);
+  const ackFeeEstGas = hre.ethers.toBigInt(feeEstimatorData.maxAckGas);
+  return { destFeeBigInt, srcFeeBigInt, recvFeeEstGas, ackFeeEstGas, totalValue: feeEstimatorData.maxTotalFee };
 }
 
 module.exports = {
