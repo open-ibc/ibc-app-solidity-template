@@ -113,16 +113,6 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver, FeeSender {
         dispatcher.channelOpenInit(version, ChannelOrder(ordering), feeEnabled, connectionHops, counterpartyPortId);
     }
 
-    function onChanOpenInit(ChannelOrder, string[] calldata, string calldata, string calldata version)
-        external
-        view
-        virtual
-        onlyIbcDispatcher
-        returns (string memory selectedVersion)
-    {
-        return _openChannel(version);
-    }
-
     // solhint-disable-next-line ordering
     function onChanOpenTry(
         ChannelOrder,
@@ -179,7 +169,7 @@ contract CustomChanIbcApp is IbcReceiverBase, IbcReceiver, FeeSender {
     }
 
     function _connectChannel(bytes32 channelId, bytes32 counterpartyChannelId, string calldata counterpartyVersion)
-        private
+        internal 
         returns (string memory version)
     {
         // ensure negotiated version is supported
