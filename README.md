@@ -163,11 +163,9 @@ A complete walkthrough on how to develop these contracts is provided in the [Dev
 
 ## 🕹️ Interaction with the contracts
 
-When the contracts are ready, you can go ahead and interact with the contracts through scripts. There is a Justfile to for the most common commands, with the underlying scripts in the /scripts folder.
+When the contracts are ready, you can go ahead and interact with the contracts through scripts. There is a Justfile too for the most common commands, with the underlying scripts in the  `/scripts` folder.
 
 The `/private` folder within the scripts folder has scripts that you're unlikely to need to touch. The only scripts you'll (potentially) be interacting with are:
-
-There's three types of default scripts in the project:
 
 - The `deploy.js` allows you to deploy your application contract. You may want to add additional deployment logic to the Hardhat script.
 - In the `/contracts` folder you'll find `arguments.js` to add your custom constructor arguments for automated deployment with the `deploy.js` script.
@@ -179,7 +177,7 @@ For most of the actions above and more, there are just recipes that combine rela
 
 ### Deploy
 
-Before deploying, make sure to update the config.json with your contract type to deploy for each of the chain you wish to deploy to.
+Before deploying, make sure to update the config.json with your contract type to deploy for each of the chains you wish to deploy to.
 
 #### Set contracts to config
 
