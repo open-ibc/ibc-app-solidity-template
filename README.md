@@ -1,6 +1,6 @@
 # ⛓️🔗⛓️ Template for IBC enabled Solidity contracts
 
-This [IBC app in Solidity template repo](https://github.com/open-ibc/ibc-app-solidity-template/tree/main) provides a starter project serves as a starting point for building multichain smart contracts that leverage Polymer Hub to connect across rollups through our [vIBC core contracts](https://github.com/open-ibc/vibc-core-smart-contracts).
+This [IBC app in Solidity template repo](https://github.com/open-ibc/ibc-app-solidity-template/tree/main) provides a starter project that serves as a starting point for building multichain smart contracts that leverage Polymer Hub to connect across rollups through our [vIBC core contracts](https://github.com/open-ibc/vibc-core-smart-contracts).
 
 The repository is a _GitHub template_ repository so you can click "Use this template" to create your own project repository without having the entire commit history of the template.
 
