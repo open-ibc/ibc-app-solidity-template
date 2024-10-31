@@ -113,7 +113,7 @@ The project comes with a built-in dummy application called x-counter (which sync
 
 ### Universal channels
 
-The easiest way to get onboarded is to use Universal channels. Universal channel is like an open port already deployed by Polymer to allow anyone to call a remote contracts. This contract is known as Universal channel handler (UCH).
+The easiest way to get onboarded is to use Universal channels. Universal channel is like an open port already deployed by Polymer to allow anyone to call a remote contracts. Universal channels utilize a contract which is known as Universal channel handler (UCH).
 
 Users can utilize universal channels through deploying a Universal channel compatible contract. This can be done either from deploying a contract which inherits the [UniversalChanIbcApp](./contracts/base/UniversalChanIbcApp.sol) base contract) or implements the [IbcUniversalPacketReceiver and IbcUniversalPacketSender interfaces](https://github.com/open-ibc/vibc-core-smart-contracts/blob/main/contracts/interfaces/IbcMiddleware.sol#L100-L112). Once deployed, the dapp will be able to connect to the Universal Channel handler, define Universal packets which will then be wrapped into a regular IBC packet by the Universal Channel Handler and unwrapped by its counterparty on the destination chain. The Universal channel handler on the destination will then unwrap the the packet and send the data to defined address.
 
