@@ -59,6 +59,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       optimism: process.env.OP_BLOCKSCOUT_API_KEY,
+      base: process.env.BASE_BLOCKSCOUT_API_KEY,
     },
     customChains: [
       {
@@ -66,7 +67,6 @@ module.exports = {
         chainId: 84532,
         urls: {
           apiURL: 'https://base-sepolia.blockscout.com/api',
-          apiKey: process.env.BASE_BLOCKSCOUT_API_KEY,
           browserURL: 'https://base-sepolia.blockscout.com',
         },
       },
@@ -75,7 +75,6 @@ module.exports = {
         chainId: 11155420,
         urls: {
           apiURL: 'https://optimism-sepolia.blockscout.com/api',
-          apiKey: process.env.OP_BLOCKSCOUT_API_KEY,
           browserURL: 'https://optimism-sepolia.blockscout.com',
         },
       },
